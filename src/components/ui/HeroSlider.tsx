@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 
 const images = [
+  "https://media.clsedu.co.kr/KakaoTalk_Photo_2026-03-31-21-41-01%20001.jpeg",
   "https://media.clsedu.co.kr/KYJ00897.jpg",
   "https://media.clsedu.co.kr/jeff-sheldon-JWiMShWiF14-unsplash.jpg",
   "https://media.clsedu.co.kr/jerry-wang-jfnUC7s3iuw-unsplash.jpg"
@@ -25,11 +26,11 @@ export default function HeroSlider() {
           <div
             className="w-full h-full bg-cover bg-center bg-no-repeat will-change-transform"
             style={{ 
-              backgroundImage: `url(${img})`,
+              backgroundImage: `url('${img}')`,
               opacity: index === currentIndex ? 0.6 : 0, 
               // 번갈아가며 줌인/줌아웃 느낌을 주기 위해 scale 애니메이션 적용
-              transform: index === currentIndex ? 'scale(1.08)' : 'scale(1)',
-              transition: 'opacity 1.5s ease-in-out, transform 7s linear'
+              transform: index === currentIndex ? 'scale(1.15)' : 'scale(1)',
+              transition: 'opacity 1.5s ease-in-out, transform 10s linear'
             }}
           />
         </div>
