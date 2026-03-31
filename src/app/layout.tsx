@@ -1,18 +1,14 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Noto_Sans_KR } from "next/font/google";
 import "./globals.css";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import FloatingButton from "@/components/ui/FloatingButton";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const notoSansKr = Noto_Sans_KR({
   subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
+  weight: ["100", "300", "400", "500", "700", "900"],
+  variable: "--font-noto-sans-kr",
 });
 
 export const metadata: Metadata = {
@@ -28,9 +24,9 @@ export default function RootLayout({
   return (
     <html
       lang="ko"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      className={`${notoSansKr.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col pt-20">
+      <body className="font-sans min-h-full flex flex-col pt-20">
         <Header />
         <main className="flex-grow">{children}</main>
         <FloatingButton />
