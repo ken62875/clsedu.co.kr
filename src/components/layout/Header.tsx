@@ -1,7 +1,12 @@
+"use client";
+
 import Link from "next/link";
 import Image from "next/image";
+import { useState } from "react";
 
 const Header = () => {
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
   return (
     <header className="fixed w-full top-0 z-50 bg-white/95 backdrop-blur-sm border-b border-gray-100 shadow-sm">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -35,11 +40,34 @@ const Header = () => {
           </div>
 
           <div className="md:hidden flex items-center">
-            <button className="text-gray-700 hover:text-cls-black focus:outline-none p-2">
+            <button 
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+              className="text-gray-700 hover:text-cls-orange focus:outline-none p-2"
+            >
               <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                {isMobileMenuOpen ? (
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                ) : (
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                )}
               </svg>
             </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Mobile Menu Dropdown */}
+      <div className={`md:hidden absolute w-full left-0 top-20 bg-white border-b border-gray-100 shadow-lg transition-all duration-300 overflow-hidden ${isMobileMenuOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'}`}>
+        <div className="px-4 pt-2 pb-6 space-y-1">
+          <Link href="/about" onClick={() => setIsMobileMenuOpen(false)} className="block px-3 py-3 text-base font-medium text-gray-700 hover:text-cls-orange hover:bg-slate-50 rounded-md">학원소개</Link>
+          <Link href="/teachers" onClick={() => setIsMobileMenuOpen(false)} className="block px-3 py-3 text-base font-medium text-gray-700 hover:text-cls-orange hover:bg-slate-50 rounded-md">강사소개</Link>
+          <Link href="/curriculum" onClick={() => setIsMobileMenuOpen(false)} className="block px-3 py-3 text-base font-medium text-gray-700 hover:text-cls-orange hover:bg-slate-50 rounded-md">교과과정</Link>
+          <Link href="/program" onClick={() => setIsMobileMenuOpen(false)} className="block px-3 py-3 text-base font-medium text-gray-700 hover:text-cls-orange hover:bg-slate-50 rounded-md">프로그램</Link>
+          <Link href="/story" onClick={() => setIsMobileMenuOpen(false)} className="block px-3 py-3 text-base font-medium text-gray-700 hover:text-cls-orange hover:bg-slate-50 rounded-md">스토리</Link>
+          <div className="pt-4">
+            <Link href="/contact" onClick={() => setIsMobileMenuOpen(false)} className="block w-full text-center bg-cls-black text-white px-6 py-3 rounded-md font-bold hover:bg-cls-black-light transition-colors shadow-md">
+              상담 문의
+            </Link>
           </div>
         </div>
       </div>
