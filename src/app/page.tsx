@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import HeroSlider from "@/components/ui/HeroSlider";
 import { Nanum_Myeongjo } from 'next/font/google';
 
 const nanumMyeongjo = Nanum_Myeongjo({
@@ -12,8 +13,7 @@ export default function Home() {
     <div className="min-h-screen">
       {/* Hero Section */}
       <section className="relative h-[80vh] min-h-[600px] flex items-center justify-center bg-cls-black overflow-hidden">
-        <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1577896851231-70ef18881754?q=80&w=2070&auto=format&fit=crop')] bg-cover bg-center bg-no-repeat opacity-30" />
-        <div className="absolute inset-0 bg-gradient-to-t from-cls-black via-cls-black/80 to-transparent" />
+        <HeroSlider />
         
         <div className="relative z-10 text-center px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto mt-20">
           <span className="inline-block px-4 py-1 rounded-full bg-cls-orange text-white text-sm font-bold tracking-widest mb-6 animate-fade-in-up">
