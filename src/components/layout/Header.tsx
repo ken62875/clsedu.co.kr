@@ -11,10 +11,11 @@ const Header = () => {
               <Image 
                 src="/logo-clsedu-landscape.webp" 
                 alt="CLS 에듀케이션 로고" 
-                width={180} 
-                height={50} 
+                width={400} 
+                height={110} 
                 className="w-auto h-10 object-contain"
                 priority
+                unoptimized
               />
             </Link>
           </div>

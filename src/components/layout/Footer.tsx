@@ -12,9 +12,10 @@ const Footer = () => {
               <Image 
                 src="/logo-clsedu-landscape.webp" 
                 alt="CLS 에듀케이션 로고" 
-                width={150} 
-                height={40} 
+                width={300} 
+                height={80} 
                 className="w-auto h-8 object-contain brightness-0 invert"
+                unoptimized
               />
             </div>
             <p className="text-gray-300 mb-4 leading-relaxed font-light">
