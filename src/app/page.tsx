@@ -1,5 +1,11 @@
 import Image from "next/image";
 import Link from "next/link";
+import { Nanum_Myeongjo } from 'next/font/google';
+
+const nanumMyeongjo = Nanum_Myeongjo({
+  weight: ['400', '700', '800'],
+  subsets: ['latin'],
+});
 
 export default function Home() {
   return (
@@ -13,7 +19,7 @@ export default function Home() {
           <span className="inline-block px-4 py-1 rounded-full bg-cls-orange text-white text-sm font-bold tracking-widest mb-6 animate-fade-in-up">
             초·중·고 내신 및 입시 전문
           </span>
-          <h1 className="text-4xl sm:text-5xl md:text-6xl font-extrabold text-white leading-tight tracking-tight mb-6 drop-shadow-lg">
+          <h1 className={`${nanumMyeongjo.className} text-4xl sm:text-5xl md:text-6xl font-extrabold text-white leading-tight tracking-tight mb-6 drop-shadow-lg`}>
             진짜 실력은 <br className="hidden sm:block" />
             <span className="text-cls-orange">속도</span>가 아니라 <span className="text-cls-orange">깊이</span>에서 나옵니다.
           </h1>
