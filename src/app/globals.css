@@ -12,10 +12,10 @@
   --font-mono: var(--font-geist-mono);
   
   /* CLS Education Theme Colors */
-  --color-cls-navy: #1C2B4B;
-  --color-cls-navy-light: #2A3C63;
-  --color-cls-gold: #B8860B;
-  --color-cls-gold-light: #DAA520;
+  --color-cls-black: #111111;
+  --color-cls-black-light: #2A2A2A;
+  --color-cls-orange: #FF6B00;
+  --color-cls-orange-light: #FF8533;
 }
 
 @media (prefers-color-scheme: dark) {

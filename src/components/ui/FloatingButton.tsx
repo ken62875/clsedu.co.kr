@@ -3,10 +3,10 @@ import Link from 'next/link';
 const FloatingButton = () => {
   return (
     <div className="fixed bottom-6 right-6 z-50 group flex items-center gap-4">
-      <span className="bg-cls-navy text-white px-4 py-2 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap hidden md:block shadow-lg font-medium tracking-tight translate-x-4 group-hover:translate-x-0 duration-300">
+      <span className="bg-cls-black text-white px-4 py-2 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap hidden md:block shadow-lg font-medium tracking-tight translate-x-4 group-hover:translate-x-0 duration-300">
         무료 상담 신청
       </span>
-      <Link href="/contact" className="flex items-center justify-center w-16 h-16 bg-cls-gold text-white rounded-full shadow-2xl hover:bg-cls-gold-light hover:scale-110 transition-all duration-300 ease-out cursor-pointer relative">
+      <Link href="/contact" className="flex items-center justify-center w-16 h-16 bg-cls-orange text-white rounded-full shadow-2xl hover:bg-cls-orange-light hover:scale-110 transition-all duration-300 ease-out cursor-pointer relative">
         <span className="absolute -top-1 -right-1 flex h-4 w-4">
           <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
           <span className="relative inline-flex rounded-full h-4 w-4 bg-red-500 border-2 border-white"></span>
