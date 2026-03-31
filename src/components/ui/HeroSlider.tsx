@@ -14,22 +14,29 @@ export default function HeroSlider() {
   useEffect(() => {
     const timer = setInterval(() => {
       setCurrentIndex((prevIndex) => (prevIndex + 1) % images.length);
-    }, 5000); // 5초마다 이미지 변경
+    }, 5000); // 5초마다 교체
     return () => clearInterval(timer);
   }, []);
 
   return (
     <>
       {images.map((img, index) => (
-        <div
-          key={img}
-          className={`absolute inset-0 bg-cover bg-center bg-no-repeat transition-opacity duration-1000 ease-in-out ${
-            index === currentIndex ? 'opacity-30' : 'opacity-0'
-          }`}
-          style={{ backgroundImage: `url(${img})` }}
-        />
+        <div key={img} className="absolute inset-0 overflow-hidden z-0">
+          <div
+            className="w-full h-full bg-cover bg-center bg-no-repeat will-change-transform"
+            style={{ 
+              backgroundImage: `url(${img})`,
+              opacity: index === currentIndex ? 0.6 : 0, 
+              // 번갈아가며 줌인/줌아웃 느낌을 주기 위해 scale 애니메이션 적용
+              transform: index === currentIndex ? 'scale(1.08)' : 'scale(1)',
+              transition: 'opacity 1.5s ease-in-out, transform 7s linear'
+            }}
+          />
+        </div>
       ))}
-      <div className="absolute inset-0 bg-gradient-to-t from-cls-black via-cls-black/80 to-transparent z-0" />
+      
+      {/* 텍스트 가독성을 위한 그라데이션 오버레이 (투명도 조절하여 이미지가 더 잘 보이게 수정) */}
+      <div className="absolute inset-0 bg-gradient-to-t from-cls-black via-cls-black/40 to-cls-black/10 z-0 pointer-events-none" />
     </>
   );
 }
