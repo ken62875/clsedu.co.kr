@@ -1,16 +1,178 @@
-import React from "react";
+"use client";
+
+import React, { useState } from "react";
+import FadeIn from "@/components/ui/FadeIn";
+
+const curriculumData = {
+  primary: {
+    title: "초등부 교과과정",
+    description: "공부의 기본기를 탄탄하게 다지고 올바른 학습 습관을 형성하는 CLS 초등부",
+    fee: "250,000원 / 월",
+    courses: [
+      { id: 1, subject: "국어", content: "독해력 향상 및 문해력 기초, 논술", room: "A강의실", time: "월,수 15:00-16:30", teacher: "김지민 강사" },
+      { id: 2, subject: "영어", content: "파닉스, 스토리텔링 및 기초 회화", room: "B강의실", time: "화,목 15:00-16:30", teacher: "Sarah Teacher" },
+      { id: 3, subject: "수학", content: "교과 수학 개념 및 창의 사고력", room: "C강의실", time: "월,수 16:30-18:00", teacher: "이현우 강사" },
+      { id: 4, subject: "비교과", content: "창의 융합 코딩 및 발표 토론", room: "D강의실", time: "금 15:00-17:00", teacher: "정민아 강사" },
+    ]
+  },
+  middle: {
+    title: "중등부 교과과정",
+    description: "내신 완벽 대비와 특목고 진학을 위해 심도있는 학업 역량을 기르는 중등부",
+    fee: "350,000원 / 월",
+    courses: [
+      { id: 1, subject: "국어", content: "내신 국어 집중 대비 및 수능 국어 기초", room: "A강의실", time: "월,수 17:00-19:00", teacher: "정수진 강사" },
+      { id: 2, subject: "영어", content: "내신 만점 및 수능 독해/문법 심화", room: "B강의실", time: "화,목 17:00-19:00", teacher: "박준영 강사" },
+      { id: 3, subject: "수학", content: "학교별 맞춤 수학 선행 및 심화 (KMO 기초)", room: "C강의실", time: "화,목 19:00-21:00", teacher: "최동훈 강사" },
+      { id: 4, subject: "과학/사회", content: "중등 과학 내신 및 물리/화학/한국사 기초", room: "D강의실", time: "금 17:00-20:00", teacher: "윤지원 강사" },
+    ]
+  },
+  high: {
+    title: "고등부 교과과정",
+    description: "수능 1등급 및 명문대 진학을 위해 최정예 강사진이 제공하는 완벽한 솔루션",
+    fee: "450,000원 / 월",
+    courses: [
+      { id: 1, subject: "수능 국어", content: "수능/모평 완벽 분석 및 고난도 심화 독해", room: "1강의실", time: "토 09:00-13:00", teacher: "김성호 강사" },
+      { id: 2, subject: "수능 영어", content: "EBS 간접 연계 및 고난도 빈칸/순서 완벽 대비", room: "2강의실", time: "일 09:00-13:00", teacher: "이유진 강사" },
+      { id: 3, subject: "수능 수학", content: "미적분, 기하, 확통 심화 및 킬러문항 정복", room: "3강의실", time: "토 14:00-18:00", teacher: "강민철 강사" },
+      { id: 4, subject: "과학/사회 탐구", content: "물리학I, 화학I 등 선택과목 수능 1등급 대비반", room: "4강의실", time: "일 14:00-18:00", teacher: "박동진 강사" },
+    ]
+  }
+};
 
 export default function Curriculum() {
+  const [activeTab, setActiveTab] = useState<"primary" | "middle" | "high">("primary");
+
+  const activeData = curriculumData[activeTab];
+
   return (
-    <div className="min-h-[70vh] flex flex-col items-center justify-center bg-slate-50">
-      <div className="w-20 h-20 bg-cls-black/10 rounded-full flex items-center justify-center mb-6">
-        <span className="text-4xl text-cls-black">📘</span>
-      </div>
-      <h1 className="text-3xl font-bold text-cls-black mb-4">교과 과정</h1>
-      <p className="text-gray-500 font-light">국/영/수/과 체계적인 교과 과정 안내 페이지가 준비 중입니다.</p>
-      <div className="mt-12 opacity-50 text-sm border-t pt-8 border-gray-200">
-        <p>Mockup Page</p>
+    <div className="w-full bg-slate-50 min-h-screen pt-24 pb-20 font-sans">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        
+        {/* Header Section */}
+        <FadeIn direction="up" duration={800}>
+          <div className="text-center mb-16">
+            <h1 className="text-4xl md:text-5xl font-bold text-cls-black mb-6 tracking-tight">CLS 교과 과정</h1>
+            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+              학생의 수준과 목표에 맞춘 체계적이고 전문적인 학습 커리큘럼을 제공합니다.
+              <br className="hidden sm:block" /> 기초부터 최상위권 도약까지 CLS 에듀케이션이 함께합니다.
+            </p>
+          </div>
+        </FadeIn>
+
+        {/* Tabs */}
+        <FadeIn direction="up" delay={200} duration={800}>
+          <div className="flex flex-col sm:flex-row justify-center gap-2 sm:gap-4 mb-12">
+            {[
+              { id: "primary", label: "초등부" },
+              { id: "middle", label: "중등부" },
+              { id: "high", label: "고등부" }
+            ].map((tab) => (
+              <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id as "primary" | "middle" | "high")}
+                className={`px-8 py-4 rounded-full text-lg font-semibold transition-all duration-300 ease-out shadow-sm
+                  ${activeTab === tab.id 
+                    ? "bg-cls-orange text-white shadow-xl shadow-cls-orange/20 translate-y-[-2px]" 
+                    : "bg-white text-gray-600 hover:bg-gray-100 border border-gray-200"
+                  }
+                `}
+              >
+                {tab.label}
+              </button>
+            ))}
+          </div>
+        </FadeIn>
+
+        {/* Content Section */}
+        <FadeIn key={activeTab} direction="up" delay={100} duration={600}>
+          <div className="bg-white rounded-3xl shadow-xl overflow-hidden border border-gray-100">
+            {/* Inner Header */}
+            <div className="bg-gradient-to-r from-gray-900 to-cls-black-light text-white p-8 md:p-10 flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+              <div>
+                <h2 className="text-3xl font-bold mb-3">{activeData.title}</h2>
+                <p className="text-gray-300 leading-relaxed font-light">{activeData.description}</p>
+              </div>
+              <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-5 text-center min-w-[200px]">
+                <p className="text-gray-300 text-sm mb-1 uppercase tracking-wider font-semibold">월별 수강료</p>
+                <p className="text-2xl font-bold text-cls-orange">{activeData.fee}</p>
+              </div>
+            </div>
+
+            {/* Table wrapper */}
+            <div className="p-6 md:p-10 hide-scrollbar overflow-x-auto">
+              <div className="min-w-[800px]">
+                <table className="w-full text-left border-collapse">
+                  <thead>
+                    <tr className="border-b-2 border-cls-black text-cls-black">
+                      <th className="py-4 px-4 font-bold w-[12%]">과목</th>
+                      <th className="py-4 px-4 font-bold w-[38%]">학습 내용</th>
+                      <th className="py-4 px-4 font-bold w-[15%]">클래스룸</th>
+                      <th className="py-4 px-4 font-bold w-[20%]">시간</th>
+                      <th className="py-4 px-4 font-bold w-[15%]">담당 강사</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-gray-100">
+                    {activeData.courses.map((course) => (
+                      <tr 
+                        key={course.id} 
+                        className="hover:bg-slate-50 transition-colors duration-200 group"
+                      >
+                        <td className="py-5 px-4 font-semibold text-cls-black">
+                          <span className="inline-block bg-gray-100 px-3 py-1 rounded-md text-sm text-gray-700">
+                            {course.subject}
+                          </span>
+                        </td>
+                        <td className="py-5 px-4 text-gray-600 font-medium">{course.content}</td>
+                        <td className="py-5 px-4 text-gray-500">
+                          <div className="flex items-center gap-1.5">
+                            <svg className="w-4 h-4 text-gray-400 group-hover:text-cls-orange transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                            </svg>
+                            {course.room}
+                          </div>
+                        </td>
+                        <td className="py-5 px-4 text-gray-700 font-medium">
+                          <div className="flex items-center gap-1.5">
+                            <svg className="w-4 h-4 text-gray-400 group-hover:text-cls-orange transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                            {course.time}
+                          </div>
+                        </td>
+                        <td className="py-5 px-4 text-gray-700 font-semibold">{course.teacher}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            {/* Footer / Payment CTA */}
+            <div className="bg-gray-50 p-6 md:p-8 border-t border-gray-100 flex flex-col md:flex-row items-center justify-between gap-6">
+              <div className="text-gray-500 text-sm">
+                <p>※ 교재비 및 온라인 학습 시스템 이용료는 별도입니다.</p>
+                <p>※ 자세한 시간표 및 반 배정은 레벨 테스트 후 상담을 통해 결정됩니다.</p>
+              </div>
+              <button 
+                onClick={() => alert("결제 모듈 연동 준비 중입니다.")}
+                className="group w-full md:w-auto px-8 py-4 bg-cls-black hover:bg-cls-orange text-white font-bold rounded-xl transition-all duration-300 ease-out flex items-center justify-center gap-2 shadow-lg hover:shadow-cls-orange/30 hover:-translate-y-1"
+              >
+                <span>{tabNameToString(activeTab)}수업 온라인 결제</span>
+                <svg className="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                </svg>
+              </button>
+            </div>
+          </div>
+        </FadeIn>
       </div>
     </div>
   );
+}
+
+function tabNameToString(tab: string) {
+  if (tab === "primary") return "초등부 ";
+  if (tab === "middle") return "중등부 ";
+  if (tab === "high") return "고등부 ";
+  return "";
 }
