@@ -2,39 +2,43 @@ import React from "react";
 import Link from "next/link";
 import { Pagination } from "@/components/ui/Pagination";
 import FadeIn from "@/components/ui/FadeIn";
+import { prisma } from "@/lib/prisma";
 
 const ITEMS_PER_PAGE = 20;
-// 서버 컴포넌트이므로 BACKEND_API_URL(서버 전용) 사용, 없으면 운영 주소로 폴백
-const API_BASE_URL =
-  process.env.BACKEND_API_URL ||
-  process.env.NEXT_PUBLIC_API_URL ||
-  "https://app.clsedu.co.kr";
 
-interface BlogPost {
+interface BlogTag { id: string; name: string; slug: string; }
+interface BlogCategory { id: string; name: string; slug: string; }
+interface BlogAuthor { id: string; name: string; }
+interface BlogPostRow {
   id: string;
   title: string;
   slug: string;
-  summary?: string;
-  featuredImageUrl?: string;
-  publishedAt?: string;
-  createdAt: string;
-  status: string;
-  author: { id: string; name: string };
-  category?: { id: string; name: string; slug: string } | null;
-  tags: { tag: { id: string; name: string; slug: string } }[];
+  summary: string | null;
+  featuredImageUrl: string | null;
+  publishedAt: Date | null;
+  createdAt: Date;
+  author: BlogAuthor;
+  category: BlogCategory | null;
+  tags: { tag: BlogTag }[];
 }
 
-async function fetchPosts(page: number): Promise<{ posts: BlogPost[]; total: number }> {
-  try {
-    const res = await fetch(
-      `${API_BASE_URL}/api/blog/posts?page=${page}&limit=${ITEMS_PER_PAGE}&status=PUBLISHED`,
-      { cache: "no-store" }
-    );
-    if (!res.ok) return { posts: [], total: 0 };
-    return await res.json();
-  } catch {
-    return { posts: [], total: 0 };
-  }
+async function fetchPosts(page: number) {
+  const skip = (page - 1) * ITEMS_PER_PAGE;
+  const [rawPosts, total] = await Promise.all([
+    prisma.blogPost.findMany({
+      where: { status: "PUBLISHED" },
+      skip,
+      take: ITEMS_PER_PAGE,
+      orderBy: { publishedAt: "desc" },
+      include: {
+        author: { select: { id: true, name: true } },
+        category: { select: { id: true, name: true, slug: true } },
+        tags: { include: { tag: { select: { id: true, name: true, slug: true } } } },
+      },
+    }),
+    prisma.blogPost.count({ where: { status: "PUBLISHED" } }),
+  ]);
+  return { posts: rawPosts as BlogPostRow[], total: total as number };
 }
 
 export default async function StoryPage({
@@ -64,7 +68,6 @@ export default async function StoryPage({
 
         {posts.length > 0 ? (
           <>
-            {/* Grid display: 2 cols on mobile, 4 cols on PC */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
               {posts.map((post, i) => (
                 <FadeIn key={post.id} delay={i * 0.05} direction="up">
