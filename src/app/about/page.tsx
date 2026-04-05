@@ -4,11 +4,23 @@ export default function About() {
   return (
     <div className="min-h-screen bg-slate-50 pb-20">
       {/* Visual Header */}
-      <div className="bg-cls-black py-24 text-center mt-0">
-        <h1 className="text-4xl md:text-5xl font-bold text-white tracking-tight mb-6">About <span className="text-cls-orange">CLS</span></h1>
-        <p className="text-xl md:text-2xl text-gray-200 font-light max-w-3xl mx-auto px-4 leading-relaxed">
-          "공부가 외롭지 않도록, 결과가 두렵지 않도록<br/>곁에서 함께 걷는 교육"
-        </p>
+      <div className="relative bg-cls-black py-24 md:py-32 text-center mt-0 overflow-hidden">
+        {/* Background Image with Overlay */}
+        <div 
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-40 transform scale-105"
+          style={{ backgroundImage: "url('https://media.clsedu.co.kr/hero-01-clsedu-main-building-rebuild-optimized.jpeg')" }}
+        />
+        <div className="absolute inset-0 bg-gradient-to-b from-cls-black/60 to-cls-black/20" />
+        
+        <div className="relative z-10 px-4">
+          <h1 className="text-4xl md:text-6xl font-bold text-white tracking-tight mb-6 drop-shadow-md">
+            About <span className="text-cls-orange">CLS</span>
+          </h1>
+          <p className="text-xl md:text-2xl text-gray-100 font-light max-w-3xl mx-auto leading-relaxed drop-shadow-md">
+            "공부가 외롭지 않도록, 결과가 두렵지 않도록<br className="hidden sm:block"/>
+            곁에서 함께 걷는 교육"
+          </p>
+        </div>
       </div>
 
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 -mt-10">
