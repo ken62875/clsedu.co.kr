@@ -3,7 +3,11 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import FadeIn from "@/components/ui/FadeIn";
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
+// 서버 컴포넌트이므로 BACKEND_API_URL(서버 전용) 사용, 없으면 운영 주소로 폴백
+const API_BASE_URL =
+  process.env.BACKEND_API_URL ||
+  process.env.NEXT_PUBLIC_API_URL ||
+  "https://app.clsedu.co.kr";
 
 interface BlogPost {
   id: string;
