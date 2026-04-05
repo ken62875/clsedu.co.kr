@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 
 const images = [
-  "https://media.clsedu.co.kr/KakaoTalk_Photo_2026-03-31-21-41-01%20001.jpeg",
+  "https://media.clsedu.co.kr/hero-01-clsedu-main-building-rebuild-optimized.jpeg",
   "https://media.clsedu.co.kr/KYJ00897.jpg",
   "https://media.clsedu.co.kr/jeff-sheldon-JWiMShWiF14-unsplash.jpg",
   "https://media.clsedu.co.kr/hero-01-student-studying-hard-optimized.jpeg"
