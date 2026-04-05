@@ -119,11 +119,15 @@ export default function Home() {
           </FadeIn>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            <FadeIn delay={100} className="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-shadow duration-300">
-              <div className="h-48 bg-cls-black/10 relative">
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <span className="text-5xl opacity-20">🎒</span>
-                </div>
+            <FadeIn delay={100} className="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 group">
+              <div className="h-48 relative overflow-hidden bg-cls-black/5">
+                <Image 
+                  src="https://media.clsedu.co.kr/programs/elementary_study.jpg" 
+                  alt="초등부 학습 활동" 
+                  fill 
+                  className="object-cover group-hover:scale-110 transition-transform duration-700" 
+                  unoptimized // R2 외부 이미지 최적화 이슈 방지
+                />
               </div>
               <div className="p-8">
                 <div className="text-sm text-cls-orange font-bold mb-2">Elementary</div>
@@ -137,11 +141,15 @@ export default function Home() {
               </div>
             </FadeIn>
 
-            <FadeIn delay={200} className="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-shadow duration-300">
-              <div className="h-48 bg-cls-black/20 relative">
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <span className="text-5xl opacity-20">📚</span>
-                </div>
+            <FadeIn delay={200} className="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 group">
+              <div className="h-48 relative overflow-hidden bg-cls-black/5">
+                <Image 
+                  src="https://media.clsedu.co.kr/programs/middle_school_study.jpg" 
+                  alt="중등부 학습 활동" 
+                  fill 
+                  className="object-cover group-hover:scale-110 transition-transform duration-700"
+                  unoptimized 
+                />
               </div>
               <div className="p-8">
                 <div className="text-sm text-cls-orange font-bold mb-2">Middle School</div>
@@ -155,11 +163,15 @@ export default function Home() {
               </div>
             </FadeIn>
 
-            <FadeIn delay={300} className="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-shadow duration-300">
-              <div className="h-48 bg-cls-black/30 relative">
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <span className="text-5xl opacity-20">🎓</span>
-                </div>
+            <FadeIn delay={300} className="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 group">
+              <div className="h-48 relative overflow-hidden bg-cls-black/5">
+                <Image 
+                  src="https://media.clsedu.co.kr/programs/high_school_study.jpg" 
+                  alt="고등부 학습 활동" 
+                  fill 
+                  className="object-cover group-hover:scale-110 transition-transform duration-700"
+                  unoptimized 
+                />
               </div>
               <div className="p-8">
                 <div className="text-sm text-cls-orange font-bold mb-2">High School</div>
