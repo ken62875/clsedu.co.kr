@@ -26,11 +26,16 @@ interface BlogPostDetail {
 }
 
 async function fetchPost(slug: string): Promise<BlogPostDetail | null> {
+  // Next.js params가 인코딩된 상태로 올 수 있어 안전하게 디코딩
+  const decodedSlug = decodeURIComponent(slug);
+
   try {
     const post = await prisma.blogPost.findFirst({
       where: {
-        OR: [{ id: slug }, { slug }],
-        status: "PUBLISHED",
+        OR: [
+          { id: decodedSlug },
+          { slug: decodedSlug },
+        ],
       },
       include: {
         author: { select: { id: true, name: true } },
@@ -38,8 +43,16 @@ async function fetchPost(slug: string): Promise<BlogPostDetail | null> {
         tags: { include: { tag: { select: { id: true, name: true, slug: true } } } },
       },
     });
-    return post as BlogPostDetail | null;
-  } catch {
+
+    // status 체크를 DB 쿼리 밖에서 수행 (enum 비교 이슈 방지)
+    if (!post || post.status !== "PUBLISHED") {
+      console.error(`[Story] 포스트 없음 또는 미발행: slug="${decodedSlug}", status="${post?.status}"`);
+      return null;
+    }
+
+    return post as BlogPostDetail;
+  } catch (err) {
+    console.error(`[Story] Prisma 오류: slug="${decodedSlug}"`, err);
     return null;
   }
 }
