@@ -9,7 +9,7 @@ export async function POST(request: Request) {
 
     // Prisma Client 파싱 충돌을 방지하기 위해 $queryRaw 사용 (role을 text로 강제 캐스팅)
     const users: any[] = await prisma.$queryRaw`
-      SELECT id, name, email, phone, password_hash as password, role::text as role 
+      SELECT id, name, email, phone, password_hash as password, role 
       FROM users 
       WHERE email = ${userid} OR phone = ${userid} 
       LIMIT 1

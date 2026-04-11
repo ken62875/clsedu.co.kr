@@ -43,9 +43,8 @@ model User {
   email     String?    @unique
   phone     String?    @unique
   password  String?    @map("password_hash")
-  // role 필드는 PostgreSQL Enum 타입 충돌을 피하기 위해
-  // 일반 Prisma Client 모델에서 제외하고 내부적으로 raw 쿼리를 사용합니다.
-  // role      String     @default("student")
+  // role 필드가 주석처리되어 db push 시 컬럼이 삭제되는 이슈를 방지하고자 복구합니다.
+  role      String?    @default("student")
 
   blogPosts BlogPost[]
 
