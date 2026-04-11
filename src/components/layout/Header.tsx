@@ -8,11 +8,30 @@ const Header = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   return (
-    <header className="fixed w-full top-0 z-50 bg-white/95 backdrop-blur-sm border-b border-gray-100 shadow-sm">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-20">
-          <div className="flex-shrink-0 flex items-center">
-            <Link href="/" className="flex items-center">
+    <header className="fixed w-full top-0 z-50 bg-white/95 backdrop-blur-sm shadow-sm flex flex-col">
+      {/* Top GNB */}
+      <div className="w-full bg-gray-50 border-b border-gray-200 hidden md:block">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-10 flex justify-between items-center text-xs font-medium text-gray-500">
+          <div className="flex items-center space-x-4">
+            <Link href="#" className="hover:text-cls-orange transition-colors">알림장</Link>
+            <span className="text-gray-300">|</span>
+            <Link href="#" className="hover:text-cls-orange transition-colors">교육비 결제</Link>
+            <span className="text-gray-300">|</span>
+            <Link href="/contact" className="hover:text-cls-orange transition-colors">교육상담예약</Link>
+          </div>
+          <div className="flex items-center space-x-4">
+            <Link href="#" className="hover:text-cls-orange transition-colors">로그인</Link>
+            <span className="text-gray-300">|</span>
+            <Link href="#" className="hover:text-cls-orange transition-colors">회원가입</Link>
+          </div>
+        </div>
+      </div>
+
+      <div className="w-full border-b border-gray-100">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between items-center h-20">
+            <div className="flex-1 flex justify-start items-center">
+              <Link href="/" className="flex items-center">
               <Image 
                 src="/logo-clsedu-landscape.webp" 
                 alt="CLS 에듀케이션 로고" 
@@ -23,10 +42,10 @@ const Header = () => {
                 unoptimized
               />
             </Link>
-          </div>
-          
-          <nav className="hidden md:flex space-x-8">
-            <Link href="/about" className="text-gray-700 hover:text-cls-orange font-semibold transition-colors">학원소개</Link>
+            </div>
+            
+            <nav className="hidden md:flex flex-shrink-0 items-center justify-center space-x-8">
+              <Link href="/about" className="text-gray-700 hover:text-cls-orange font-semibold transition-colors">학원소개</Link>
             <Link href="/teachers" className="text-gray-700 hover:text-cls-orange font-semibold transition-colors">강사소개</Link>
             <div className="relative group">
               <Link href="/curriculum" className="text-gray-700 hover:text-cls-orange font-semibold transition-colors flex items-center gap-1 py-6">
@@ -48,7 +67,7 @@ const Header = () => {
             <Link href="/story" className="text-gray-700 hover:text-cls-orange font-semibold transition-colors">스토리</Link>
           </nav>
 
-          <div className="hidden md:flex items-center">
+          <div className="flex-1 hidden md:flex justify-end items-center">
             <Link href="/contact" className="bg-cls-black text-white px-6 py-2.5 rounded-md font-bold hover:bg-cls-black-light transition-colors shadow-md">
               상담 문의
             </Link>
@@ -69,6 +88,7 @@ const Header = () => {
             </button>
           </div>
         </div>
+      </div>
       </div>
 
       {/* Mobile Menu Dropdown */}

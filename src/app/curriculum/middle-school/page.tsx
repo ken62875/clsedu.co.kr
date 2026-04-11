@@ -6,18 +6,18 @@ import FadeIn from "@/components/ui/FadeIn";
 
 export default function MiddleSchoolCurriculum() {
   return (
-    <div className="w-full bg-slate-50 min-h-screen pt-24 pb-20 font-sans">
+    <div className="w-full bg-slate-50 min-h-screen pb-20 font-sans">
       {/* Hero Section */}
       <section className="relative w-full h-[400px] md:h-[500px]">
         <Image
-          src="/images/programs/middle_school_study.jpg"
+          src="https://media.clsedu.co.kr/cls-middle-young-students-studying-in-a-classroom-16x9.jpg"
           alt="중등부 교과과정"
           fill
           className="object-cover"
           priority
         />
         <div className="absolute inset-0 bg-black/50" />
-        <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-4">
+        <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-4 pt-20 md:pt-32">
           <FadeIn direction="up" duration={800}>
             <span className="inline-block py-1 px-3 rounded-full bg-cls-orange/20 text-cls-orange border border-cls-orange/30 text-sm font-bold mb-4 backdrop-blur-md">
               Middle School
