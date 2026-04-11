@@ -51,7 +51,10 @@ export async function POST(request: Request) {
     const resetUrl = `${appUrl}/login/reset-password?token=${token}`;
 
     const mailOptions = {
-      from: process.env.SMTP_FROM || '"CLS에듀케이션" <no-reply@clsedu.co.kr>',
+      from: {
+        name: 'CLS에듀케이션',
+        address: process.env.SMTP_FROM || 'no-reply@clsedu.co.kr'
+      },
       to: user.email,
       subject: '[CLS에듀케이션] 비밀번호 재설정 링크 안내',
       html: `
