@@ -5,6 +5,7 @@ import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import FloatingButton from "@/components/ui/FloatingButton";
 import MobileBottomNav from "@/components/layout/MobileBottomNav";
+import { AuthProvider } from "@/providers/AuthProvider";
 
 const notoSansKr = Noto_Sans_KR({
   subsets: ["latin"],
@@ -28,11 +29,13 @@ export default function RootLayout({
       className={`${notoSansKr.variable} h-full antialiased`}
     >
       <body className="font-sans min-h-full flex flex-col pt-20 pb-16 md:pb-0">
-        <Header />
-        <main className="flex-grow">{children}</main>
-        <FloatingButton />
-        <Footer />
-        <MobileBottomNav />
+        <AuthProvider>
+          <Header />
+          <main className="flex-grow">{children}</main>
+          <FloatingButton />
+          <Footer />
+          <MobileBottomNav />
+        </AuthProvider>
       </body>
     </html>
   );

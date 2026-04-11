@@ -3,9 +3,11 @@
 import Link from "next/link";
 import Image from "next/image";
 import { useState } from "react";
+import { useAuth } from "@/providers/AuthProvider";
 
 const Header = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const { isLoggedIn, logout } = useAuth();
 
   return (
     <header className="fixed w-full top-0 z-50 bg-white/95 backdrop-blur-sm shadow-sm flex flex-col">
@@ -20,9 +22,19 @@ const Header = () => {
             <Link href="/contact" className="hover:text-cls-orange transition-colors">교육상담예약</Link>
           </div>
           <div className="flex items-center space-x-4">
-            <Link href="#" className="hover:text-cls-orange transition-colors">로그인</Link>
-            <span className="text-gray-300">|</span>
-            <Link href="#" className="hover:text-cls-orange transition-colors">회원가입</Link>
+            {isLoggedIn ? (
+              <>
+                <Link href="/my-account/dashboard" className="text-cls-orange font-bold hover:text-orange-600 transition-colors">마이페이지</Link>
+                <span className="text-gray-300">|</span>
+                <button onClick={logout} className="hover:text-cls-orange transition-colors">로그아웃</button>
+              </>
+            ) : (
+              <>
+                <Link href="/login" className="hover:text-cls-orange transition-colors">로그인</Link>
+                <span className="text-gray-300">|</span>
+                <Link href="/signup" className="hover:text-cls-orange transition-colors">회원가입</Link>
+              </>
+            )}
           </div>
         </div>
       </div>
@@ -107,7 +119,18 @@ const Header = () => {
           </div>
           <Link href="/program" onClick={() => setIsMobileMenuOpen(false)} className="block px-3 py-3 text-base font-medium text-gray-700 hover:text-cls-orange hover:bg-slate-50 rounded-md">프로그램</Link>
           <Link href="/story" onClick={() => setIsMobileMenuOpen(false)} className="block px-3 py-3 text-base font-medium text-gray-700 hover:text-cls-orange hover:bg-slate-50 rounded-md">스토리</Link>
-          <div className="pt-4">
+          <div className="pt-4 space-y-3">
+            {isLoggedIn ? (
+              <div className="bg-slate-50 p-2 rounded-lg space-y-1">
+                <Link href="/my-account/dashboard" onClick={() => setIsMobileMenuOpen(false)} className="block px-3 py-2 text-sm font-bold text-cls-orange hover:bg-slate-100 rounded-md">마이페이지</Link>
+                <button onClick={() => { logout(); setIsMobileMenuOpen(false); }} className="w-full text-left block px-3 py-2 text-sm font-medium text-gray-600 hover:bg-slate-100 rounded-md">로그아웃</button>
+              </div>
+            ) : (
+              <div className="flex space-x-2 px-3 pb-2">
+                <Link href="/login" onClick={() => setIsMobileMenuOpen(false)} className="flex-1 text-center bg-gray-100 text-gray-700 px-4 py-2.5 rounded-md text-sm font-medium hover:bg-gray-200 transition-colors">로그인</Link>
+                <Link href="/signup" onClick={() => setIsMobileMenuOpen(false)} className="flex-1 text-center border-2 border-cls-orange text-cls-orange px-4 py-2.5 rounded-md text-sm font-bold hover:bg-cls-orange hover:text-white transition-colors">회원가입</Link>
+              </div>
+            )}
             <Link href="/contact" onClick={() => setIsMobileMenuOpen(false)} className="block w-full text-center bg-cls-black text-white px-6 py-3 rounded-md font-bold hover:bg-cls-black-light transition-colors shadow-md">
               상담 문의
             </Link>
