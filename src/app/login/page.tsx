@@ -11,12 +11,39 @@ export default function LoginPage() {
   const router = useRouter();
   const [userid, setUserid] = useState("");
   const [password, setPassword] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [loginError, setLoginError] = useState("");
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    // 더미 로그인 로직
-    login({ id: "user_123", name: "홍길동", email: userid, role: "student" });
-    router.push("/my-account/dashboard");
+    setIsLoading(true);
+    setLoginError("");
+    
+    try {
+      const res = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ userid, password })
+      });
+      const data = await res.json();
+      
+      if (!res.ok) {
+        if (data.error === "PASSWORD_NOT_SET") {
+          alert("비밀번호 설정이 필요한 사용자입니다. 패스워드 설정 화면으로 이동합니다.");
+          router.push("/login/set-password");
+          return;
+        }
+        throw new Error(data.error || "로그인에 실패했습니다.");
+      }
+
+      // Context 상태 업데이트 및 리다이렉트
+      login(data.user);
+      router.push("/my-account/dashboard");
+    } catch (err: any) {
+      setLoginError(err.message);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -30,6 +57,13 @@ export default function LoginPage() {
             CLS 에듀케이션에 오신 것을 환영합니다
           </p>
         </div>
+        
+        {loginError && (
+          <div className="p-3 bg-red-50 text-red-600 text-sm rounded-lg border border-red-100 font-medium">
+            {loginError}
+          </div>
+        )}
+
         <form className="mt-8 space-y-6" onSubmit={handleLogin}>
           <div className="space-y-4 rounded-md shadow-sm">
             <div>

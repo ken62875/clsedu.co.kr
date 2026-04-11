@@ -29,17 +29,21 @@ model BlogPost {
   publishedAt      DateTime?     @map("published_at")
   createdAt        DateTime      @default(now()) @map("created_at")
   updatedAt        DateTime      @updatedAt @map("updated_at")
-  author           BlogAuthor    @relation(fields: [authorId], references: [id])
+  author           User          @relation(fields: [authorId], references: [id])
   category         BlogCategory? @relation(fields: [categoryId], references: [id])
   tags             BlogPostTag[]
 
   @@map("blog_posts")
 }
 
-// users 테이블에서 작성자 이름만 읽기 위한 최소 모델
-model BlogAuthor {
+// users 테이블: 인증 및 블로그 작성자 정보 활용 구조로 확대
+model User {
   id        String     @id @default(cuid())
   name      String
+  email     String?    @unique
+  phone     String?    @unique
+  password  String?
+  role      String     @default("student")
   blogPosts BlogPost[]
 
   @@map("users")

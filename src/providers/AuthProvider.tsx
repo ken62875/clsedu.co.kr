@@ -6,7 +6,7 @@ export type User = {
   id: string;
   name: string;
   email: string;
-  role?: "student" | "parent" | "admin";
+  role?: "student" | "parent" | "admin" | "superadmin";
 };
 
 type AuthContextType = {
@@ -14,6 +14,7 @@ type AuthContextType = {
   user: User | null;
   login: (userData: User) => void;
   logout: () => void;
+  checkSession: () => Promise<void>;
 };
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -22,21 +23,39 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [user, setUser] = useState<User | null>(null);
 
-  // 더미: 초기 마운트 시 로컬스토리지 등에서 가져와도 되지만, 일단 메모리 기반으로 둠.
-  // 실제 프로젝트 연동 시 이곳에서 세션/토큰 검증 로직 처리.
+  const checkSession = async () => {
+    try {
+      const res = await fetch("/api/auth/me");
+      if (res.ok) {
+        const data = await res.json();
+        if (data.isLoggedIn && data.user) {
+          setIsLoggedIn(true);
+          setUser(data.user);
+          return;
+        }
+      }
+    } catch (err) {}
+    setIsLoggedIn(false);
+    setUser(null);
+  };
+
+  useEffect(() => {
+    checkSession();
+  }, []);
 
   const login = (userData: User) => {
     setIsLoggedIn(true);
     setUser(userData);
   };
 
-  const logout = () => {
+  const logout = async () => {
+    await fetch("/api/auth/me", { method: "POST" }); // 쿠키 삭제 API 호출
     setIsLoggedIn(false);
     setUser(null);
   };
 
   return (
-    <AuthContext.Provider value={{ isLoggedIn, user, login, logout }}>
+    <AuthContext.Provider value={{ isLoggedIn, user, login, logout, checkSession }}>
       {children}
     </AuthContext.Provider>
   );
