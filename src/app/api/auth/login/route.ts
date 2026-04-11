@@ -47,19 +47,9 @@ export async function POST(request: Request) {
 
   } catch (error: any) {
     console.error('Login error:', error);
-    
-    // 디버깅 목적으로 users 테이블의 실제 컬럼들을 조회 시도 (보안상 개발 완료 시 제거)
-    let debugCols = "조회 실패";
-    try {
-      const cols: any = await prisma.$queryRaw`SELECT column_name FROM information_schema.columns WHERE table_name = 'users'`;
-      debugCols = cols.map((c: any) => c.column_name).join(", ");
-    } catch (e) {
-      debugCols = "오류 발생: " + String(e);
-    }
-
     return NextResponse.json({ 
       error: 'Internal Server Error', 
-      debugDetail: `${error?.message || String(error)}\n\n[실제 컬럼 목록]\n${debugCols}`
+      debugDetail: error?.message || String(error)
     }, { status: 500 });
   }
 }

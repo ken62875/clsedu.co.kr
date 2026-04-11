@@ -42,7 +42,7 @@ model User {
   name      String
   email     String?    @unique
   phone     String?    @unique
-  password  String?
+  password  String?    @map("password_hash")
   role      String     @default("student")
   blogPosts BlogPost[]
 
