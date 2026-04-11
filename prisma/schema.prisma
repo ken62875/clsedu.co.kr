@@ -43,7 +43,10 @@ model User {
   email     String?    @unique
   phone     String?    @unique
   password  String?    @map("password_hash")
-  role      String     @default("student")
+  // role 필드는 PostgreSQL Enum 타입 충돌을 피하기 위해
+  // 일반 Prisma Client 모델에서 제외하고 내부적으로 raw 쿼리를 사용합니다.
+  // role      String     @default("student")
+
   blogPosts BlogPost[]
 
   @@map("users")

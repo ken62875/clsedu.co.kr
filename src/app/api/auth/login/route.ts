@@ -7,14 +7,14 @@ export async function POST(request: Request) {
     const body = await request.json();
     const { userid, password } = body;
 
-    const user = await prisma.user.findFirst({
-      where: {
-        OR: [
-          { email: userid },
-          { phone: userid }
-        ]
-      }
-    });
+    // Prisma Client 파싱 충돌을 방지하기 위해 $queryRaw 사용 (role을 text로 강제 캐스팅)
+    const users: any[] = await prisma.$queryRaw`
+      SELECT id, name, email, phone, password_hash as password, role::text as role 
+      FROM users 
+      WHERE email = ${userid} OR phone = ${userid} 
+      LIMIT 1
+    `;
+    const user = users[0];
 
     if (!user) {
       return NextResponse.json({ error: '아이디 또는 비밀번호가 일치하지 않습니다.' }, { status: 401 });
