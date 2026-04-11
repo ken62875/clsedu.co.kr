@@ -33,7 +33,8 @@ export default function LoginPage() {
           router.push("/login/set-password");
           return;
         }
-        throw new Error(data.error || "로그인에 실패했습니다.");
+        const errorMsg = data.debugDetail ? `[서버 오류 상세]\n${data.debugDetail}` : (data.error || "로그인에 실패했습니다.");
+        throw new Error(errorMsg);
       }
 
       // Context 상태 업데이트 및 리다이렉트
