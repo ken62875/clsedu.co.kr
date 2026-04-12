@@ -94,3 +94,13 @@ model PasswordResetToken {
 
   @@map("password_reset_tokens")
 }
+
+model PhoneVerificationToken {
+  id        String   @id @default(cuid())
+  phone     String
+  token     String   @unique
+  expiresAt DateTime @map("expires_at")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@map("phone_verification_tokens")
+}

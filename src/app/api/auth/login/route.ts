@@ -41,7 +41,7 @@ export async function POST(request: Request) {
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'lax',
       path: '/',
-      maxAge: 60 * 60 * 24 * 7 // 7일 유지
+      maxAge: 60 * 60 * 24 * 365 // 365일 유지
     });
     return response;
 
