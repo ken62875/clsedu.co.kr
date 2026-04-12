@@ -79,8 +79,12 @@ export async function POST(request: Request) {
       message: '인증번호가 휴대폰으로 전송되었습니다.'
     });
 
-  } catch (error) {
+  } catch (error: any) {
     console.error("SMS 발송 에러:", error);
-    return NextResponse.json({ error: 'Server Error' }, { status: 500 });
+    return NextResponse.json({ 
+      error: 'Server Error',
+      details: error?.message || String(error)
+    }, { status: 500 });
   }
 }
+

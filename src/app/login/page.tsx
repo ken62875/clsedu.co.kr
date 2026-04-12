@@ -77,7 +77,12 @@ export default function LoginPage() {
       });
       const data = await res.json();
       
-      if (!res.ok) throw new Error(data.error || "인증번호 발송에 실패했습니다.");
+      if (!res.ok) {
+        throw new Error(
+          (data.error || "인증번호 발송에 실패했습니다.") + 
+          (data.details ? `\n\n[상세 에러 내역]\n${data.details}` : "")
+        );
+      }
       
       setIsCodeSent(true);
       setSmsMessage(data.message || "인증번호가 전송되었습니다.");
