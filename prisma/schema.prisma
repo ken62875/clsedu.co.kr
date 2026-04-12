@@ -36,6 +36,14 @@ model BlogPost {
   @@map("blog_posts")
 }
 
+enum Role {
+  SUPER_ADMIN
+  ADMIN
+  TEACHER
+  PARENT
+  STUDENT
+}
+
 // users 테이블: 인증 및 블로그 작성자 정보 활용 구조로 확대
 model User {
   id        String     @id @default(cuid())
@@ -43,8 +51,7 @@ model User {
   email     String?    @unique
   phone     String?    @unique
   password  String?    @map("password_hash")
-  // role 필드가 주석처리되어 db push 시 컬럼이 삭제되는 이슈를 방지하고자 복구합니다.
-  role      String?    @default("student")
+  role      Role       @default(STUDENT)
 
   blogPosts BlogPost[]
 
