@@ -168,7 +168,7 @@ export default function Contact() {
             <button 
               type="submit" 
               disabled={isLoading}
-              className={\`w-full py-4 px-6 bg-cls-black text-white rounded-lg font-bold text-lg transition-all shadow-md mt-6 \${isLoading ? 'opacity-70 cursor-not-allowed' : 'hover:bg-cls-black-light'}\`}
+              className={`w-full py-4 px-6 bg-cls-black text-white rounded-lg font-bold text-lg transition-all shadow-md mt-6 ${isLoading ? 'opacity-70 cursor-not-allowed' : 'hover:bg-cls-black-light'}`}
             >
               {isLoading ? '전송 중...' : '상담 신청 완료'}
             </button>
