@@ -2,51 +2,12 @@ import Image from "next/image";
 import Link from "next/link";
 import HeroSlider from "@/components/ui/HeroSlider";
 import FadeIn from "@/components/ui/FadeIn";
-import { Nanum_Myeongjo } from 'next/font/google';
-
-const nanumMyeongjo = Nanum_Myeongjo({
-  weight: ['400', '700', '800'],
-  subsets: ['latin'],
-});
 
 export default function Home() {
   return (
     <div className="min-h-screen">
-      {/* Hero Section */}
-      <section className="relative h-[80vh] min-h-[600px] flex items-center justify-center bg-cls-black overflow-hidden">
-        <HeroSlider />
-        
-        <div className="relative z-10 text-center px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto mt-20">
-          <FadeIn delay={100} duration={800}>
-            <span className="inline-block px-4 py-1 rounded-full bg-cls-orange text-white text-sm font-bold tracking-widest mb-6">
-              초·중·고 내신 및 입시 전문
-            </span>
-          </FadeIn>
-          
-          <FadeIn delay={300} duration={1000}>
-            <h1 className={`${nanumMyeongjo.className} text-4xl sm:text-5xl md:text-6xl font-extrabold text-white leading-tight tracking-tight mb-6 drop-shadow-lg`}>
-              진짜 실력은 <br className="hidden sm:block" />
-              <span className="text-cls-orange">속도</span>가 아니라 <span className="text-cls-orange">깊이</span>에서 나옵니다.
-            </h1>
-          </FadeIn>
-          
-          <FadeIn delay={500} duration={1000}>
-            <p className="mt-4 text-xl sm:text-2xl text-gray-200 font-light mb-10 max-w-3xl mx-auto leading-relaxed drop-shadow-md">
-              단순히 지식을 전달하는 곳을 넘어,<br className="sm:hidden"/> 
-              아이들의 학습 습관과 마음까지 세심하게 살핍니다.
-            </p>
-          </FadeIn>
-          
-          <FadeIn delay={700} duration={1000} className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link href="/program" className="px-8 py-4 bg-transparent border-2 border-white text-white rounded-lg font-bold text-lg hover:bg-white hover:text-cls-black transition-all duration-300">
-              프로그램 보기
-            </Link>
-            <Link href="/contact" className="px-8 py-4 bg-cls-orange text-white rounded-lg font-bold text-lg shadow-xl hover:bg-cls-orange-light hover:-translate-y-1 transition-all duration-300">
-              무료 상담 신청하기
-            </Link>
-          </FadeIn>
-        </div>
-      </section>
+      {/* Hero Section — 텍스트/버튼/설정은 HeroSlider 내부에서 API 기반으로 렌더링 */}
+      <HeroSlider />
 
       {/* Philosophy Section */}
       <section className="py-24 bg-white">
