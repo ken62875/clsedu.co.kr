@@ -2,12 +2,16 @@ import Image from "next/image";
 import Link from "next/link";
 import HeroSlider from "@/components/ui/HeroSlider";
 import FadeIn from "@/components/ui/FadeIn";
+import CountupStats from "@/components/ui/CountupStats";
 
 export default function Home() {
   return (
     <div className="min-h-screen">
       {/* Hero Section — 텍스트/버튼/설정은 HeroSlider 내부에서 API 기반으로 렌더링 */}
       <HeroSlider />
+
+      {/* Statistics Section */}
+      <CountupStats />
 
       {/* Philosophy Section */}
       <section className="py-24 bg-white">
