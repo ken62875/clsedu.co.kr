@@ -86,25 +86,28 @@ const DEFAULT_STAFF: Teacher[] = [
 
 // ─── 서버사이드 데이터 fetch ───────────────────────────────────────────────────
 
-async function fetchTeachers(): Promise<{ director: Teacher; staff: Teacher[] }> {
+async function fetchTeachers(): Promise<{ directors: Teacher[]; staff: Teacher[] }> {
   const apiUrl = process.env.NEXT_PUBLIC_API_URL;
-  if (!apiUrl) return { director: DEFAULT_DIRECTOR, staff: DEFAULT_STAFF };
+  if (!apiUrl) return { directors: [DEFAULT_DIRECTOR], staff: DEFAULT_STAFF };
 
   try {
     const res = await fetch(`${apiUrl}/api/site-teachers`, {
       next: { revalidate: 300 },
     });
-    if (!res.ok) return { director: DEFAULT_DIRECTOR, staff: DEFAULT_STAFF };
+    if (!res.ok) return { directors: [DEFAULT_DIRECTOR], staff: DEFAULT_STAFF };
 
     const { teachers } = await res.json();
-    if (!teachers?.length) return { director: DEFAULT_DIRECTOR, staff: DEFAULT_STAFF };
+    if (!teachers?.length) return { directors: [DEFAULT_DIRECTOR], staff: DEFAULT_STAFF };
 
-    const director = teachers.find((t: Teacher) => t.isDirector) ?? DEFAULT_DIRECTOR;
+    const directors = teachers.filter((t: Teacher) => t.isDirector);
     const staff = teachers.filter((t: Teacher) => !t.isDirector);
 
-    return { director, staff };
+    return {
+      directors: directors.length > 0 ? directors : [DEFAULT_DIRECTOR],
+      staff,
+    };
   } catch {
-    return { director: DEFAULT_DIRECTOR, staff: DEFAULT_STAFF };
+    return { directors: [DEFAULT_DIRECTOR], staff: DEFAULT_STAFF };
   }
 }
 
@@ -124,7 +127,7 @@ function parseBackground(item: string): { label: string; content: string } {
 // ─── 컴포넌트 ─────────────────────────────────────────────────────────────────
 
 export default async function Teachers() {
-  const { director, staff } = await fetchTeachers();
+  const { directors, staff } = await fetchTeachers();
 
   return (
     <div className="min-h-screen bg-white">
@@ -154,46 +157,50 @@ export default async function Teachers() {
             <span className="text-gray-400 font-light hidden sm:inline-block">Head Instructor</span>
           </div>
 
-          <div className="bg-white rounded-3xl shadow-2xl overflow-hidden flex flex-col md:flex-row border border-gray-100 group">
-            <div className="md:w-2/5 md:bg-gray-50 flex items-center justify-center p-0 relative overflow-hidden">
-              <div className="w-full h-[400px] md:h-full bg-slate-200 relative">
-                <div className="absolute inset-0 bg-gradient-to-t from-cls-black/80 to-transparent z-10 md:hidden"></div>
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={director.profileImage ?? "https://images.unsplash.com/photo-1544717305-2782549b5136?q=80&w=800&auto=format&fit=crop"}
-                  alt={`${director.name} 프로필`}
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-                />
+          <div className="space-y-10">
+            {directors.map((director) => (
+              <div key={director.id} className="bg-white rounded-3xl shadow-2xl overflow-hidden flex flex-col md:flex-row border border-gray-100 group">
+                <div className="md:w-2/5 md:bg-gray-50 flex items-center justify-center p-0 relative overflow-hidden">
+                  <div className="w-full h-[400px] md:h-full bg-slate-200 relative">
+                    <div className="absolute inset-0 bg-gradient-to-t from-cls-black/80 to-transparent z-10 md:hidden"></div>
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={director.profileImage ?? "https://images.unsplash.com/photo-1544717305-2782549b5136?q=80&w=800&auto=format&fit=crop"}
+                      alt={`${director.name} 프로필`}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                    />
+                  </div>
+                </div>
+                <div className="md:w-3/5 p-10 md:p-14 relative bg-white">
+                  <div className="absolute top-14 right-14 text-6xl text-gray-100 font-serif leading-none opacity-50 hidden md:block">&ldquo;</div>
+                  <h3 className="text-cls-orange font-bold text-lg mb-2">{director.role}</h3>
+                  <h4 className="text-4xl font-extrabold text-cls-black mb-6">
+                    {director.name}
+                  </h4>
+                  {director.quote && (
+                    <p className="text-xl text-gray-700 italic font-light mb-8 break-keep leading-relaxed relative z-10">
+                      &ldquo;{director.quote}&rdquo;
+                    </p>
+                  )}
+                  <div className="space-y-4 text-gray-600 font-light">
+                    {director.background.map((item, i) => {
+                      const { label, content } = parseBackground(item);
+                      return (
+                        <div key={i} className="flex items-start gap-3">
+                          <span className="text-cls-orange mt-1">✓</span>
+                          <p>
+                            {label && (
+                              <span className="font-semibold text-cls-black mr-2">{label}:</span>
+                            )}
+                            {content}
+                          </p>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
               </div>
-            </div>
-            <div className="md:w-3/5 p-10 md:p-14 relative bg-white">
-              <div className="absolute top-14 right-14 text-6xl text-gray-100 font-serif leading-none opacity-50 hidden md:block">&ldquo;</div>
-              <h3 className="text-cls-orange font-bold text-lg mb-2">{director.role}</h3>
-              <h4 className="text-4xl font-extrabold text-cls-black mb-6">
-                {director.name}
-              </h4>
-              {director.quote && (
-                <p className="text-xl text-gray-700 italic font-light mb-8 break-keep leading-relaxed relative z-10">
-                  &ldquo;{director.quote}&rdquo;
-                </p>
-              )}
-              <div className="space-y-4 text-gray-600 font-light">
-                {director.background.map((item, i) => {
-                  const { label, content } = parseBackground(item);
-                  return (
-                    <div key={i} className="flex items-start gap-3">
-                      <span className="text-cls-orange mt-1">✓</span>
-                      <p>
-                        {label && (
-                          <span className="font-semibold text-cls-black mr-2">{label}:</span>
-                        )}
-                        {content}
-                      </p>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
+            ))}
           </div>
         </div>
 
