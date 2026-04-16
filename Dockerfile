@@ -18,7 +18,7 @@ COPY package*.json ./
 COPY prisma ./prisma
 COPY src ./src
 COPY public ./public
-COPY tsconfig.json next.config.ts eslint.config.mjs ./
+COPY tsconfig.json next.config.ts eslint.config.mjs postcss.config.mjs ./
 
 # 개발 의존성 설치 + Prisma 생성 + 빌드
 RUN npm ci --ignore-scripts && \
