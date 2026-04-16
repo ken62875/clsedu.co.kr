@@ -15,13 +15,14 @@ COPY --from=deps /app/node_modules ./node_modules
 
 # 소스 코드 및 설정 복사
 COPY package*.json ./
+COPY prisma ./prisma
 COPY src ./src
 COPY public ./public
-COPY tsconfig.json next.config.ts ./
-COPY .eslintrc.json* ./
+COPY tsconfig.json next.config.ts eslint.config.mjs ./
 
-# 개발 의존성 설치 및 빌드
+# 개발 의존성 설치 + Prisma 생성 + 빌드
 RUN npm ci --ignore-scripts && \
+    npx prisma generate && \
     npm run build && \
     npm prune --omit=dev
 
@@ -40,6 +41,10 @@ RUN addgroup --system --gid 1001 nodejs && \
 COPY --from=builder /app/.next/standalone ./
 COPY --from=builder /app/.next/static ./.next/static
 COPY --from=builder /app/public ./public
+
+# Prisma 클라이언트 복사
+COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma
+COPY --from=builder /app/node_modules/@prisma ./node_modules/@prisma
 
 USER nextjs
 
