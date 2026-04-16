@@ -2,16 +2,146 @@ import Image from "next/image";
 import Link from "next/link";
 import HeroSlider from "@/components/ui/HeroSlider";
 import FadeIn from "@/components/ui/FadeIn";
-import CountupStats from "@/components/ui/CountupStats";
+import CountupStats, { type StatData } from "@/components/ui/CountupStats";
 
-export default function Home() {
+// ─── 기본값 (API 실패 시 fallback) ────────────────────────────────────────────
+
+const DEFAULT_STATS: StatData[] = [
+  { end: 15000, label: "누적수강생", suffix: "+" },
+  { end: 98.8, label: "학생만족도", suffix: "%" },
+  { end: 5, label: "평균 수강기간", suffix: "Year" },
+];
+
+const DEFAULT_PHILOSOPHY = [
+  {
+    title: "1:1 맞춤형 로드맵",
+    description:
+      "학생 한 명 한 명의 학습 속도와 취약점을 분석하여, 오직 그 학생만을 위한 커리큘럼을 설계합니다.",
+  },
+  {
+    title: "공부 근육 관리 시스템",
+    description:
+      "단순 지식 전달을 넘어, 자기 주도적으로 공부하는 힘을 기르는 습관 관리 시스템을 운영합니다.",
+  },
+  {
+    title: "함께 성장하는 공동체",
+    description:
+      "같은 목표를 향해 나아가는 동료들과 함께하며, 서로 긍정적인 자극을 주고받는 환경을 만듭니다.",
+  },
+];
+
+const DEFAULT_PROGRAMS = [
+  {
+    category: "Elementary",
+    imageUrl: "https://media.clsedu.co.kr/programs/elementary_study.jpg",
+    title: "초등부",
+    description:
+      "공부에 대한 흥미를 높이고 올바른 학습 습관을 형성하는 CLS 초등부. 기초부터 차근차근 실력을 쌓습니다.",
+  },
+  {
+    category: "Middle School",
+    imageUrl: "https://media.clsedu.co.kr/programs/middle_school_study.jpg",
+    title: "중등부",
+    description:
+      "신현중 등 인근 학교의 철저한 내신 분석과 특목고 대비까지, 중학교의 결정적 시기를 함께합니다.",
+  },
+  {
+    category: "High School",
+    imageUrl: "https://media.clsedu.co.kr/programs/high_school_study.jpg",
+    title: "고등부/입시",
+    description:
+      "수능과 내신을 아우르는 심층 학습으로 SKY 및 상위권 대학 진학의 꿈을 실현합니다.",
+  },
+];
+
+const DEFAULT_TRUST_REVIEW =
+  "아이가 학원 가는 걸 즐거워해요. 무엇보다 우리 아이가 오늘 무엇을 배웠고 어떻게 변하고 있는지 정기적으로 공유해주셔서 정말 안심이 됩니다.";
+
+// ─── 서버사이드 데이터 fetch ───────────────────────────────────────────────────
+
+const PHILOSOPHY_ICONS = [
+  <svg key="book" className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+  </svg>,
+  <svg key="lightning" className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+  </svg>,
+  <svg key="people" className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+  </svg>,
+];
+
+const PHILOSOPHY_ICON_BG = ["bg-cls-black", "bg-cls-orange", "bg-cls-black"];
+
+async function fetchSection<T>(section: string, fallback: T): Promise<T> {
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+  if (!apiUrl) return fallback;
+  try {
+    const res = await fetch(`${apiUrl}/api/site-content?section=${section}`, {
+      next: { revalidate: 300 },
+    });
+    if (!res.ok) return fallback;
+    const { items } = await res.json();
+    return items?.length ? items : fallback;
+  } catch {
+    return fallback;
+  }
+}
+
+export default async function Home() {
+  // 병렬 fetch
+  const [statsItems, philosophyItems, programItems, trustItems] =
+    await Promise.all([
+      fetchSection("stats", null),
+      fetchSection("home_philosophy", null),
+      fetchSection("home_programs", null),
+      fetchSection("home_trust", null),
+    ]);
+
+  // 통계
+  const stats: StatData[] = statsItems
+    ? (statsItems as { data: StatData }[]).map((i) => i.data)
+    : DEFAULT_STATS;
+
+  // 철학 카드
+  const philosophy: { title: string; description: string }[] = philosophyItems
+    ? (philosophyItems as { data: { title: string; description: string } }[]).map(
+        (i) => i.data
+      )
+    : DEFAULT_PHILOSOPHY;
+
+  // 프로그램 카드
+  const programs: {
+    category: string;
+    imageUrl: string;
+    title: string;
+    description: string;
+  }[] = programItems
+    ? (
+        programItems as {
+          data: {
+            category: string;
+            imageUrl: string;
+            title: string;
+            description: string;
+          };
+        }[]
+      ).map((i) => i.data)
+    : DEFAULT_PROGRAMS;
+
+  // 신뢰 후기
+  const trustReview: string =
+    trustItems && (trustItems as { data: { content: string } }[]).length > 0
+      ? (trustItems as { data: { content: string } }[])[0].data.content
+      : DEFAULT_TRUST_REVIEW;
+
   return (
     <div className="min-h-screen">
-      {/* Hero Section — 텍스트/버튼/설정은 HeroSlider 내부에서 API 기반으로 렌더링 */}
+      {/* Hero Section */}
       <HeroSlider />
 
       {/* Statistics Section */}
-      <CountupStats />
+      <CountupStats stats={stats} />
 
       {/* Philosophy Section */}
       <section className="py-24 bg-white">
@@ -28,41 +158,21 @@ export default function Home() {
           </FadeIn>
 
           <div className="grid md:grid-cols-3 gap-12 mt-16">
-            <FadeIn delay={100} className="bg-slate-50 rounded-2xl p-8 hover:shadow-xl hover:-translate-y-2 transition-all duration-300 border border-slate-100">
-              <div className="w-14 h-14 bg-cls-black text-white rounded-full flex items-center justify-center mb-6 shadow-md">
-                <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-                </svg>
-              </div>
-              <h4 className="text-xl font-bold text-cls-black mb-4">1:1 맞춤형 로드맵</h4>
-              <p className="text-gray-600 leading-relaxed font-light">
-                아이마다 속도가 다르고 취약한 부분이 다릅니다. 학생의 상태와 목표를 정밀하게 진단하여 최적화된 학습 방향을 설정합니다.
-              </p>
-            </FadeIn>
-            
-            <FadeIn delay={200} className="bg-slate-50 rounded-2xl p-8 hover:shadow-xl hover:-translate-y-2 transition-all duration-300 border border-slate-100">
-              <div className="w-14 h-14 bg-cls-orange text-white rounded-full flex items-center justify-center mb-6 shadow-md">
-                <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-                </svg>
-              </div>
-              <h4 className="text-xl font-bold text-cls-black mb-4">공부 근육 관리 시스템</h4>
-              <p className="text-gray-600 leading-relaxed font-light">
-                수업만 듣고 끝나는 것이 아니라, 학생 스스로 공부하는 힘을 기를 수 있도록 꼼꼼한 피드백과 동기부여를 제공합니다.
-              </p>
-            </FadeIn>
-            
-            <FadeIn delay={300} className="bg-slate-50 rounded-2xl p-8 hover:shadow-xl hover:-translate-y-2 transition-all duration-300 border border-slate-100">
-              <div className="w-14 h-14 bg-cls-black text-white rounded-full flex items-center justify-center mb-6 shadow-md">
-                <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-                </svg>
-              </div>
-              <h4 className="text-xl font-bold text-cls-black mb-4">함께 성장하는 공동체</h4>
-              <p className="text-gray-600 leading-relaxed font-light">
-                신현고, 원묵고 등 인근 학교 학생들이 모여 긍정적인 자극을 주고받으며 완벽한 내신 대비 및 방학 특강을 진행합니다.
-              </p>
-            </FadeIn>
+            {philosophy.map((card, i) => (
+              <FadeIn
+                key={i}
+                delay={(i + 1) * 100}
+                className="bg-slate-50 rounded-2xl p-8 hover:shadow-xl hover:-translate-y-2 transition-all duration-300 border border-slate-100"
+              >
+                <div
+                  className={`w-14 h-14 ${PHILOSOPHY_ICON_BG[i % PHILOSOPHY_ICON_BG.length]} text-white rounded-full flex items-center justify-center mb-6 shadow-md`}
+                >
+                  {PHILOSOPHY_ICONS[i % PHILOSOPHY_ICONS.length]}
+                </div>
+                <h4 className="text-xl font-bold text-cls-black mb-4">{card.title}</h4>
+                <p className="text-gray-600 leading-relaxed font-light">{card.description}</p>
+              </FadeIn>
+            ))}
           </div>
         </div>
       </section>
@@ -84,71 +194,31 @@ export default function Home() {
           </FadeIn>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            <FadeIn delay={100} className="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 group">
-              <div className="h-48 relative overflow-hidden bg-cls-black/5">
-                <Image 
-                  src="https://media.clsedu.co.kr/programs/elementary_study.jpg" 
-                  alt="초등부 학습 활동" 
-                  fill 
-                  className="object-cover group-hover:scale-110 transition-transform duration-700" 
-                  unoptimized // R2 외부 이미지 최적화 이슈 방지
-                />
-              </div>
-              <div className="p-8">
-                <div className="text-sm text-cls-orange font-bold mb-2">Elementary</div>
-                <h4 className="text-2xl font-bold text-cls-black mb-4">초등부</h4>
-                <p className="text-gray-600 mb-6 font-light h-20">
-                  공부에 대한 흥미를 높이고 올바른 학습 습관을 형성하는 기초 탄탄 과정입니다.
-                </p>
-                <Link href="/program" className="text-cls-black font-semibold hover:text-cls-orange inline-flex items-center">
-                  자세히 보기 &rarr;
-                </Link>
-              </div>
-            </FadeIn>
-
-            <FadeIn delay={200} className="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 group">
-              <div className="h-48 relative overflow-hidden bg-cls-black/5">
-                <Image 
-                  src="https://media.clsedu.co.kr/programs/middle_school_study.jpg" 
-                  alt="중등부 학습 활동" 
-                  fill 
-                  className="object-cover group-hover:scale-110 transition-transform duration-700"
-                  unoptimized 
-                />
-              </div>
-              <div className="p-8">
-                <div className="text-sm text-cls-orange font-bold mb-2">Middle School</div>
-                <h4 className="text-2xl font-bold text-cls-black mb-4">중등부</h4>
-                <p className="text-gray-600 mb-6 font-light h-20">
-                  신현중 등 인근 학교의 철저한 내신 분석을 통해 성적 향상과 고등 선행을 동시에 이룹니다.
-                </p>
-                <Link href="/program" className="text-cls-black font-semibold hover:text-cls-orange inline-flex items-center">
-                  자세히 보기 &rarr;
-                </Link>
-              </div>
-            </FadeIn>
-
-            <FadeIn delay={300} className="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 group">
-              <div className="h-48 relative overflow-hidden bg-cls-black/5">
-                <Image 
-                  src="https://media.clsedu.co.kr/programs/high_school_study.jpg" 
-                  alt="고등부 학습 활동" 
-                  fill 
-                  className="object-cover group-hover:scale-110 transition-transform duration-700"
-                  unoptimized 
-                />
-              </div>
-              <div className="p-8">
-                <div className="text-sm text-cls-orange font-bold mb-2">High School</div>
-                <h4 className="text-2xl font-bold text-cls-black mb-4">고등부/입시</h4>
-                <p className="text-gray-600 mb-6 font-light h-20">
-                  수능과 내신을 아우르는 심층 학습 및 의대/명문대 진학을 위한 입시 컨설팅을 제공합니다.
-                </p>
-                <Link href="/program" className="text-cls-black font-semibold hover:text-cls-orange inline-flex items-center">
-                  자세히 보기 &rarr;
-                </Link>
-              </div>
-            </FadeIn>
+            {programs.map((prog, i) => (
+              <FadeIn
+                key={i}
+                delay={(i + 1) * 100}
+                className="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 group"
+              >
+                <div className="h-48 relative overflow-hidden bg-cls-black/5">
+                  <Image
+                    src={prog.imageUrl}
+                    alt={prog.title}
+                    fill
+                    className="object-cover group-hover:scale-110 transition-transform duration-700"
+                    unoptimized
+                  />
+                </div>
+                <div className="p-8">
+                  <div className="text-sm text-cls-orange font-bold mb-2">{prog.category}</div>
+                  <h4 className="text-2xl font-bold text-cls-black mb-4">{prog.title}</h4>
+                  <p className="text-gray-600 mb-6 font-light h-20">{prog.description}</p>
+                  <Link href="/program" className="text-cls-black font-semibold hover:text-cls-orange inline-flex items-center">
+                    자세히 보기 &rarr;
+                  </Link>
+                </div>
+              </FadeIn>
+            ))}
           </div>
         </div>
       </section>
@@ -163,7 +233,7 @@ export default function Home() {
                 <path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z"/>
               </svg>
               <p className="text-xl md:text-2xl font-light italic leading-relaxed mb-6 relative z-10 px-8">
-                "아이가 학원 가는 걸 즐거워해요. 무엇보다 우리 아이가 오늘 무엇을 배웠고 어떻게 변하고 있는지 정기적으로 공유해주셔서 정말 안심이 됩니다."
+                &ldquo;{trustReview}&rdquo;
               </p>
               <p className="font-bold text-cls-orange">- 학부모님 수강 후기 중 -</p>
             </div>
@@ -179,7 +249,7 @@ export default function Home() {
               우리 아이의 변화, 지금부터 시작하세요.
             </h2>
             <p className="text-lg md:text-xl mb-10 opacity-90 font-light">
-              아이가 스스로 '해냈다'는 변화를 느낄 수 있도록 CLS가 끝까지 함께 걷겠습니다.
+              아이가 스스로 &apos;해냈다&apos;는 변화를 느낄 수 있도록 CLS가 끝까지 함께 걷겠습니다.
             </p>
             <Link href="/contact" className="inline-block px-10 py-5 bg-white text-cls-black rounded-xl font-extrabold text-xl shadow-2xl hover:bg-slate-50 hover:scale-105 transition-all duration-300">
               1:1 상담 및 레벨 테스트 예약

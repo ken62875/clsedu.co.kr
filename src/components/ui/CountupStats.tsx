@@ -63,7 +63,23 @@ function StatCard({ end, label, suffix = "", isVisible, delay }: StatItemProps) 
   );
 }
 
-export default function CountupStats() {
+export interface StatData {
+  end: number;
+  label: string;
+  suffix: string;
+}
+
+interface CountupStatsProps {
+  stats?: StatData[];
+}
+
+const DEFAULT_STATS: StatData[] = [
+  { end: 15000, label: "누적수강생", suffix: "+" },
+  { end: 98.8, label: "학생만족도", suffix: "%" },
+  { end: 5, label: "평균 수강기간", suffix: "Year" },
+];
+
+export default function CountupStats({ stats = DEFAULT_STATS }: CountupStatsProps) {
   const [isVisible, setIsVisible] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -93,27 +109,16 @@ export default function CountupStats() {
     <section ref={containerRef} className="py-12 sm:py-16 bg-slate-50">
       <div className="max-w-6xl mx-auto px-3 sm:px-6 lg:px-8">
         <div className="grid grid-cols-3 gap-4 sm:gap-6 md:gap-8">
-          <StatCard
-            end={15000}
-            label="누적수강생"
-            suffix="+"
-            isVisible={isVisible}
-            delay={0}
-          />
-          <StatCard
-            end={98.8}
-            label="학생만족도"
-            suffix="%"
-            isVisible={isVisible}
-            delay={200}
-          />
-          <StatCard
-            end={5}
-            label="평균 수강기간"
-            suffix="Year"
-            isVisible={isVisible}
-            delay={400}
-          />
+          {stats.map((stat, i) => (
+            <StatCard
+              key={i}
+              end={stat.end}
+              label={stat.label}
+              suffix={stat.suffix}
+              isVisible={isVisible}
+              delay={i * 200}
+            />
+          ))}
         </div>
       </div>
     </section>
