@@ -54,11 +54,11 @@ function StatCard({ end, label, suffix = "", isVisible, delay }: StatItemProps) 
 
   return (
     <div className="text-center">
-      <div className="text-5xl md:text-6xl font-bold text-cls-orange mb-3">
+      <div className="text-3xl sm:text-4xl md:text-6xl font-bold text-cls-orange mb-2">
         {displayValue}
-        <span className="text-3xl md:text-4xl ml-1">{suffix}</span>
+        <span className="text-xl sm:text-2xl md:text-4xl ml-1">{suffix}</span>
       </div>
-      <p className="text-lg md:text-xl text-gray-600 font-light">{label}</p>
+      <p className="text-xs sm:text-sm md:text-lg text-gray-600 font-light">{label}</p>
     </div>
   );
 }
@@ -90,9 +90,9 @@ export default function CountupStats() {
   }, []);
 
   return (
-    <section ref={containerRef} className="py-16 bg-slate-50">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid md:grid-cols-3 gap-12 md:gap-8">
+    <section ref={containerRef} className="py-12 sm:py-16 bg-slate-50">
+      <div className="max-w-6xl mx-auto px-3 sm:px-6 lg:px-8">
+        <div className="grid grid-cols-3 gap-4 sm:gap-6 md:gap-8">
           <StatCard
             end={15000}
             label="누적수강생"
