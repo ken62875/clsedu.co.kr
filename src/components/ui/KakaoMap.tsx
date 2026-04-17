@@ -6,6 +6,7 @@ const TIMESTAMP = "1776399826983";
 const MAP_KEY = "ku9i9nvinet";
 const CONTAINER_ID = `daumRoughmapContainer${TIMESTAMP}`;
 const LOADER_URL = "https://ssl.daumcdn.net/dmaps/map_js_init/roughmapLoader.js";
+const ASPECT = 360 / 640;
 
 type RoughmapWindow = Window & {
   daum?: {
@@ -22,6 +23,7 @@ type RoughmapWindow = Window & {
 
 export default function KakaoMap() {
   const initialized = useRef(false);
+  const wrapperRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (initialized.current) return;
@@ -30,8 +32,8 @@ export default function KakaoMap() {
     const origWrite = document.write.bind(document);
     const restore = () => { document.write = origWrite; };
 
-    // roughmapLoader.js 는 document.write() 로 roughmapLander.js <script> 태그를 주입한다.
-    // 해당 src를 추출해 직접 onload 핸들러가 있는 스크립트로 교체 로드한다.
+    // roughmapLoader.js 가 document.write() 로 roughmapLander.js 를 주입한다.
+    // src 를 추출해 직접 onload 핸들러가 있는 스크립트로 교체 로드한다.
     document.write = (content: string) => {
       restore();
       const match = content.match(/src=["']([^"']+)["']/);
@@ -43,11 +45,14 @@ export default function KakaoMap() {
       landerScript.onload = () => {
         const w = window as RoughmapWindow;
         if (w.daum?.roughmap?.Lander) {
+          // 컨테이너 실제 너비로 mapWidth 를 결정해 모바일에서도 지도가 중앙 정렬된다.
+          const mapWidth = Math.min(wrapperRef.current?.offsetWidth ?? 640, 640);
+          const mapHeight = Math.round(mapWidth * ASPECT);
           new w.daum.roughmap.Lander({
             timestamp: TIMESTAMP,
             key: MAP_KEY,
-            mapWidth: "640",
-            mapHeight: "360",
+            mapWidth: String(mapWidth),
+            mapHeight: String(mapHeight),
           }).render();
         }
       };
@@ -66,9 +71,11 @@ export default function KakaoMap() {
   }, []);
 
   return (
-    <div
-      id={CONTAINER_ID}
-      className="root_daum_roughmap root_daum_roughmap_landing w-full"
-    />
+    <div ref={wrapperRef} className="w-full">
+      <div
+        id={CONTAINER_ID}
+        className="root_daum_roughmap root_daum_roughmap_landing"
+      />
+    </div>
   );
 }
