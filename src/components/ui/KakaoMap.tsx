@@ -28,42 +28,39 @@ export default function KakaoMap() {
     initialized.current = true;
 
     const origWrite = document.write.bind(document);
+    const restore = () => { document.write = origWrite; };
 
-    // roughmapLoader.js 는 비동기 로드 시 document.write() 를 호출해 에러가 발생한다.
-    // 스크립트 실행 전에 document.write 를 가로채서 컨테이너에 직접 주입한다.
+    // roughmapLoader.js 는 document.write() 로 roughmapLander.js <script> 태그를 주입한다.
+    // 해당 src를 추출해 직접 onload 핸들러가 있는 스크립트로 교체 로드한다.
     document.write = (content: string) => {
-      const container = document.getElementById(CONTAINER_ID);
-      if (!container) return;
-      // createContextualFragment 는 <script> 태그도 정상 실행한다
-      const fragment = document.createRange().createContextualFragment(content);
-      container.appendChild(fragment);
-    };
-
-    const restore = () => {
-      document.write = origWrite;
-    };
-
-    const script = document.createElement("script");
-    script.charset = "UTF-8";
-    script.className = "daum_roughmap_loader_script";
-    script.src = LOADER_URL;
-
-    script.onload = () => {
       restore();
-      const w = window as RoughmapWindow;
-      if (w.daum?.roughmap?.Lander) {
-        new w.daum.roughmap.Lander({
-          timestamp: TIMESTAMP,
-          key: MAP_KEY,
-          mapWidth: "640",
-          mapHeight: "360",
-        }).render();
-      }
+      const match = content.match(/src=["']([^"']+)["']/);
+      if (!match?.[1]) return;
+
+      const landerScript = document.createElement("script");
+      landerScript.charset = "UTF-8";
+      landerScript.src = match[1];
+      landerScript.onload = () => {
+        const w = window as RoughmapWindow;
+        if (w.daum?.roughmap?.Lander) {
+          new w.daum.roughmap.Lander({
+            timestamp: TIMESTAMP,
+            key: MAP_KEY,
+            mapWidth: "640",
+            mapHeight: "360",
+          }).render();
+        }
+      };
+      document.body.appendChild(landerScript);
     };
 
-    script.onerror = restore;
+    const loader = document.createElement("script");
+    loader.charset = "UTF-8";
+    loader.className = "daum_roughmap_loader_script";
+    loader.src = LOADER_URL;
+    loader.onerror = restore;
 
-    document.body.appendChild(script);
+    document.body.appendChild(loader);
 
     return restore;
   }, []);
