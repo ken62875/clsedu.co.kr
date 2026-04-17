@@ -12,6 +12,7 @@ interface BasicInfo {
   subway: string;
   bus: string;
   parking: string;
+  mapUrl?: string;
 }
 
 interface PhilosophyItem {
@@ -34,6 +35,7 @@ const DEFAULT_BASIC_INFO: BasicInfo = {
   subway: "6호선 봉화산역 3/4번 출구 이동",
   bus: "영창빌딩 앞 정류장 하차",
   parking: "건물 내 주차장 이용 문의 필요",
+  mapUrl: "https://place.map.kakao.com/290325055",
 };
 
 const DEFAULT_PHILOSOPHIES: PhilosophyItem[] = [
@@ -235,29 +237,13 @@ export default async function About() {
         <div className="bg-white rounded-2xl shadow-sm p-8 md:p-12 border border-slate-100">
           <h3 className="text-2xl font-bold text-cls-black mb-8 border-b pb-4">찾아오시는 길</h3>
           <div className="grid md:grid-cols-2 gap-10">
-            <div className="bg-slate-100 rounded-xl h-64 md:h-full flex items-center justify-center text-slate-400">
-              <div className="text-center">
-                <svg
-                  className="w-12 h-12 mx-auto mb-2 opacity-50"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={1}
-                    d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
-                  />
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={1}
-                    d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
-                  />
-                </svg>
-                <p>지도 영역 (추후 API 연동)</p>
-              </div>
+            <div className="rounded-xl overflow-hidden h-64 md:h-80">
+              <iframe
+                src={basicInfo.mapUrl ?? "https://place.map.kakao.com/290325055"}
+                className="w-full h-full border-0"
+                title="CLS 에듀케이션 위치"
+                allowFullScreen
+              />
             </div>
             <div className="space-y-6">
               <div>
