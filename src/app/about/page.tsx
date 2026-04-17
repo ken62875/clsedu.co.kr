@@ -1,4 +1,5 @@
 import React from "react";
+import KakaoMap from "@/components/ui/KakaoMap";
 
 interface BasicInfo {
   location: string;
@@ -237,13 +238,8 @@ export default async function About() {
         <div className="bg-white rounded-2xl shadow-sm p-8 md:p-12 border border-slate-100">
           <h3 className="text-2xl font-bold text-cls-black mb-8 border-b pb-4">찾아오시는 길</h3>
           <div className="grid md:grid-cols-2 gap-10">
-            <div className="rounded-xl overflow-hidden h-64 md:h-80">
-              <iframe
-                src={basicInfo.mapUrl ?? "https://place.map.kakao.com/290325055"}
-                className="w-full h-full border-0"
-                title="CLS 에듀케이션 위치"
-                allowFullScreen
-              />
+            <div className="rounded-xl overflow-hidden">
+              <KakaoMap />
             </div>
             <div className="space-y-6">
               <div>
