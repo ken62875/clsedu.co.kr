@@ -19,13 +19,23 @@ export async function GET() {
   if (!session) return NextResponse.json({ error: '로그인이 필요합니다.' }, { status: 401 });
 
   try {
+    // avatarUrl 포함 조회 시도
     const user = await prisma.user.findUnique({
       where: { id: session.id },
       select: { id: true, name: true, email: true, phone: true, role: true, avatarUrl: true },
     });
     if (!user) return NextResponse.json({ error: '사용자를 찾을 수 없습니다.' }, { status: 404 });
     return NextResponse.json({ user });
-  } catch (err) {
+  } catch (err: any) {
+    // avatar_url 컬럼 미존재(P2022) 시 제외하고 재조회
+    if (err.code === 'P2022') {
+      const user = await prisma.user.findUnique({
+        where: { id: session.id },
+        select: { id: true, name: true, email: true, phone: true, role: true },
+      });
+      if (!user) return NextResponse.json({ error: '사용자를 찾을 수 없습니다.' }, { status: 404 });
+      return NextResponse.json({ user: { ...user, avatarUrl: null } });
+    }
     console.error('프로필 조회 실패:', err);
     return NextResponse.json({ error: '프로필을 불러오는 데 실패했습니다.' }, { status: 500 });
   }
@@ -65,7 +75,12 @@ export async function PATCH(request: Request) {
       return NextResponse.json({ error: '수정할 내용이 없습니다.' }, { status: 400 });
     }
 
-    await prisma.user.update({ where: { id: session.id }, data: updateData });
+    // select: { id: true } 로 avatarUrl SELECT 회피 (컬럼 미존재 시 오류 방지)
+    await prisma.user.update({
+      where: { id: session.id },
+      data: updateData,
+      select: { id: true },
+    });
     return NextResponse.json({ success: true, message: '프로필이 업데이트되었습니다.' });
   } catch (err: any) {
     if (err.code === 'P2002') {

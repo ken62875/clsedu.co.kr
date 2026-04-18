@@ -33,7 +33,7 @@ export async function POST(request: Request) {
     const buffer = Buffer.from(await file.arrayBuffer());
     const avatarUrl = await uploadToR2(buffer, fileName, 'avatars', file.type);
 
-    await prisma.user.update({ where: { id: session.id }, data: { avatarUrl } });
+    await prisma.user.update({ where: { id: session.id }, data: { avatarUrl }, select: { id: true } });
 
     // 세션 쿠키에 avatarUrl 반영
     const updatedSession = { ...session, avatarUrl };
