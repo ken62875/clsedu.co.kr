@@ -1,92 +1,182 @@
+"use client";
+
+import { useEffect, useState } from "react";
+
+type Schedule = {
+  id: string;
+  dayOfWeek: string;
+  startTime: number;
+  duration: number;
+};
+
+type Teacher = {
+  teacher: { id: string; name: string };
+};
+
+type CourseClass = {
+  id: string;
+  name: string;
+  subjects: string[];
+  levels: string[];
+  color: string;
+  isActive: boolean;
+  startDate: string | null;
+  endDate: string | null;
+  schedules: Schedule[];
+  teachers: Teacher[];
+};
+
+type Enrollment = {
+  classId: string;
+  studentId: string;
+  enrolledAt: string;
+  class: CourseClass;
+};
+
+function formatTime(startTime: number, duration: number): string {
+  const startH = Math.floor(startTime);
+  const startM = Math.round((startTime - startH) * 60);
+  const endTime = startTime + duration;
+  const endH = Math.floor(endTime);
+  const endM = Math.round((endTime - endH) * 60);
+  return `${String(startH).padStart(2, "0")}:${String(startM).padStart(2, "0")} - ${String(endH).padStart(2, "0")}:${String(endM).padStart(2, "0")}`;
+}
+
+function formatSchedule(schedules: Schedule[]): string {
+  if (!schedules.length) return "시간표 미정";
+  const days = schedules.map((s) => s.dayOfWeek).join(", ");
+  const first = schedules[0];
+  return `매주 ${days} ${formatTime(first.startTime, first.duration)}`;
+}
+
 export default function ClassPage() {
-  const classes = [
-    {
-      id: 1,
-      title: "고등 수학 (상) 최상위권 심화반",
-      teacher: "김수학 쌤",
-      progress: 60,
-      schedule: "매주 화, 목 17:00 - 19:00",
-      status: "수강중",
-      thumbnail: "bg-indigo-50 border-indigo-100 text-indigo-700"
-    },
-    {
-      id: 2,
-      title: "수능 영어 1등급 목표 실전반",
-      teacher: "박영어 쌤",
-      progress: 85,
-      schedule: "매주 월, 수 19:30 - 21:30",
-      status: "수강중",
-      thumbnail: "bg-orange-50 border-orange-100 text-orange-700"
-    },
-    {
-      id: 3,
-      title: "통합과학 중간고사 대비 특강",
-      teacher: "이과학 쌤",
-      progress: 100,
-      schedule: "매주 토 10:00 - 13:00",
-      status: "종료",
-      thumbnail: "bg-slate-50 border-slate-200 text-slate-500"
-    }
-  ];
+  const [enrollments, setEnrollments] = useState<Enrollment[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    fetch("/api/my-classes")
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.error) {
+          setError(data.error);
+        } else {
+          setEnrollments(data.enrollments || []);
+        }
+      })
+      .catch(() => setError("수업 정보를 불러오는 데 실패했습니다."))
+      .finally(() => setLoading(false));
+  }, []);
+
+  const activeCount = enrollments.filter((e) => e.class.isActive).length;
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center py-20">
+        <div className="w-8 h-8 border-4 border-cls-orange border-t-transparent rounded-full animate-spin" />
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-8 animate-in fade-in duration-500">
       <div className="flex justify-between items-end border-b border-gray-200 pb-4">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">나의 수업</h1>
-          <p className="mt-1 text-gray-500">수강 중인 과목과 출석, 진도 현황을 확인하세요.</p>
+          <p className="mt-1 text-gray-500">수강 중인 과목과 수업 현황을 확인하세요.</p>
         </div>
-        <div className="hidden sm:flex space-x-2">
-          <span className="px-3 py-1 bg-gray-100 text-gray-600 rounded-full text-sm font-medium">전체 3</span>
-          <span className="px-3 py-1 bg-green-100 text-green-700 rounded-full text-sm font-medium">수강중 2</span>
-        </div>
+        {enrollments.length > 0 && (
+          <div className="hidden sm:flex space-x-2">
+            <span className="px-3 py-1 bg-gray-100 text-gray-600 rounded-full text-sm font-medium">
+              전체 {enrollments.length}
+            </span>
+            {activeCount > 0 && (
+              <span className="px-3 py-1 bg-green-100 text-green-700 rounded-full text-sm font-medium">
+                수강중 {activeCount}
+              </span>
+            )}
+          </div>
+        )}
       </div>
 
-      <div className="space-y-6">
-        {classes.map((cls) => (
-          <div key={cls.id} className="bg-white border border-gray-100 rounded-2xl p-6 shadow-sm hover:shadow-md transition-shadow">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-              <div className="flex items-center gap-5">
-                <div className={`w-16 h-16 rounded-xl flex items-center justify-center font-bold text-lg border ${cls.thumbnail}`}>
-                  {cls.title.slice(3, 5)}
-                </div>
-                <div>
-                  <div className="flex items-center gap-2 mb-1">
-                    <span className={`text-xs font-bold px-2 py-0.5 rounded ${cls.status === '수강중' ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500'}`}>
-                      {cls.status}
-                    </span>
-                    <span className="text-sm font-medium text-gray-500">{cls.teacher}</span>
-                  </div>
-                  <h3 className="text-lg font-bold text-gray-900">{cls.title}</h3>
-                  <p className="text-sm text-gray-500 mt-1">{cls.schedule}</p>
-                </div>
-              </div>
-              
-              <div className="w-full sm:w-48">
-                <div className="flex justify-between text-sm mb-1">
-                  <span className="font-medium text-gray-700">진도율</span>
-                  <span className="font-bold text-cls-orange">{cls.progress}%</span>
-                </div>
-                <div className="w-full bg-gray-100 rounded-full h-2.5">
-                  <div 
-                    className={`h-2.5 rounded-full ${cls.progress === 100 ? 'bg-gray-400' : 'bg-cls-orange'}`} 
-                    style={{ width: `${cls.progress}%` }}
-                  ></div>
-                </div>
-              </div>
-              
-              <div className="flex gap-2">
-                <button className="flex-1 sm:flex-none px-4 py-2 bg-slate-50 text-gray-700 font-medium text-sm rounded-lg border border-gray-200 hover:bg-slate-100 transition-colors">
-                  강의자료
-                </button>
-                <button className="flex-1 sm:flex-none px-4 py-2 bg-cls-orange text-white font-medium text-sm rounded-lg hover:bg-orange-600 transition-colors shadow-sm">
-                  강의실 입장
-                </button>
-              </div>
-            </div>
+      {error ? (
+        <div className="text-center py-12 text-red-500">{error}</div>
+      ) : enrollments.length === 0 ? (
+        <div className="text-center py-16">
+          <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+            </svg>
           </div>
-        ))}
-      </div>
+          <p className="text-lg font-medium text-gray-700">등록된 수업이 없습니다.</p>
+          <p className="text-sm text-gray-400 mt-1">학원에 문의하여 수강 신청을 완료해 주세요.</p>
+        </div>
+      ) : (
+        <div className="space-y-4">
+          {enrollments.map((enrollment) => {
+            const cls = enrollment.class;
+            const isActive = cls.isActive;
+            const teacherNames = cls.teachers.map((t) => t.teacher.name).join(", ");
+            const scheduleText = formatSchedule(cls.schedules);
+
+            return (
+              <div
+                key={enrollment.classId}
+                className="bg-white border border-gray-100 rounded-2xl p-6 shadow-sm hover:shadow-md transition-shadow"
+              >
+                <div className="flex items-start gap-5">
+                  <div
+                    className="w-14 h-14 rounded-xl flex items-center justify-center font-bold text-base text-white shrink-0"
+                    style={{ backgroundColor: cls.color }}
+                  >
+                    {cls.subjects[0]?.slice(0, 2) || cls.name.slice(0, 2)}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 mb-1">
+                      <span
+                        className={`text-xs font-bold px-2 py-0.5 rounded ${
+                          isActive
+                            ? "bg-green-100 text-green-700"
+                            : "bg-gray-100 text-gray-500"
+                        }`}
+                      >
+                        {isActive ? "수강중" : "종료"}
+                      </span>
+                      {teacherNames && (
+                        <span className="text-sm font-medium text-gray-500">
+                          {teacherNames}
+                        </span>
+                      )}
+                    </div>
+                    <h3 className="text-lg font-bold text-gray-900 truncate">{cls.name}</h3>
+                    <p className="text-sm text-gray-500 mt-1">{scheduleText}</p>
+                    {cls.subjects.length > 0 && (
+                      <div className="flex flex-wrap gap-1 mt-2">
+                        {cls.subjects.map((s) => (
+                          <span
+                            key={s}
+                            className="text-xs px-2 py-0.5 bg-blue-50 text-blue-600 rounded-md"
+                          >
+                            {s}
+                          </span>
+                        ))}
+                        {cls.levels.map((l) => (
+                          <span
+                            key={l}
+                            className="text-xs px-2 py-0.5 bg-orange-50 text-orange-600 rounded-md"
+                          >
+                            {l}
+                          </span>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      )}
     </div>
   );
 }
