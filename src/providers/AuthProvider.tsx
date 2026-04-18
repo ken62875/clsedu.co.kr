@@ -13,6 +13,7 @@ export type User = {
 
 type AuthContextType = {
   isLoggedIn: boolean;
+  isLoading: boolean;
   user: User | null;
   login: (userData: User) => void;
   logout: () => void;
@@ -23,6 +24,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [user, setUser] = useState<User | null>(null);
 
   const checkSession = async () => {
@@ -42,7 +44,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   useEffect(() => {
-    checkSession();
+    checkSession().finally(() => setIsLoading(false));
   }, []);
 
   const login = (userData: User) => {
@@ -57,7 +59,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ isLoggedIn, user, login, logout, checkSession }}>
+    <AuthContext.Provider value={{ isLoggedIn, isLoading, user, login, logout, checkSession }}>
       {children}
     </AuthContext.Provider>
   );
