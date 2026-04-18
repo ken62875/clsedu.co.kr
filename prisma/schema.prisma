@@ -55,10 +55,11 @@ model User {
   avatarUrl String?    @map("avatar_url")
 
   blogPosts              BlogPost[]
-  courseClassEnrollments CourseClassStudent[] @relation("StudentCourseClasses")
-  courseClassTeachers    CourseClassTeacher[] @relation("TeacherCourseClasses")
+  courseClassEnrollments CourseClassStudent[]  @relation("StudentCourseClasses")
+  courseClassTeachers    CourseClassTeacher[]  @relation("TeacherCourseClasses")
   payments               Payment[]
   enrollments            Enrollment[]
+  notificationRecipients NotificationRecipient[]
 
   @@map("users")
 }
@@ -134,9 +135,10 @@ model CourseClass {
   isActive  Boolean              @default(true) @map("is_active")
   startDate DateTime?            @map("start_date")
   endDate   DateTime?            @map("end_date")
-  schedules ClassSchedule[]
-  students  CourseClassStudent[]
-  teachers  CourseClassTeacher[]
+  schedules     ClassSchedule[]
+  students      CourseClassStudent[]
+  teachers      CourseClassTeacher[]
+  notifications Notification[]
 
   @@map("course_classes")
 }
@@ -171,6 +173,39 @@ model CourseClassTeacher {
 
   @@id([classId, teacherId])
   @@map("course_class_teachers")
+}
+
+// ─── 알림장 모델 ─────────────────────────────────────────────────────────────
+
+model Notification {
+  id          String                  @id @default(cuid())
+  title       String
+  content     Json
+  contentHtml String?                 @map("content_html")
+  status      String                  @default("DRAFT")
+  authorId    String                  @map("author_id")
+  classId     String                  @map("class_id")
+  publishedAt DateTime?               @map("published_at")
+  createdAt   DateTime                @default(now()) @map("created_at")
+  updatedAt   DateTime                @updatedAt @map("updated_at")
+  author      User                    @relation(fields: [authorId], references: [id])
+  class       CourseClass             @relation(fields: [classId], references: [id])
+  recipients  NotificationRecipient[]
+
+  @@map("notifications")
+}
+
+model NotificationRecipient {
+  id             String       @id @default(cuid())
+  notificationId String       @map("notification_id")
+  userId         String       @map("user_id")
+  isRead         Boolean      @default(false) @map("is_read")
+  readAt         DateTime?    @map("read_at")
+  notification   Notification @relation(fields: [notificationId], references: [id], onDelete: Cascade)
+  user           User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([notificationId, userId])
+  @@map("notification_recipients")
 }
 
 model PasswordResetToken {
