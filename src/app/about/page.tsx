@@ -127,6 +127,10 @@ async function fetchAboutData(): Promise<{
 
 const PHILOSOPHY_COLORS = ["bg-cls-orange", "bg-cls-black", "bg-cls-orange"];
 
+function isHtmlContent(str: string): boolean {
+  return /<[a-z][\s\S]*>/i.test(str);
+}
+
 export default async function About() {
   const { basicInfo, philosophies, promise } = await fetchAboutData();
 
@@ -206,7 +210,14 @@ export default async function About() {
               </div>
               <div>
                 <h4 className="text-xl font-bold text-cls-black mb-3">{p.title}</h4>
-                <p className="text-gray-600 leading-relaxed font-light break-keep">{p.content}</p>
+                {isHtmlContent(p.content) ? (
+                  <div
+                    className="text-gray-600 leading-relaxed font-light story-content"
+                    dangerouslySetInnerHTML={{ __html: p.content }}
+                  />
+                ) : (
+                  <p className="text-gray-600 leading-relaxed font-light break-keep">{p.content}</p>
+                )}
               </div>
             </div>
           ))}
@@ -218,18 +229,25 @@ export default async function About() {
           <div className="relative z-10">
             <h3 className="text-3xl font-bold mb-8 text-cls-orange">CLS에듀케이션의 약속</h3>
             <div className="space-y-6 text-lg font-light leading-relaxed max-w-4xl mx-auto opacity-90 break-keep">
-              {promiseParagraphs.map((para, i) => (
-                <p
-                  key={i}
-                  className={
-                    i === promiseParagraphs.length - 1
-                      ? "font-medium text-white italic mt-8 text-xl opacity-100"
-                      : ""
-                  }
-                >
-                  {para}
-                </p>
-              ))}
+              {isHtmlContent(promise) ? (
+                <div
+                  className="about-promise-content"
+                  dangerouslySetInnerHTML={{ __html: promise }}
+                />
+              ) : (
+                promiseParagraphs.map((para, i) => (
+                  <p
+                    key={i}
+                    className={
+                      i === promiseParagraphs.length - 1
+                        ? "font-medium text-white italic mt-8 text-xl opacity-100"
+                        : ""
+                    }
+                  >
+                    {para}
+                  </p>
+                ))
+              )}
             </div>
           </div>
         </div>

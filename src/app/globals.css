@@ -191,3 +191,51 @@ body {
   font-weight: 600;
   color: #374151;
 }
+
+/* ── About 페이지 어두운 배경용 BlockNote HTML 렌더링 ───────────────── */
+.about-promise-content {
+  font-size: 1.0625rem;
+  line-height: 1.85;
+  color: rgba(255, 255, 255, 0.9);
+  word-break: keep-all;
+  overflow-wrap: break-word;
+}
+
+.about-promise-content p {
+  margin-bottom: 1.25em;
+}
+
+.about-promise-content ol {
+  list-style-type: decimal;
+  padding-left: 1.75rem;
+  margin-bottom: 1.25em;
+}
+
+.about-promise-content ul {
+  list-style-type: disc;
+  padding-left: 1.75rem;
+  margin-bottom: 1.25em;
+}
+
+.about-promise-content li {
+  margin-bottom: 0.5em;
+}
+
+.about-promise-content li > p {
+  margin-bottom: 0.25em;
+}
+
+.about-promise-content .bn-inline-content {
+  margin: 0;
+}
+
+.about-promise-content strong,
+.about-promise-content b {
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.about-promise-content em,
+.about-promise-content i {
+  font-style: italic;
+}
