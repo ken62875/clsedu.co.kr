@@ -59,6 +59,7 @@ model User {
   courseClassTeachers    CourseClassTeacher[]  @relation("TeacherCourseClasses")
   payments               Payment[]
   enrollments            Enrollment[]
+  notifications          Notification[]
   notificationRecipients NotificationRecipient[]
 
   @@map("users")
