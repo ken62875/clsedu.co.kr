@@ -21,16 +21,25 @@ export default function NotificationPage() {
   const [total, setTotal] = useState(0);
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [expanded, setExpanded] = useState<string | null>(null);
   const LIMIT = 20;
 
   const fetchNotifications = useCallback(async () => {
     setLoading(true);
-    const res = await fetch(`/api/my-notifications?page=${page}&limit=${LIMIT}`);
-    if (res.ok) {
-      const data = await res.json();
-      setItems(data.recipients || []);
-      setTotal(data.total || 0);
+    setError(null);
+    try {
+      const res = await fetch(`/api/my-notifications?page=${page}&limit=${LIMIT}`);
+      if (res.ok) {
+        const data = await res.json();
+        setItems(data.recipients || []);
+        setTotal(data.total || 0);
+      } else {
+        const err = await res.json().catch(() => ({}));
+        setError(err.error || `오류가 발생했습니다. (${res.status})`);
+      }
+    } catch {
+      setError("알림장을 불러오는 데 실패했습니다. 잠시 후 다시 시도해 주세요.");
     }
     setLoading(false);
   }, [page]);
@@ -80,6 +89,16 @@ export default function NotificationPage() {
       {loading ? (
         <div className="flex items-center justify-center py-20">
           <div className="w-8 h-8 border-4 border-orange-400 border-t-transparent rounded-full animate-spin" />
+        </div>
+      ) : error ? (
+        <div className="flex flex-col items-center justify-center py-20 text-center">
+          <p className="text-red-500 font-medium">{error}</p>
+          <button
+            onClick={fetchNotifications}
+            className="mt-3 text-sm text-orange-500 underline hover:text-orange-600"
+          >
+            다시 시도
+          </button>
         </div>
       ) : items.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-20 text-gray-400">
