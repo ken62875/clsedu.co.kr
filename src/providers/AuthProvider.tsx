@@ -6,7 +6,9 @@ export type User = {
   id: string;
   name: string;
   email: string;
-  role?: "student" | "parent" | "admin" | "superadmin";
+  role?: string;
+  avatarUrl?: string;
+  phone?: string;
 };
 
 type AuthContextType = {

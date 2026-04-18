@@ -32,7 +32,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: '아이디 또는 비밀번호가 일치하지 않습니다.' }, { status: 401 });
     }
 
-    const userData = { id: user.id, name: user.name, email: user.email || userid, role: user.role };
+    const userData = { id: user.id, name: user.name, email: user.email || userid, role: (user.role as string).toLowerCase() };
 
     // Next.js HTTP-Only 쿠키로 세션 저장
     const response = NextResponse.json({ success: true, user: userData });

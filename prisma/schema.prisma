@@ -52,12 +52,41 @@ model User {
   phone     String?    @unique
   password  String?    @map("password_hash")
   role      Role       @default(STUDENT)
+  avatarUrl String?    @map("avatar_url")
 
   blogPosts              BlogPost[]
   courseClassEnrollments CourseClassStudent[] @relation("StudentCourseClasses")
   courseClassTeachers    CourseClassTeacher[] @relation("TeacherCourseClasses")
+  payments               Payment[]
+  enrollments            Enrollment[]
 
   @@map("users")
+}
+
+model Payment {
+  id          String   @id @default(cuid())
+  userId      String   @map("user_id")
+  amount      Int      @default(0)
+  method      String?
+  status      String   @default("PAID")
+  paymentDate DateTime @map("payment_date")
+  remarks     String?
+  user        User     @relation(fields: [userId], references: [id])
+
+  @@map("payments")
+}
+
+model Enrollment {
+  id             String    @id @default(cuid())
+  userId         String    @map("user_id")
+  className      String?   @map("class_name")
+  studentStatus  String?   @map("student_status")
+  enrollmentDate DateTime? @map("enrollment_date")
+  startDate      DateTime? @map("start_date")
+  endDate        DateTime? @map("end_date")
+  user           User      @relation(fields: [userId], references: [id])
+
+  @@map("enrollments")
 }
 
 model BlogCategory {

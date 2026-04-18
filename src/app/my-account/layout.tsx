@@ -5,6 +5,16 @@ import { usePathname } from "next/navigation";
 import { useAuth } from "@/providers/AuthProvider";
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
+
+function getRoleLabel(role?: string) {
+  const r = role?.toUpperCase();
+  if (r === 'STUDENT') return '학생 회원';
+  if (r === 'PARENT') return '학부모 회원';
+  if (r === 'TEACHER') return '강사';
+  if (r === 'ADMIN' || r === 'SUPER_ADMIN') return '관리자';
+  return '회원';
+}
 
 export default function MyAccountLayout({
   children,
@@ -15,9 +25,7 @@ export default function MyAccountLayout({
   const { isLoggedIn, user } = useAuth();
   const router = useRouter();
 
-  // 더미 환경이므로, 렌더링된 이후에 미로그인 상태면 로그인 페이지로 유도
   useEffect(() => {
-    // 본래라면 middleware에서 처리하는 것이 좋음
     if (!isLoggedIn) {
       router.push("/login");
     }
@@ -31,22 +39,35 @@ export default function MyAccountLayout({
     { name: "프로필", href: "/my-account/profile", icon: "M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" },
   ];
 
-  if (!isLoggedIn) return null; // 로딩 또는 빈 화면
+  if (!isLoggedIn) return null;
 
   return (
     <div className="min-h-screen bg-slate-50 pt-20 pb-12">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex flex-col md:flex-row gap-8">
-          
+
           {/* Sidebar */}
           <aside className="w-full md:w-64 flex-shrink-0">
             <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden sticky top-32">
               <div className="p-6 border-b border-gray-100 bg-slate-50/50">
-                <div className="w-16 h-16 rounded-full bg-cls-orange/10 flex items-center justify-center mb-4">
-                  <span className="text-2xl font-bold text-cls-orange">{user?.name?.charAt(0) || 'U'}</span>
+                <div className="w-16 h-16 rounded-full bg-cls-orange/10 flex items-center justify-center mb-4 overflow-hidden border-2 border-orange-100">
+                  {(user as any)?.avatarUrl ? (
+                    <Image
+                      src={(user as any).avatarUrl}
+                      alt={user?.name || ''}
+                      width={64}
+                      height={64}
+                      className="w-full h-full object-cover rounded-full"
+                      unoptimized
+                    />
+                  ) : (
+                    <span className="text-2xl font-bold text-cls-orange">
+                      {user?.name?.charAt(0) || 'U'}
+                    </span>
+                  )}
                 </div>
                 <h2 className="text-lg font-bold text-gray-900">{user?.name || '사용자'} 님</h2>
-                <p className="text-sm text-gray-500">{user?.role === 'student' ? '학생 회원' : '학부모 회원'}</p>
+                <p className="text-sm text-gray-500">{getRoleLabel(user?.role)}</p>
               </div>
               <nav className="p-3 space-y-1">
                 {navItems.map((item) => {
