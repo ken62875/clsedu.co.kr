@@ -3,6 +3,12 @@ import Link from "next/link";
 import HeroSlider from "@/components/ui/HeroSlider";
 import FadeIn from "@/components/ui/FadeIn";
 import CountupStats, { type StatData } from "@/components/ui/CountupStats";
+import { sanitizeHtml } from "@/lib/sanitize";
+
+// BlockNote 에디터가 생성한 HTML인지, 순수 텍스트인지 판별
+function isHtmlContent(value: string): boolean {
+  return /<[a-z][\s\S]*>/i.test(value);
+}
 
 // ─── 기본값 (API 실패 시 fallback) ────────────────────────────────────────────
 
@@ -170,7 +176,14 @@ export default async function Home() {
                   {PHILOSOPHY_ICONS[i % PHILOSOPHY_ICONS.length]}
                 </div>
                 <h4 className="text-xl font-bold text-cls-black mb-4">{card.title}</h4>
-                <p className="text-gray-600 leading-relaxed font-light">{card.description}</p>
+                {isHtmlContent(card.description) ? (
+                  <div
+                    className="text-gray-600 leading-relaxed font-light prose prose-sm max-w-none prose-p:text-gray-600 prose-p:leading-relaxed prose-p:font-light"
+                    dangerouslySetInnerHTML={{ __html: sanitizeHtml(card.description) }}
+                  />
+                ) : (
+                  <p className="text-gray-600 leading-relaxed font-light">{card.description}</p>
+                )}
               </FadeIn>
             ))}
           </div>
@@ -212,7 +225,14 @@ export default async function Home() {
                 <div className="p-8">
                   <div className="text-sm text-cls-orange font-bold mb-2">{prog.category}</div>
                   <h4 className="text-2xl font-bold text-cls-black mb-4">{prog.title}</h4>
-                  <p className="text-gray-600 mb-6 font-light h-20">{prog.description}</p>
+                  {isHtmlContent(prog.description) ? (
+                    <div
+                      className="text-gray-600 mb-6 font-light h-20 overflow-hidden prose prose-sm max-w-none prose-p:text-gray-600 prose-p:font-light prose-p:my-0"
+                      dangerouslySetInnerHTML={{ __html: sanitizeHtml(prog.description) }}
+                    />
+                  ) : (
+                    <p className="text-gray-600 mb-6 font-light h-20">{prog.description}</p>
+                  )}
                   <Link href="/program" className="text-cls-black font-semibold hover:text-cls-orange inline-flex items-center">
                     자세히 보기 &rarr;
                   </Link>
@@ -232,9 +252,17 @@ export default async function Home() {
               <svg className="absolute top-6 left-6 w-12 h-12 text-cls-orange opacity-50" fill="currentColor" viewBox="0 0 24 24">
                 <path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z"/>
               </svg>
-              <p className="text-xl md:text-2xl font-light italic leading-relaxed mb-6 relative z-10 px-8">
-                &ldquo;{trustReview}&rdquo;
-              </p>
+              {isHtmlContent(trustReview) ? (
+                <div className="text-xl md:text-2xl font-light italic leading-relaxed mb-6 relative z-10 px-8 prose prose-invert max-w-none prose-p:text-white prose-p:font-light prose-p:italic prose-p:leading-relaxed prose-p:my-0">
+                  <span aria-hidden>&ldquo;</span>
+                  <span dangerouslySetInnerHTML={{ __html: sanitizeHtml(trustReview) }} />
+                  <span aria-hidden>&rdquo;</span>
+                </div>
+              ) : (
+                <p className="text-xl md:text-2xl font-light italic leading-relaxed mb-6 relative z-10 px-8">
+                  &ldquo;{trustReview}&rdquo;
+                </p>
+              )}
               <p className="font-bold text-cls-orange">- 학부모님 수강 후기 중 -</p>
             </div>
           </FadeIn>
