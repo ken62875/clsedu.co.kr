@@ -1,37 +1,7 @@
-"use client";
+import { redirect } from "next/navigation";
+import { getMyAccountUser, getMyClasses } from "@/lib/my-account/queries";
 
-import { useEffect, useState } from "react";
-
-type Schedule = {
-  id: string;
-  dayOfWeek: string;
-  startTime: number;
-  duration: number;
-};
-
-type Teacher = {
-  teacher: { id: string; name: string };
-};
-
-type CourseClass = {
-  id: string;
-  name: string;
-  subjects: string[];
-  levels: string[];
-  color: string;
-  isActive: boolean;
-  startDate: string | null;
-  endDate: string | null;
-  schedules: Schedule[];
-  teachers: Teacher[];
-};
-
-type Enrollment = {
-  classId: string;
-  studentId: string;
-  enrolledAt: string;
-  class: CourseClass;
-};
+type ScheduleRow = { dayOfWeek: string; startTime: number; duration: number };
 
 function formatTime(startTime: number, duration: number): string {
   const startH = Math.floor(startTime);
@@ -42,41 +12,19 @@ function formatTime(startTime: number, duration: number): string {
   return `${String(startH).padStart(2, "0")}:${String(startM).padStart(2, "0")} - ${String(endH).padStart(2, "0")}:${String(endM).padStart(2, "0")}`;
 }
 
-function formatSchedule(schedules: Schedule[]): string {
+function formatSchedule(schedules: ScheduleRow[]): string {
   if (!schedules.length) return "시간표 미정";
   const days = schedules.map((s) => s.dayOfWeek).join(", ");
   const first = schedules[0];
   return `매주 ${days} ${formatTime(first.startTime, first.duration)}`;
 }
 
-export default function ClassPage() {
-  const [enrollments, setEnrollments] = useState<Enrollment[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+export default async function ClassPage() {
+  const user = await getMyAccountUser();
+  if (!user) redirect("/login");
 
-  useEffect(() => {
-    fetch("/api/my-classes")
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.error) {
-          setError(data.error);
-        } else {
-          setEnrollments(data.enrollments || []);
-        }
-      })
-      .catch(() => setError("수업 정보를 불러오는 데 실패했습니다."))
-      .finally(() => setLoading(false));
-  }, []);
-
+  const enrollments = await getMyClasses(user.id);
   const activeCount = enrollments.filter((e) => e.class.isActive).length;
-
-  if (loading) {
-    return (
-      <div className="flex justify-center items-center py-20">
-        <div className="w-8 h-8 border-4 border-cls-orange border-t-transparent rounded-full animate-spin" />
-      </div>
-    );
-  }
 
   return (
     <div className="space-y-8 animate-in fade-in duration-500">
@@ -99,13 +47,16 @@ export default function ClassPage() {
         )}
       </div>
 
-      {error ? (
-        <div className="text-center py-12 text-red-500">{error}</div>
-      ) : enrollments.length === 0 ? (
+      {enrollments.length === 0 ? (
         <div className="text-center py-16">
           <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
             <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={1.5}
+                d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"
+              />
             </svg>
           </div>
           <p className="text-lg font-medium text-gray-700">등록된 수업이 없습니다.</p>

@@ -1,79 +1,22 @@
-"use client";
+import { redirect } from "next/navigation";
+import { getDashboardData, getMyAccountUser } from "@/lib/my-account/queries";
 
-import { useEffect, useState } from "react";
-
-type Schedule = {
-  id: string;
-  className: string;
-  teachers: string;
-  startTimeStr: string;
-  color: string;
-};
-
-type Notice = {
-  id: string;
-  title: string;
-  publishedAt: string | null;
-  slug: string;
-};
-
-type PaymentInfo = {
-  amount: number;
-  status: string;
-  paymentDate: string;
-  remarks: string | null;
-} | null;
-
-type DashboardData = {
-  activeClassCount: number;
-  todaySchedules: Schedule[];
-  latestPayment: PaymentInfo;
-  thisMonthPaid: boolean;
-  notices: Notice[];
-};
-
-function formatDate(dateStr: string | null): string {
-  if (!dateStr) return '-';
+function formatDate(dateStr: Date | string | null): string {
+  if (!dateStr) return "-";
   const d = new Date(dateStr);
-  return `${d.getMonth() + 1}.${String(d.getDate()).padStart(2, '0')}`;
+  return `${d.getMonth() + 1}.${String(d.getDate()).padStart(2, "0")}`;
 }
 
 function formatAmount(n: number): string {
-  return n.toLocaleString('ko-KR');
+  return n.toLocaleString("ko-KR");
 }
 
-export default function DashboardPage() {
-  const [data, setData] = useState<DashboardData | null>(null);
-  const [loading, setLoading] = useState(true);
+export default async function DashboardPage() {
+  const user = await getMyAccountUser();
+  if (!user) redirect("/login");
 
-  useEffect(() => {
-    fetch('/api/my-dashboard')
-      .then(res => res.json())
-      .then(json => setData(json))
-      .catch(() => {})
-      .finally(() => setLoading(false));
-  }, []);
-
-  if (loading) {
-    return (
-      <div className="space-y-8 animate-pulse">
-        <div className="h-8 bg-gray-100 rounded w-48" />
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {[1, 2, 3].map(i => <div key={i} className="h-32 bg-gray-100 rounded-2xl" />)}
-        </div>
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          <div className="h-48 bg-gray-100 rounded-xl" />
-          <div className="h-48 bg-gray-100 rounded-xl" />
-        </div>
-      </div>
-    );
-  }
-
-  const activeClassCount = data?.activeClassCount ?? 0;
-  const todaySchedules = data?.todaySchedules ?? [];
-  const notices = data?.notices ?? [];
-  const latestPayment = data?.latestPayment ?? null;
-  const thisMonthPaid = data?.thisMonthPaid ?? false;
+  const data = await getDashboardData(user.id);
+  const { activeClassCount, todaySchedules, notices, latestPayment, thisMonthPaid } = data;
 
   return (
     <div className="space-y-8 animate-in fade-in duration-500">
@@ -83,7 +26,6 @@ export default function DashboardPage() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        {/* 진행 중인 수업 위젯 */}
         <div className="bg-gradient-to-br from-orange-50 to-orange-100 p-6 rounded-2xl border border-orange-200">
           <h3 className="text-lg font-bold text-gray-900 mb-2">진행 중인 수업</h3>
           <div className="text-4xl font-extrabold text-cls-orange">
@@ -97,7 +39,6 @@ export default function DashboardPage() {
           )}
         </div>
 
-        {/* 결제 현황 위젯 */}
         <div className="bg-slate-50 p-6 rounded-2xl border border-gray-100">
           <h3 className="text-lg font-bold text-gray-900 mb-2">결제 현황</h3>
           {latestPayment ? (
@@ -124,7 +65,6 @@ export default function DashboardPage() {
           )}
         </div>
 
-        {/* 공지 현황 위젯 */}
         <div className="bg-slate-50 p-6 rounded-2xl border border-gray-100">
           <h3 className="text-lg font-bold text-gray-900 mb-2">학원 소식</h3>
           <div className="text-4xl font-extrabold text-gray-800">
@@ -132,28 +72,32 @@ export default function DashboardPage() {
             <span className="text-lg text-gray-600 font-medium ml-1">건</span>
           </div>
           <p className="mt-4 text-sm text-gray-600">
-            {notices[0] ? `최근: ${notices[0].title.slice(0, 20)}${notices[0].title.length > 20 ? '...' : ''}` : '최근 공지가 없습니다.'}
+            {notices[0]
+              ? `최근: ${notices[0].title.slice(0, 20)}${notices[0].title.length > 20 ? "..." : ""}`
+              : "최근 공지가 없습니다."}
           </p>
         </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        {/* 오늘의 시간표 */}
         <div>
           <h3 className="text-xl font-bold text-gray-900 mb-4">오늘의 시간표</h3>
           {todaySchedules.length > 0 ? (
             <ul className="space-y-4">
-              {todaySchedules.map(s => (
-                <li key={s.id} className="flex bg-white shadow-sm border border-gray-100 rounded-xl p-4 items-center">
+              {todaySchedules.map((s) => (
+                <li
+                  key={s.id}
+                  className="flex bg-white shadow-sm border border-gray-100 rounded-xl p-4 items-center"
+                >
                   <div
                     className="font-bold px-3 py-2 rounded-lg mr-4 text-sm w-20 text-center text-white"
-                    style={{ backgroundColor: s.color || '#f97316' }}
+                    style={{ backgroundColor: s.color || "#f97316" }}
                   >
                     {s.startTimeStr}
                   </div>
                   <div>
                     <p className="font-bold text-gray-900">{s.className}</p>
-                    <p className="text-sm text-gray-500">{s.teachers || '강사 미정'}</p>
+                    <p className="text-sm text-gray-500">{s.teachers || "강사 미정"}</p>
                   </div>
                 </li>
               ))}
@@ -165,12 +109,11 @@ export default function DashboardPage() {
           )}
         </div>
 
-        {/* 학원 공지사항 */}
         <div>
           <h3 className="text-xl font-bold text-gray-900 mb-4">학원 공지사항</h3>
           {notices.length > 0 ? (
             <ul className="divide-y divide-gray-100 border border-gray-100 rounded-xl px-4 bg-white shadow-sm">
-              {notices.map(n => (
+              {notices.map((n) => (
                 <li key={n.id} className="py-4 flex justify-between items-center">
                   <p className="font-medium text-gray-800 hover:text-cls-orange cursor-pointer line-clamp-1 flex-1 pr-3">
                     {n.title}
