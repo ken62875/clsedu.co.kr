@@ -1,5 +1,10 @@
 import React from "react";
 import Link from "next/link";
+import { sanitizeHtml } from "@/lib/sanitize";
+
+function isHtmlContent(value: string): boolean {
+  return /<[a-z][\s\S]*>/i.test(value);
+}
 
 interface ProgramStep {
   step: number;
@@ -22,6 +27,28 @@ interface ProgramTarget {
   mainTitle: string;
   description: string;
   features: ProgramFeature[];
+}
+
+interface ProgramMeta {
+  header: {
+    badge: string;
+    titleLead: string;
+    titleAccent: string;
+    subtitle: string;
+  };
+  processIntro: {
+    title: string;
+    subtitle: string;
+  };
+  targetsIntro: {
+    title: string;
+  };
+  cta: {
+    title: string;
+    description: string;
+    buttonText: string;
+    buttonLink: string;
+  };
 }
 
 // ─── 기본값 (API 실패 시 fallback) ────────────────────────────────────────────
@@ -52,6 +79,30 @@ const DEFAULT_STEPS: ProgramStep[] = [
     details: ["오답 노트 작성 및 유사 문항 풀이", "강사와 조교의 1:1 대면 피드백"],
   },
 ];
+
+const DEFAULT_META: ProgramMeta = {
+  header: {
+    badge: "PROGRAM & SYSTEM",
+    titleLead: "결과가 증명하는",
+    titleAccent: "완벽한 학습 시스템",
+    subtitle:
+      "주먹구구식 강의를 넘어, 예습-수업-클리닉으로 이어지는\nCLS에듀케이션만의 3단계 다면 관리 프로세스를 경험하세요.",
+  },
+  processIntro: {
+    title: "CLS 3-STEP Learning Process",
+    subtitle: "듣기만 하는 수업이 아닌, 학생 본인의 실력으로 체득화하는 과학적 시스템",
+  },
+  targetsIntro: {
+    title: "대상별 특화 커리큘럼",
+  },
+  cta: {
+    title: "자세한 학년별 시간표가 궁금하신가요?",
+    description:
+      "학생의 학년과 지망 수준에 따라 다양한 클래스가 실시간으로 운영중입니다.\n상담을 남겨주시면 최적의 반 편성과 시간표를 안내해 드립니다.",
+    buttonText: "반 편성 및 시간표 문의하기",
+    buttonLink: "/contact",
+  },
+};
 
 const DEFAULT_TARGETS: ProgramTarget[] = [
   {
@@ -87,23 +138,29 @@ const DEFAULT_TARGETS: ProgramTarget[] = [
 async function fetchProgramData(): Promise<{
   steps: ProgramStep[];
   targets: ProgramTarget[];
+  meta: ProgramMeta;
 }> {
   const apiUrl = process.env.NEXT_PUBLIC_API_URL;
-  if (!apiUrl) return { steps: DEFAULT_STEPS, targets: DEFAULT_TARGETS };
+  if (!apiUrl)
+    return { steps: DEFAULT_STEPS, targets: DEFAULT_TARGETS, meta: DEFAULT_META };
 
   try {
-    const [stepsRes, targetsRes] = await Promise.all([
+    const [stepsRes, targetsRes, metaRes] = await Promise.all([
       fetch(`${apiUrl}/api/site-content?section=program_steps`, {
         next: { revalidate: 300 },
       }),
       fetch(`${apiUrl}/api/site-content?section=program_targets`, {
         next: { revalidate: 300 },
       }),
+      fetch(`${apiUrl}/api/site-content?section=program_meta`, {
+        next: { revalidate: 300 },
+      }),
     ]);
 
-    const [stepsData, targetsData] = await Promise.all([
+    const [stepsData, targetsData, metaData] = await Promise.all([
       stepsRes.json(),
       targetsRes.json(),
+      metaRes.json(),
     ]);
 
     const steps: ProgramStep[] =
@@ -120,9 +177,41 @@ async function fetchProgramData(): Promise<{
           )
         : DEFAULT_TARGETS;
 
-    return { steps, targets };
+    const metaItems = (metaData.items ?? []) as {
+      key: string;
+      data: Record<string, string>;
+    }[];
+    const metaByKey = Object.fromEntries(metaItems.map((i) => [i.key, i.data]));
+    const meta: ProgramMeta = {
+      header: {
+        badge: metaByKey.header?.badge || DEFAULT_META.header.badge,
+        titleLead: metaByKey.header?.titleLead || DEFAULT_META.header.titleLead,
+        titleAccent:
+          metaByKey.header?.titleAccent || DEFAULT_META.header.titleAccent,
+        subtitle: metaByKey.header?.subtitle || DEFAULT_META.header.subtitle,
+      },
+      processIntro: {
+        title:
+          metaByKey.process_intro?.title || DEFAULT_META.processIntro.title,
+        subtitle:
+          metaByKey.process_intro?.subtitle ||
+          DEFAULT_META.processIntro.subtitle,
+      },
+      targetsIntro: {
+        title:
+          metaByKey.targets_intro?.title || DEFAULT_META.targetsIntro.title,
+      },
+      cta: {
+        title: metaByKey.cta?.title || DEFAULT_META.cta.title,
+        description: metaByKey.cta?.description || DEFAULT_META.cta.description,
+        buttonText: metaByKey.cta?.buttonText || DEFAULT_META.cta.buttonText,
+        buttonLink: metaByKey.cta?.buttonLink || DEFAULT_META.cta.buttonLink,
+      },
+    };
+
+    return { steps, targets, meta };
   } catch {
-    return { steps: DEFAULT_STEPS, targets: DEFAULT_TARGETS };
+    return { steps: DEFAULT_STEPS, targets: DEFAULT_TARGETS, meta: DEFAULT_META };
   }
 }
 
@@ -156,10 +245,12 @@ const STEP_STYLES = [
 // ─── 컴포넌트 ─────────────────────────────────────────────────────────────────
 
 export default async function Program() {
-  const { steps, targets } = await fetchProgramData();
+  const { steps, targets, meta } = await fetchProgramData();
 
   const middleTarget = targets.find((t) => t.id === "middle") ?? targets[0];
   const highTarget = targets.find((t) => t.id === "high") ?? targets[1];
+
+  const isExternalCtaLink = /^https?:\/\//i.test(meta.cta.buttonLink);
 
   return (
     <div className="min-h-screen bg-slate-50">
@@ -168,14 +259,14 @@ export default async function Program() {
         <div className="absolute inset-0 opacity-10 bg-[url('https://images.unsplash.com/photo-1434030216411-0b793f4b4173?q=80&auto=format&fit=crop')] bg-cover bg-center"></div>
         <div className="relative z-10 px-4">
           <span className="inline-block px-4 py-1 rounded-full border border-gray-600 text-gray-300 text-sm font-bold tracking-widest mb-6">
-            PROGRAM & SYSTEM
+            {meta.header.badge}
           </span>
           <h1 className="text-4xl md:text-5xl font-bold text-white tracking-tight mb-6">
-            결과가 증명하는 <span className="text-cls-orange">완벽한 학습 시스템</span>
+            {meta.header.titleLead}{" "}
+            <span className="text-cls-orange">{meta.header.titleAccent}</span>
           </h1>
-          <p className="text-xl md:text-2xl text-gray-300 font-light max-w-3xl mx-auto leading-relaxed">
-            주먹구구식 강의를 넘어, 예습-수업-클리닉으로 이어지는<br className="hidden md:block"/>
-            CLS에듀케이션만의 3단계 다면 관리 프로세스를 경험하세요.
+          <p className="text-xl md:text-2xl text-gray-300 font-light max-w-3xl mx-auto leading-relaxed whitespace-pre-line">
+            {meta.header.subtitle}
           </p>
         </div>
       </div>
@@ -185,8 +276,8 @@ export default async function Program() {
         {/* Core Process (3 Steps) */}
         <div className="mb-28">
           <div className="text-center mb-16">
-            <h2 className="text-3xl font-bold text-cls-black mb-4">CLS 3-STEP Learning Process</h2>
-            <p className="text-gray-500 font-light text-lg">듣기만 하는 수업이 아닌, 학생 본인의 실력으로 체득화하는 과학적 시스템</p>
+            <h2 className="text-3xl font-bold text-cls-black mb-4">{meta.processIntro.title}</h2>
+            <p className="text-gray-500 font-light text-lg">{meta.processIntro.subtitle}</p>
           </div>
 
           <div className="grid md:grid-cols-3 gap-6 relative">
@@ -202,9 +293,16 @@ export default async function Program() {
                     <br />
                     <span className={style.subtitleCls}>{step.subtitle}</span>
                   </h3>
-                  <p className="text-gray-600 font-light leading-relaxed mb-6">
-                    {step.description}
-                  </p>
+                  {isHtmlContent(step.description) ? (
+                    <div
+                      className="text-gray-600 font-light leading-relaxed mb-6 prose prose-sm max-w-none prose-p:text-gray-600 prose-p:font-light prose-p:leading-relaxed prose-p:my-0"
+                      dangerouslySetInnerHTML={{ __html: sanitizeHtml(step.description) }}
+                    />
+                  ) : (
+                    <p className="text-gray-600 font-light leading-relaxed mb-6">
+                      {step.description}
+                    </p>
+                  )}
                   <ul className={style.listCls}>
                     {step.details.map((d, di) => (
                       <li key={di}>• {d}</li>
@@ -219,7 +317,7 @@ export default async function Program() {
         {/* Level Targeted Programs */}
         <div className="mb-24">
           <div className="flex items-center gap-4 mb-10 border-l-4 border-cls-orange pl-4">
-            <h2 className="text-3xl font-bold text-cls-black">대상별 특화 커리큘럼</h2>
+            <h2 className="text-3xl font-bold text-cls-black">{meta.targetsIntro.title}</h2>
           </div>
 
           <div className="space-y-12">
@@ -235,9 +333,16 @@ export default async function Program() {
                 </div>
                 <div className="md:w-2/3">
                   <h4 className="text-xl font-bold text-cls-black mb-4">{middleTarget.mainTitle}</h4>
-                  <p className="text-gray-600 font-light leading-relaxed mb-6">
-                    {middleTarget.description}
-                  </p>
+                  {isHtmlContent(middleTarget.description) ? (
+                    <div
+                      className="text-gray-600 font-light leading-relaxed mb-6 prose prose-sm max-w-none prose-p:text-gray-600 prose-p:font-light prose-p:leading-relaxed prose-p:my-0"
+                      dangerouslySetInnerHTML={{ __html: sanitizeHtml(middleTarget.description) }}
+                    />
+                  ) : (
+                    <p className="text-gray-600 font-light leading-relaxed mb-6">
+                      {middleTarget.description}
+                    </p>
+                  )}
                   <div className="grid grid-cols-2 gap-4 text-sm font-light">
                     {middleTarget.features.map((f, i) => (
                       <div
@@ -265,9 +370,16 @@ export default async function Program() {
                 </div>
                 <div className="md:w-2/3">
                   <h4 className="text-xl font-bold text-cls-orange mb-4">{highTarget.mainTitle}</h4>
-                  <p className="text-gray-300 font-light leading-relaxed mb-6">
-                    {highTarget.description}
-                  </p>
+                  {isHtmlContent(highTarget.description) ? (
+                    <div
+                      className="text-gray-300 font-light leading-relaxed mb-6 prose prose-invert max-w-none prose-p:text-gray-300 prose-p:font-light prose-p:leading-relaxed prose-p:my-0"
+                      dangerouslySetInnerHTML={{ __html: sanitizeHtml(highTarget.description) }}
+                    />
+                  ) : (
+                    <p className="text-gray-300 font-light leading-relaxed mb-6">
+                      {highTarget.description}
+                    </p>
+                  )}
                   <div className="grid grid-cols-2 gap-4 text-sm font-light">
                     {highTarget.features.map((f, i) => (
                       <div
@@ -287,14 +399,27 @@ export default async function Program() {
 
         {/* Time Table CTA box */}
         <div className="bg-gradient-to-br from-cls-orange to-cls-orange-light rounded-3xl p-10 text-center text-white shadow-xl shadow-cls-orange/20">
-          <h3 className="text-3xl font-bold mb-4">자세한 학년별 시간표가 궁금하신가요?</h3>
-          <p className="text-lg opacity-90 mb-8 font-light">
-            학생의 학년과 지망 수준에 따라 다양한 클래스가 실시간으로 운영중입니다.<br/>
-            상담을 남겨주시면 최적의 반 편성과 시간표를 안내해 드립니다.
+          <h3 className="text-3xl font-bold mb-4">{meta.cta.title}</h3>
+          <p className="text-lg opacity-90 mb-8 font-light whitespace-pre-line">
+            {meta.cta.description}
           </p>
-          <Link href="/contact" className="inline-block px-8 py-4 bg-white text-cls-orange rounded-xl font-bold hover:bg-cls-black hover:text-white transition-colors duration-300 shadow-lg">
-            반 편성 및 시간표 문의하기
-          </Link>
+          {isExternalCtaLink ? (
+            <a
+              href={meta.cta.buttonLink}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-block px-8 py-4 bg-white text-cls-orange rounded-xl font-bold hover:bg-cls-black hover:text-white transition-colors duration-300 shadow-lg"
+            >
+              {meta.cta.buttonText}
+            </a>
+          ) : (
+            <Link
+              href={meta.cta.buttonLink}
+              className="inline-block px-8 py-4 bg-white text-cls-orange rounded-xl font-bold hover:bg-cls-black hover:text-white transition-colors duration-300 shadow-lg"
+            >
+              {meta.cta.buttonText}
+            </Link>
+          )}
         </div>
 
       </div>
