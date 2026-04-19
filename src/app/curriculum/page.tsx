@@ -3,6 +3,12 @@
 import React, { useState, useEffect } from "react";
 import FadeIn from "@/components/ui/FadeIn";
 import Link from "next/link";
+import { sanitizeHtml } from "@/lib/sanitize";
+
+// BlockNote 에디터가 생성한 HTML인지, 순수 텍스트인지 판별
+function isHtmlContent(value: string): boolean {
+  return /<[a-z][\s\S]*>/i.test(value);
+}
 
 interface CourseItem {
   level: string;
@@ -168,7 +174,14 @@ export default function Curriculum() {
             <div className="bg-gradient-to-r from-gray-900 to-cls-black-light text-white p-8 md:p-10 flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
               <div>
                 <h2 className="text-3xl font-bold mb-3">{activeData.title}</h2>
-                <p className="text-gray-300 leading-relaxed font-light">{activeData.description}</p>
+                {isHtmlContent(activeData.description) ? (
+                  <div
+                    className="text-gray-300 leading-relaxed font-light prose prose-invert max-w-none prose-p:text-gray-300 prose-p:leading-relaxed prose-p:font-light prose-p:my-0"
+                    dangerouslySetInnerHTML={{ __html: sanitizeHtml(activeData.description) }}
+                  />
+                ) : (
+                  <p className="text-gray-300 leading-relaxed font-light">{activeData.description}</p>
+                )}
               </div>
               <div className="flex items-center">
                 <Link
@@ -207,7 +220,16 @@ export default function Curriculum() {
                             {course.subject}
                           </span>
                         </td>
-                        <td className="py-5 px-4 text-gray-600 font-medium">{course.content}</td>
+                        <td className="py-5 px-4 text-gray-600 font-medium">
+                          {isHtmlContent(course.content) ? (
+                            <div
+                              className="prose prose-sm max-w-none prose-p:text-gray-600 prose-p:font-medium prose-p:my-0"
+                              dangerouslySetInnerHTML={{ __html: sanitizeHtml(course.content) }}
+                            />
+                          ) : (
+                            course.content
+                          )}
+                        </td>
                         <td className="py-5 px-4 text-gray-500">
                           <div className="flex items-center gap-1.5">
                             <svg className="w-4 h-4 text-gray-400 group-hover:text-cls-orange transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor">

@@ -63,6 +63,21 @@ const DEFAULT_PROGRAMS = [
 const DEFAULT_TRUST_REVIEW =
   "아이가 학원 가는 걸 즐거워해요. 무엇보다 우리 아이가 오늘 무엇을 배웠고 어떻게 변하고 있는지 정기적으로 공유해주셔서 정말 안심이 됩니다.";
 
+interface CtaData {
+  title: string;
+  description: string;
+  buttonText: string;
+  buttonLink: string;
+}
+
+const DEFAULT_CTA: CtaData = {
+  title: "우리 아이의 변화, 지금부터 시작하세요.",
+  description:
+    "아이가 스스로 '해냈다'는 변화를 느낄 수 있도록 CLS가 끝까지 함께 걷겠습니다.",
+  buttonText: "1:1 상담 및 레벨 테스트 예약",
+  buttonLink: "/contact",
+};
+
 // ─── 서버사이드 데이터 fetch ───────────────────────────────────────────────────
 
 const PHILOSOPHY_ICONS = [
@@ -96,12 +111,13 @@ async function fetchSection<T>(section: string, fallback: T): Promise<T> {
 
 export default async function Home() {
   // 병렬 fetch
-  const [statsItems, philosophyItems, programItems, trustItems] =
+  const [statsItems, philosophyItems, programItems, trustItems, ctaItems] =
     await Promise.all([
       fetchSection("stats", null),
       fetchSection("home_philosophy", null),
       fetchSection("home_programs", null),
       fetchSection("home_trust", null),
+      fetchSection("home_cta", null),
     ]);
 
   // 통계
@@ -140,6 +156,18 @@ export default async function Home() {
     trustItems && (trustItems as { data: { content: string } }[]).length > 0
       ? (trustItems as { data: { content: string } }[])[0].data.content
       : DEFAULT_TRUST_REVIEW;
+
+  // 하단 CTA 배너
+  const ctaRaw = (ctaItems as { key: string; data: Partial<CtaData> }[] | null)?.find(
+    (i) => i.key === "main"
+  )?.data;
+  const cta: CtaData = {
+    title: ctaRaw?.title?.trim() || DEFAULT_CTA.title,
+    description: ctaRaw?.description?.trim() || DEFAULT_CTA.description,
+    buttonText: ctaRaw?.buttonText?.trim() || DEFAULT_CTA.buttonText,
+    buttonLink: ctaRaw?.buttonLink?.trim() || DEFAULT_CTA.buttonLink,
+  };
+  const isExternalCtaLink = /^https?:\/\//i.test(cta.buttonLink);
 
   return (
     <div className="min-h-screen">
@@ -274,14 +302,35 @@ export default async function Home() {
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-white">
           <FadeIn direction="up" duration={1000}>
             <h2 className="text-3xl md:text-4xl font-bold mb-6 tracking-tight">
-              우리 아이의 변화, 지금부터 시작하세요.
+              {cta.title}
             </h2>
-            <p className="text-lg md:text-xl mb-10 opacity-90 font-light">
-              아이가 스스로 &apos;해냈다&apos;는 변화를 느낄 수 있도록 CLS가 끝까지 함께 걷겠습니다.
-            </p>
-            <Link href="/contact" className="inline-block px-10 py-5 bg-white text-cls-black rounded-xl font-extrabold text-xl shadow-2xl hover:bg-slate-50 hover:scale-105 transition-all duration-300">
-              1:1 상담 및 레벨 테스트 예약
-            </Link>
+            {isHtmlContent(cta.description) ? (
+              <div
+                className="text-lg md:text-xl mb-10 opacity-90 font-light prose prose-invert max-w-none prose-p:text-white prose-p:font-light prose-p:my-0"
+                dangerouslySetInnerHTML={{ __html: sanitizeHtml(cta.description) }}
+              />
+            ) : (
+              <p className="text-lg md:text-xl mb-10 opacity-90 font-light">
+                {cta.description}
+              </p>
+            )}
+            {isExternalCtaLink ? (
+              <a
+                href={cta.buttonLink}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-block px-10 py-5 bg-white text-cls-black rounded-xl font-extrabold text-xl shadow-2xl hover:bg-slate-50 hover:scale-105 transition-all duration-300"
+              >
+                {cta.buttonText}
+              </a>
+            ) : (
+              <Link
+                href={cta.buttonLink}
+                className="inline-block px-10 py-5 bg-white text-cls-black rounded-xl font-extrabold text-xl shadow-2xl hover:bg-slate-50 hover:scale-105 transition-all duration-300"
+              >
+                {cta.buttonText}
+              </Link>
+            )}
           </FadeIn>
         </div>
       </section>
