@@ -68,9 +68,11 @@ export default function HeroSlider() {
 
     async function fetchData() {
       try {
+        // 클라이언트 컴포넌트에서는 Next.js 캐시 옵션(next.revalidate)이 무효.
+        // 대시보드 변경 사항이 즉시 반영되도록 브라우저 HTTP 캐시를 회피한다.
         const [slidesRes, settingsRes] = await Promise.all([
-          fetch(`${apiUrl}/api/hero-slides`, { next: { revalidate: 60 } }),
-          fetch(`${apiUrl}/api/hero-slides/settings`, { next: { revalidate: 60 } }),
+          fetch(`${apiUrl}/api/hero-slides`, { cache: "no-store" }),
+          fetch(`${apiUrl}/api/hero-slides/settings`, { cache: "no-store" }),
         ]);
 
         let fetchedSlides: SlideData[] = DEFAULT_IMAGES;
