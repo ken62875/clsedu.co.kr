@@ -1,5 +1,6 @@
 import React from "react";
 import KakaoMap from "@/components/ui/KakaoMap";
+import { sanitizeHtml } from "@/lib/sanitize";
 
 interface BasicInfo {
   location: string;
@@ -213,7 +214,7 @@ export default async function About() {
                 {isHtmlContent(p.content) ? (
                   <div
                     className="text-gray-600 leading-relaxed font-light story-content"
-                    dangerouslySetInnerHTML={{ __html: p.content }}
+                    dangerouslySetInnerHTML={{ __html: sanitizeHtml(p.content) }}
                   />
                 ) : (
                   <p className="text-gray-600 leading-relaxed font-light break-keep">{p.content}</p>
@@ -232,7 +233,7 @@ export default async function About() {
               {isHtmlContent(promise) ? (
                 <div
                   className="about-promise-content"
-                  dangerouslySetInnerHTML={{ __html: promise }}
+                  dangerouslySetInnerHTML={{ __html: sanitizeHtml(promise) }}
                 />
               ) : (
                 promiseParagraphs.map((para, i) => (

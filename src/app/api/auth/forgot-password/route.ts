@@ -2,41 +2,41 @@ import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import crypto from 'crypto';
 import nodemailer from 'nodemailer';
+import { serverError } from '@/lib/api';
+import { isEmail } from '@/lib/validation';
 
 export async function POST(request: Request) {
   try {
     const { email } = await request.json();
 
-    if (!email) {
-      return NextResponse.json({ error: '이메일을 입력해주세요.' }, { status: 400 });
+    if (!isEmail(email)) {
+      return NextResponse.json(
+        { error: '유효한 이메일을 입력해주세요.' },
+        { status: 400 }
+      );
     }
 
-    // Check if user exists
-    const users: any[] = await prisma.$queryRaw`
+    // User Enumeration 방지: 동일한 성공 메시지로 응답합니다.
+    const successResponse = NextResponse.json({
+      success: true,
+      message: '해당 이메일로 재설정 안내가 발송되었습니다.',
+    });
+
+    const users = await prisma.$queryRaw<{ id: string; name: string; email: string }[]>`
       SELECT id, name, email FROM users WHERE email = ${email} LIMIT 1
     `;
     const user = users[0];
 
-    if (!user) {
-      // 보안을 위해 해당 이메일이 없더라도 성공 메시지를 반환합니다. (User Enumeration 방지)
-      return NextResponse.json({ success: true, message: '이메일이 발송되었습니다.' });
-    }
+    if (!user) return successResponse;
 
-    // Generate token
     const token = crypto.randomBytes(32).toString('hex');
     const expiresAt = new Date();
-    expiresAt.setHours(expiresAt.getHours() + 1); // 1시간 후 만료
+    expiresAt.setHours(expiresAt.getHours() + 1);
 
-    // Save token
     await prisma.passwordResetToken.create({
-      data: {
-        email: user.email,
-        token,
-        expiresAt,
-      }
+      data: { email: user.email, token, expiresAt },
     });
 
-    // Send email using nodemailer
     const transporter = nodemailer.createTransport({
       host: process.env.SMTP_HOST,
       port: Number(process.env.SMTP_PORT) || 587,
@@ -44,7 +44,7 @@ export async function POST(request: Request) {
         user: process.env.SMTP_USER,
         pass: process.env.SMTP_PASS,
       },
-      secure: Number(process.env.SMTP_PORT) === 465, // true for 465, false for other ports
+      secure: Number(process.env.SMTP_PORT) === 465,
     });
 
     const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://app.clsedu.co.kr';
@@ -53,7 +53,7 @@ export async function POST(request: Request) {
     const mailOptions = {
       from: {
         name: 'CLS에듀케이션',
-        address: process.env.SMTP_FROM || 'no-reply@clsedu.co.kr'
+        address: process.env.SMTP_FROM || 'no-reply@clsedu.co.kr',
       },
       to: user.email,
       subject: '[CLS에듀케이션] 비밀번호 재설정 링크 안내',
@@ -73,7 +73,7 @@ export async function POST(request: Request) {
           </p>
           <hr style="border: 0; border-top: 1px solid #e5e7eb; margin: 24px 0;"/>
           <p style="font-size: 12px; color: #9ca3af; text-align: center;">
-            본 메일은 발신 전용이며, 이 메일을 요청하지 않으셨다면 이 메일을 무시하셔도 됩니다.<br/>
+            본 메일은 발신 전용이며, 이 메일을 요청하지 않으셨다면 무시하셔도 됩니다.<br/>
             해당 링크는 1시간 동안만 유효합니다.
           </p>
         </div>
@@ -82,13 +82,8 @@ export async function POST(request: Request) {
 
     await transporter.sendMail(mailOptions);
 
-    return NextResponse.json({ success: true, message: '이메일이 발송되었습니다.' });
-
-  } catch (error: any) {
-    console.error('Forgot password error:', error);
-    return NextResponse.json({ 
-      error: '이메일 발송 중 오류가 발생했습니다.', 
-      debugDetail: process.env.NODE_ENV === 'development' ? (error?.message || String(error)) : undefined
-    }, { status: 500 });
+    return successResponse;
+  } catch (error) {
+    return serverError('이메일 발송 중 오류가 발생했습니다.', error);
   }
 }

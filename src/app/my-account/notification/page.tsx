@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
+import { sanitizeHtml } from "@/lib/sanitize";
 
 interface NotificationItem {
   id: string;
@@ -158,7 +159,7 @@ export default function NotificationPage() {
                 <div className="px-5 pb-5 border-t border-gray-100 pt-4">
                   <div
                     className="prose prose-sm max-w-none text-gray-700"
-                    dangerouslySetInnerHTML={{ __html: item.notification.contentHtml }}
+                    dangerouslySetInnerHTML={{ __html: sanitizeHtml(item.notification.contentHtml) }}
                   />
                 </div>
               )}

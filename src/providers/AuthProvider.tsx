@@ -1,13 +1,20 @@
 "use client";
 
-import React, { createContext, useContext, useState, useEffect } from "react";
+import React, {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 
 export type User = {
   id: string;
   name: string;
   email: string;
   role?: string;
-  avatarUrl?: string;
+  avatarUrl?: string | null;
   phone?: string;
 };
 
@@ -16,7 +23,7 @@ type AuthContextType = {
   isLoading: boolean;
   user: User | null;
   login: (userData: User) => void;
-  logout: () => void;
+  logout: () => Promise<void>;
   checkSession: () => Promise<void>;
 };
 
@@ -27,39 +34,60 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [isLoading, setIsLoading] = useState(true);
   const [user, setUser] = useState<User | null>(null);
 
-  const checkSession = async () => {
-    try {
-      const res = await fetch("/api/auth/me");
-      if (res.ok) {
-        const data = await res.json();
-        if (data.isLoggedIn && data.user) {
-          setIsLoggedIn(true);
-          setUser(data.user);
-          return;
+  // StrictMode/탭 포커스 등으로 인한 중복 체크를 억제하기 위한 in-flight promise ref
+  const inflight = useRef<Promise<void> | null>(null);
+
+  const checkSession = useCallback(async () => {
+    if (inflight.current) return inflight.current;
+    const p = (async () => {
+      try {
+        const res = await fetch("/api/auth/me", {
+          credentials: "include",
+          cache: "no-store",
+        });
+        if (res.ok) {
+          const data = await res.json();
+          if (data.isLoggedIn && data.user) {
+            setIsLoggedIn(true);
+            setUser(data.user);
+            return;
+          }
         }
+      } catch {
+        // 네트워크 오류는 비로그인 처리
       }
-    } catch (err) {}
-    setIsLoggedIn(false);
-    setUser(null);
-  };
+      setIsLoggedIn(false);
+      setUser(null);
+    })().finally(() => {
+      inflight.current = null;
+    });
+    inflight.current = p;
+    return p;
+  }, []);
 
   useEffect(() => {
     checkSession().finally(() => setIsLoading(false));
-  }, []);
+  }, [checkSession]);
 
-  const login = (userData: User) => {
+  const login = useCallback((userData: User) => {
     setIsLoggedIn(true);
     setUser(userData);
-  };
+  }, []);
 
-  const logout = async () => {
-    await fetch("/api/auth/me", { method: "POST" }); // 쿠키 삭제 API 호출
+  const logout = useCallback(async () => {
+    try {
+      await fetch("/api/auth/me", { method: "POST", credentials: "include" });
+    } catch {
+      // 네트워크 오류여도 클라이언트 상태는 리셋
+    }
     setIsLoggedIn(false);
     setUser(null);
-  };
+  }, []);
 
   return (
-    <AuthContext.Provider value={{ isLoggedIn, isLoading, user, login, logout, checkSession }}>
+    <AuthContext.Provider
+      value={{ isLoggedIn, isLoading, user, login, logout, checkSession }}
+    >
       {children}
     </AuthContext.Provider>
   );

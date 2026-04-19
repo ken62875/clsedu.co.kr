@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
-import { cookies } from 'next/headers';
 import { prisma } from '@/lib/prisma';
+import { requireAuth } from '@/lib/auth';
+import { serverError } from '@/lib/api';
 
 const DAYS = ['일', '월', '화', '수', '목', '금', '토'];
 
@@ -11,19 +12,9 @@ function floatToTimeStr(t: number): string {
 }
 
 export async function GET() {
-  const cookieStore = await cookies();
-  const sessionData = cookieStore.get('cls_session')?.value;
-
-  if (!sessionData) {
-    return NextResponse.json({ error: '로그인이 필요합니다.' }, { status: 401 });
-  }
-
-  let session: { id: string; name: string; role: string };
-  try {
-    session = JSON.parse(sessionData);
-  } catch {
-    return NextResponse.json({ error: '세션이 유효하지 않습니다.' }, { status: 401 });
-  }
+  const auth = await requireAuth();
+  if (!auth.session) return auth.response;
+  const { session } = auth;
 
   try {
     const todayDay = DAYS[new Date().getDay()];
@@ -48,6 +39,7 @@ export async function GET() {
       prisma.payment.findFirst({
         where: { userId: session.id },
         orderBy: { paymentDate: 'desc' },
+        select: { amount: true, status: true, paymentDate: true },
       }),
       prisma.blogPost.findMany({
         where: { status: 'PUBLISHED' },
@@ -78,19 +70,11 @@ export async function GET() {
     return NextResponse.json({
       activeClassCount,
       todaySchedules,
-      latestPayment: latestPayment
-        ? {
-            amount: latestPayment.amount,
-            status: latestPayment.status,
-            paymentDate: latestPayment.paymentDate,
-            remarks: latestPayment.remarks,
-          }
-        : null,
+      latestPayment,
       thisMonthPaid,
       notices,
     });
   } catch (err) {
-    console.error('대시보드 데이터 조회 실패:', err);
-    return NextResponse.json({ error: '데이터를 불러오는 데 실패했습니다.' }, { status: 500 });
+    return serverError('대시보드 데이터를 불러오는 데 실패했습니다.', err);
   }
 }

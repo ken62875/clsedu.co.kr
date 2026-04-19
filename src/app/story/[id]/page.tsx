@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import FadeIn from "@/components/ui/FadeIn";
 import { prisma } from "@/lib/prisma";
+import { sanitizeHtml } from "@/lib/sanitize";
 
 interface BlogTag { id: string; name: string; slug: string; }
 interface BlogCategory { id: string; name: string; slug: string; }
@@ -145,7 +146,7 @@ export default async function StoryDetailPage({
           <FadeIn delay={0.2} direction="up">
             <div className="prose prose-lg max-w-none text-gray-700">
               {post.contentHtml ? (
-                <div className="mt-8 story-content" dangerouslySetInnerHTML={{ __html: post.contentHtml }} />
+                <div className="mt-8 story-content" dangerouslySetInnerHTML={{ __html: sanitizeHtml(post.contentHtml) }} />
               ) : (
                 <p className="text-gray-400 italic">콘텐츠가 없습니다.</p>
               )}

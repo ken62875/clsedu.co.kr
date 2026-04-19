@@ -1,25 +1,16 @@
 import { NextResponse } from 'next/server';
-import { cookies } from 'next/headers';
 import { prisma } from '@/lib/prisma';
+import { requireAuth } from '@/lib/auth';
+import { serverError } from '@/lib/api';
 
 export async function GET() {
-  const cookieStore = await cookies();
-  const sessionData = cookieStore.get('cls_session')?.value;
-
-  if (!sessionData) {
-    return NextResponse.json({ error: '로그인이 필요합니다.' }, { status: 401 });
-  }
-
-  let user: { id: string; name: string; email: string; role: string };
-  try {
-    user = JSON.parse(sessionData);
-  } catch {
-    return NextResponse.json({ error: '세션이 유효하지 않습니다.' }, { status: 401 });
-  }
+  const auth = await requireAuth();
+  if (!auth.session) return auth.response;
+  const { session } = auth;
 
   try {
     const enrollments = await prisma.courseClassStudent.findMany({
-      where: { studentId: user.id },
+      where: { studentId: session.id },
       include: {
         class: {
           include: {
@@ -37,7 +28,6 @@ export async function GET() {
 
     return NextResponse.json({ enrollments });
   } catch (err) {
-    console.error('수업 조회 실패:', err);
-    return NextResponse.json({ error: '수업 정보를 불러오는 데 실패했습니다.' }, { status: 500 });
+    return serverError('수업 정보를 불러오는 데 실패했습니다.', err);
   }
 }
