@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState, useTransition } from "react";
 import { sanitizeHtml } from "@/lib/sanitize";
@@ -33,7 +34,34 @@ export default function NotificationList({
   const searchParams = useSearchParams();
   const [items, setItems] = useState(initialItems);
   const [expanded, setExpanded] = useState<string | null>(null);
+  const [copiedId, setCopiedId] = useState<string | null>(null);
   const [, startTransition] = useTransition();
+
+  async function handleCopyLink(e: React.MouseEvent, notificationId: string) {
+    e.stopPropagation();
+    const url = `${window.location.origin}/my-account/notification/${notificationId}`;
+    try {
+      await navigator.clipboard.writeText(url);
+    } catch {
+      // clipboard API 미지원 환경 fallback
+      const ta = document.createElement("textarea");
+      ta.value = url;
+      ta.style.position = "fixed";
+      ta.style.opacity = "0";
+      document.body.appendChild(ta);
+      ta.select();
+      try {
+        document.execCommand("copy");
+      } catch {
+        /* noop */
+      }
+      document.body.removeChild(ta);
+    }
+    setCopiedId(notificationId);
+    window.setTimeout(() => {
+      setCopiedId((prev) => (prev === notificationId ? null : prev));
+    }, 1500);
+  }
 
   const unreadCount = items.filter((i) => !i.isRead).length;
   const totalPages = Math.ceil(total / limit);
@@ -144,21 +172,57 @@ export default function NotificationList({
                     <h3 className="font-bold text-lg text-gray-900">{item.notification.title}</h3>
                     <p className="text-xs text-gray-400 mt-1">{item.notification.author.name} 선생님</p>
                   </div>
-                  <svg
-                    className={`w-5 h-5 text-gray-400 flex-shrink-0 transition-transform mt-1 ${
-                      expanded === item.id ? "rotate-180" : ""
-                    }`}
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M19 9l-7 7-7-7"
-                    />
-                  </svg>
+                  <div className="flex items-center gap-1 flex-shrink-0 mt-1">
+                    <button
+                      type="button"
+                      onClick={(e) => handleCopyLink(e, item.notification.id)}
+                      className="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-medium text-gray-500 bg-white border border-gray-200 rounded-full hover:bg-gray-50 hover:text-gray-700 transition-colors"
+                      title="이 알림장의 링크 복사"
+                      aria-label="이 알림장의 링크 복사"
+                    >
+                      {copiedId === item.notification.id ? (
+                        <>
+                          <svg className="w-3.5 h-3.5 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
+                          </svg>
+                          <span className="text-green-600">복사됨</span>
+                        </>
+                      ) : (
+                        <>
+                          <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
+                          </svg>
+                          <span>링크</span>
+                        </>
+                      )}
+                    </button>
+                    <Link
+                      href={`/my-account/notification/${item.notification.id}`}
+                      onClick={(e) => e.stopPropagation()}
+                      className="inline-flex items-center px-2.5 py-1 text-xs font-medium text-gray-500 bg-white border border-gray-200 rounded-full hover:bg-gray-50 hover:text-gray-700 transition-colors"
+                      title="새 페이지에서 열기"
+                      aria-label="새 페이지에서 열기"
+                    >
+                      <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                      </svg>
+                    </Link>
+                    <svg
+                      className={`w-5 h-5 text-gray-400 transition-transform ml-1 ${
+                        expanded === item.id ? "rotate-180" : ""
+                      }`}
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M19 9l-7 7-7-7"
+                      />
+                    </svg>
+                  </div>
                 </div>
               </div>
 
@@ -170,6 +234,17 @@ export default function NotificationList({
                       __html: sanitizeHtml(item.notification.contentHtml),
                     }}
                   />
+                  <div className="mt-4 pt-3 border-t border-gray-100">
+                    <Link
+                      href={`/my-account/notification/${item.notification.id}`}
+                      className="inline-flex items-center text-xs font-medium text-cls-orange hover:underline"
+                    >
+                      상세 페이지로 이동
+                      <svg className="w-3.5 h-3.5 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                      </svg>
+                    </Link>
+                  </div>
                 </div>
               )}
             </div>

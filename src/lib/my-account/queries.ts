@@ -188,6 +188,64 @@ export const getMyNotifications = cache(
   }
 );
 
+export const getMyNotificationById = cache(
+  async (userId: string, notificationId: string): Promise<NotificationItem | null> => {
+    const rows = await prisma.$queryRaw<
+      {
+        id: string;
+        isRead: boolean;
+        notificationId: string;
+        title: string;
+        contentHtml: string | null;
+        publishedAt: Date | null;
+        createdAt: Date;
+        authorId: string;
+        authorName: string;
+        classId: string;
+        className: string;
+      }[]
+    >`
+      SELECT
+        nr.id,
+        nr.is_read       AS "isRead",
+        n.id             AS "notificationId",
+        n.title,
+        n.content_html   AS "contentHtml",
+        n.published_at   AS "publishedAt",
+        n.created_at     AS "createdAt",
+        u.id             AS "authorId",
+        u.name           AS "authorName",
+        cc.id            AS "classId",
+        cc.name          AS "className"
+      FROM notification_recipients nr
+      JOIN notifications n  ON nr.notification_id = n.id
+      JOIN users u          ON n.author_id = u.id
+      JOIN course_classes cc ON n.class_id = cc.id
+      WHERE nr.user_id = ${userId}
+        AND n.id = ${notificationId}
+        AND n.status::text = 'PUBLISHED'
+      LIMIT 1
+    `;
+
+    const r = rows[0];
+    if (!r) return null;
+
+    return {
+      id: r.id,
+      isRead: r.isRead,
+      notification: {
+        id: r.notificationId,
+        title: r.title,
+        contentHtml: r.contentHtml,
+        publishedAt: r.publishedAt,
+        createdAt: r.createdAt,
+        author: { id: r.authorId, name: r.authorName },
+        class: { id: r.classId, name: r.className },
+      },
+    };
+  }
+);
+
 export const getMyPayments = cache(
   async (userId: string, page: number, limit: number) => {
     const skip = (page - 1) * limit;
