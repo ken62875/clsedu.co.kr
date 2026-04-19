@@ -14,9 +14,6 @@ interface CourseItem {
   level: string;
   subject: string;
   content: string;
-  room: string;
-  time: string;
-  teacher: string;
 }
 
 interface LevelMeta {
@@ -39,10 +36,10 @@ const DEFAULT_DATA: Record<"primary" | "middle" | "high", LevelData> = {
     description: "공부의 기본기를 탄탄하게 다지고 올바른 학습 습관을 형성하는 CLS 초등부",
     href: "/curriculum/elementary-school",
     courses: [
-      { id: 1, subject: "국어", content: "독해력 향상 및 문해력 기초, 논술", room: "A강의실", time: "월,수 15:00-16:30", teacher: "김지민 강사", level: "primary" },
-      { id: 2, subject: "영어", content: "파닉스, 스토리텔링 및 기초 회화", room: "B강의실", time: "화,목 15:00-16:30", teacher: "Sarah Teacher", level: "primary" },
-      { id: 3, subject: "수학", content: "교과 수학 개념 및 창의 사고력", room: "C강의실", time: "월,수 16:30-18:00", teacher: "이현우 강사", level: "primary" },
-      { id: 4, subject: "비교과", content: "창의 융합 코딩 및 발표 토론", room: "D강의실", time: "금 15:00-17:00", teacher: "정민아 강사", level: "primary" },
+      { id: 1, subject: "국어", content: "독해력 향상 및 문해력 기초, 논술", level: "primary" },
+      { id: 2, subject: "영어", content: "파닉스, 스토리텔링 및 기초 회화", level: "primary" },
+      { id: 3, subject: "수학", content: "교과 수학 개념 및 창의 사고력", level: "primary" },
+      { id: 4, subject: "비교과", content: "창의 융합 코딩 및 발표 토론", level: "primary" },
     ],
   },
   middle: {
@@ -50,10 +47,10 @@ const DEFAULT_DATA: Record<"primary" | "middle" | "high", LevelData> = {
     description: "내신 완벽 대비와 특목고 진학을 위해 심도있는 학업 역량을 기르는 중등부",
     href: "/curriculum/middle-school",
     courses: [
-      { id: 1, subject: "국어", content: "내신 국어 집중 대비 및 수능 국어 기초", room: "A강의실", time: "월,수 17:00-19:00", teacher: "정수진 강사", level: "middle" },
-      { id: 2, subject: "영어", content: "내신 만점 및 수능 독해/문법 심화", room: "B강의실", time: "화,목 17:00-19:00", teacher: "박준영 강사", level: "middle" },
-      { id: 3, subject: "수학", content: "학교별 맞춤 수학 선행 및 심화 (KMO 기초)", room: "C강의실", time: "화,목 19:00-21:00", teacher: "최동훈 강사", level: "middle" },
-      { id: 4, subject: "과학/사회", content: "중등 과학 내신 및 물리/화학/한국사 기초", room: "D강의실", time: "금 17:00-20:00", teacher: "윤지원 강사", level: "middle" },
+      { id: 1, subject: "국어", content: "내신 국어 집중 대비 및 수능 국어 기초", level: "middle" },
+      { id: 2, subject: "영어", content: "내신 만점 및 수능 독해/문법 심화", level: "middle" },
+      { id: 3, subject: "수학", content: "학교별 맞춤 수학 선행 및 심화 (KMO 기초)", level: "middle" },
+      { id: 4, subject: "과학/사회", content: "중등 과학 내신 및 물리/화학/한국사 기초", level: "middle" },
     ],
   },
   high: {
@@ -61,10 +58,10 @@ const DEFAULT_DATA: Record<"primary" | "middle" | "high", LevelData> = {
     description: "수능 1등급 및 명문대 진학을 위해 최정예 강사진이 제공하는 완벽한 솔루션",
     href: "/curriculum/high-school",
     courses: [
-      { id: 1, subject: "수능 국어", content: "수능/모평 완벽 분석 및 고난도 심화 독해", room: "1강의실", time: "토 09:00-13:00", teacher: "김성호 강사", level: "high" },
-      { id: 2, subject: "수능 영어", content: "EBS 간접 연계 및 고난도 빈칸/순서 완벽 대비", room: "2강의실", time: "일 09:00-13:00", teacher: "이유진 강사", level: "high" },
-      { id: 3, subject: "수능 수학", content: "미적분, 기하, 확통 심화 및 킬러문항 정복", room: "3강의실", time: "토 14:00-18:00", teacher: "강민철 강사", level: "high" },
-      { id: 4, subject: "과학/사회 탐구", content: "물리학I, 화학I 등 선택과목 수능 1등급 대비반", room: "4강의실", time: "일 14:00-18:00", teacher: "박동진 강사", level: "high" },
+      { id: 1, subject: "수능 국어", content: "수능/모평 완벽 분석 및 고난도 심화 독해", level: "high" },
+      { id: 2, subject: "수능 영어", content: "EBS 간접 연계 및 고난도 빈칸/순서 완벽 대비", level: "high" },
+      { id: 3, subject: "수능 수학", content: "미적분, 기하, 확통 심화 및 킬러문항 정복", level: "high" },
+      { id: 4, subject: "과학/사회 탐구", content: "물리학I, 화학I 등 선택과목 수능 1등급 대비반", level: "high" },
     ],
   },
 };
@@ -197,61 +194,39 @@ export default function Curriculum() {
             </div>
 
             {/* Table wrapper */}
-            <div className="p-6 md:p-10 hide-scrollbar overflow-x-auto">
-              <div className="min-w-[800px]">
-                <table className="w-full text-left border-collapse">
-                  <thead>
-                    <tr className="border-b-2 border-cls-black text-cls-black">
-                      <th className="py-4 px-4 font-bold w-[12%]">과목</th>
-                      <th className="py-4 px-4 font-bold w-[38%]">학습 내용</th>
-                      <th className="py-4 px-4 font-bold w-[15%]">클래스룸</th>
-                      <th className="py-4 px-4 font-bold w-[20%]">시간</th>
-                      <th className="py-4 px-4 font-bold w-[15%]">담당 강사</th>
+            <div className="p-6 md:p-10">
+              <table className="w-full text-left border-collapse">
+                <thead>
+                  <tr className="border-b-2 border-cls-black text-cls-black">
+                    <th className="py-4 px-4 font-bold w-[20%]">과목</th>
+                    <th className="py-4 px-4 font-bold w-[80%]">학습 내용</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-gray-100">
+                  {activeData.courses.map((course) => (
+                    <tr
+                      key={course.id}
+                      className="hover:bg-slate-50 transition-colors duration-200 group"
+                    >
+                      <td className="py-5 px-4 font-semibold text-cls-black">
+                        <span className="inline-block bg-gray-100 px-3 py-1 rounded-md text-sm text-gray-700">
+                          {course.subject}
+                        </span>
+                      </td>
+                      <td className="py-5 px-4 text-gray-600 font-medium">
+                        {isHtmlContent(course.content) ? (
+                          <div
+                            className="prose prose-sm max-w-none prose-p:text-gray-600 prose-p:font-medium prose-p:my-0"
+                            dangerouslySetInnerHTML={{ __html: sanitizeHtml(course.content) }}
+                          />
+                        ) : (
+                          course.content
+                        )}
+                      </td>
                     </tr>
-                  </thead>
-                  <tbody className="divide-y divide-gray-100">
-                    {activeData.courses.map((course) => (
-                      <tr
-                        key={course.id}
-                        className="hover:bg-slate-50 transition-colors duration-200 group"
-                      >
-                        <td className="py-5 px-4 font-semibold text-cls-black">
-                          <span className="inline-block bg-gray-100 px-3 py-1 rounded-md text-sm text-gray-700">
-                            {course.subject}
-                          </span>
-                        </td>
-                        <td className="py-5 px-4 text-gray-600 font-medium">
-                          {isHtmlContent(course.content) ? (
-                            <div
-                              className="prose prose-sm max-w-none prose-p:text-gray-600 prose-p:font-medium prose-p:my-0"
-                              dangerouslySetInnerHTML={{ __html: sanitizeHtml(course.content) }}
-                            />
-                          ) : (
-                            course.content
-                          )}
-                        </td>
-                        <td className="py-5 px-4 text-gray-500">
-                          <div className="flex items-center gap-1.5">
-                            <svg className="w-4 h-4 text-gray-400 group-hover:text-cls-orange transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
-                            </svg>
-                            {course.room}
-                          </div>
-                        </td>
-                        <td className="py-5 px-4 text-gray-700 font-medium">
-                          <div className="flex items-center gap-1.5">
-                            <svg className="w-4 h-4 text-gray-400 group-hover:text-cls-orange transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                            </svg>
-                            {course.time}
-                          </div>
-                        </td>
-                        <td className="py-5 px-4 text-gray-700 font-semibold">{course.teacher}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
+                  ))}
+                </tbody>
+              </table>
             </div>
 
             {/* Footer / Payment CTA */}
