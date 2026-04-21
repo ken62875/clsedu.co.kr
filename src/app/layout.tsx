@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Noto_Sans_KR } from "next/font/google";
+import { GoogleAnalytics } from "@next/third-parties/google";
 import "./globals.css";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
@@ -7,6 +8,8 @@ import FloatingButton from "@/components/ui/FloatingButton";
 import MobileBottomNav from "@/components/layout/MobileBottomNav";
 import { AuthProvider } from "@/providers/AuthProvider";
 import { getSession } from "@/lib/auth";
+
+const GA_ID = process.env.NEXT_PUBLIC_GA_ID;
 
 const notoSansKr = Noto_Sans_KR({
   subsets: ["latin"],
@@ -52,6 +55,7 @@ export default async function RootLayout({
           <MobileBottomNav />
         </AuthProvider>
       </body>
+      {GA_ID ? <GoogleAnalytics gaId={GA_ID} /> : null}
     </html>
   );
 }
