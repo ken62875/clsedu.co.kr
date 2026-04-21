@@ -2,6 +2,12 @@ import React from "react";
 import KakaoMap from "@/components/ui/KakaoMap";
 import { sanitizeHtml } from "@/lib/sanitize";
 
+interface HeroContent {
+  title: string;
+  titleHighlight: string;
+  subtitle: string;
+}
+
 interface BasicInfo {
   location: string;
   address: string;
@@ -24,6 +30,13 @@ interface PhilosophyItem {
 }
 
 // ─── 기본값 (API 실패 시 fallback) ────────────────────────────────────────────
+
+const DEFAULT_HERO: HeroContent = {
+  title: "About",
+  titleHighlight: "CLS",
+  subtitle:
+    "“공부가 외롭지 않도록, 결과가 두렵지 않도록\n곁에서 함께 걷는 교육”",
+};
 
 const DEFAULT_BASIC_INFO: BasicInfo = {
   location: "신내동 영창빌딩 7층",
@@ -67,6 +80,7 @@ const DEFAULT_PROMISE =
 // ─── 서버사이드 데이터 fetch ───────────────────────────────────────────────────
 
 async function fetchAboutData(): Promise<{
+  hero: HeroContent;
   basicInfo: BasicInfo;
   philosophies: PhilosophyItem[];
   promise: string;
@@ -74,6 +88,7 @@ async function fetchAboutData(): Promise<{
   const apiUrl = process.env.NEXT_PUBLIC_API_URL;
   if (!apiUrl)
     return {
+      hero: DEFAULT_HERO,
       basicInfo: DEFAULT_BASIC_INFO,
       philosophies: DEFAULT_PHILOSOPHIES,
       promise: DEFAULT_PROMISE,
@@ -85,6 +100,7 @@ async function fetchAboutData(): Promise<{
     });
     if (!res.ok)
       return {
+        hero: DEFAULT_HERO,
         basicInfo: DEFAULT_BASIC_INFO,
         philosophies: DEFAULT_PHILOSOPHIES,
         promise: DEFAULT_PROMISE,
@@ -93,17 +109,21 @@ async function fetchAboutData(): Promise<{
     const { items } = await res.json();
     if (!items?.length)
       return {
+        hero: DEFAULT_HERO,
         basicInfo: DEFAULT_BASIC_INFO,
         philosophies: DEFAULT_PHILOSOPHIES,
         promise: DEFAULT_PROMISE,
       };
 
+    let hero = DEFAULT_HERO;
     let basicInfo = DEFAULT_BASIC_INFO;
     const philosophies: PhilosophyItem[] = [];
     let promise = DEFAULT_PROMISE;
 
     items.forEach((item: { key: string; data: Record<string, unknown> }) => {
-      if (item.key === "basic_info") basicInfo = item.data as unknown as BasicInfo;
+      if (item.key === "hero")
+        hero = { ...DEFAULT_HERO, ...(item.data as unknown as Partial<HeroContent>) };
+      else if (item.key === "basic_info") basicInfo = item.data as unknown as BasicInfo;
       else if (item.key.startsWith("philosophy_"))
         philosophies.push(item.data as unknown as PhilosophyItem);
       else if (item.key === "promise")
@@ -111,6 +131,7 @@ async function fetchAboutData(): Promise<{
     });
 
     return {
+      hero,
       basicInfo,
       philosophies: philosophies.sort((a, b) => a.number - b.number).length
         ? philosophies
@@ -119,6 +140,7 @@ async function fetchAboutData(): Promise<{
     };
   } catch {
     return {
+      hero: DEFAULT_HERO,
       basicInfo: DEFAULT_BASIC_INFO,
       philosophies: DEFAULT_PHILOSOPHIES,
       promise: DEFAULT_PROMISE,
@@ -133,7 +155,7 @@ function isHtmlContent(str: string): boolean {
 }
 
 export default async function About() {
-  const { basicInfo, philosophies, promise } = await fetchAboutData();
+  const { hero, basicInfo, philosophies, promise } = await fetchAboutData();
 
   // 약속 텍스트를 문단으로 분리
   const promiseParagraphs = promise.split("\n\n").filter((p) => p.trim());
@@ -153,12 +175,16 @@ export default async function About() {
 
         <div className="relative z-10 px-4">
           <h1 className="text-4xl md:text-6xl font-bold text-white tracking-tight mb-6 drop-shadow-md">
-            About <span className="text-cls-orange">CLS</span>
+            {hero.title}
+            {hero.titleHighlight && (
+              <>
+                {hero.title && " "}
+                <span className="text-cls-orange">{hero.titleHighlight}</span>
+              </>
+            )}
           </h1>
-          <p className="text-xl md:text-2xl text-gray-100 font-light max-w-3xl mx-auto leading-relaxed drop-shadow-md">
-            &ldquo;공부가 외롭지 않도록, 결과가 두렵지 않도록
-            <br className="hidden sm:block" />
-            곁에서 함께 걷는 교육&rdquo;
+          <p className="text-xl md:text-2xl text-gray-100 font-light max-w-3xl mx-auto leading-relaxed drop-shadow-md whitespace-pre-line">
+            {hero.subtitle}
           </p>
         </div>
       </div>
