@@ -8,6 +8,11 @@ interface HeroContent {
   subtitle: string;
 }
 
+interface IntroContent {
+  heading: string;
+  description: string;
+}
+
 interface BasicInfo {
   location: string;
   address: string;
@@ -36,6 +41,12 @@ const DEFAULT_HERO: HeroContent = {
   titleHighlight: "CLS",
   subtitle:
     "“공부가 외롭지 않도록, 결과가 두렵지 않도록\n곁에서 함께 걷는 교육”",
+};
+
+const DEFAULT_INTRO: IntroContent = {
+  heading: "신내동 최고의 교육 파트너",
+  description:
+    "단순히 지식을 전달하는 곳을 넘어, 아이들의 학습 습관과 마음까지 세심하게 살피는 곳.\n신내동에서 꾸준히 신뢰를 쌓아온 CLS에듀케이션이 우리 아이들의 ‘든든한 교육 파트너’가 되어드립니다.",
 };
 
 const DEFAULT_BASIC_INFO: BasicInfo = {
@@ -72,6 +83,12 @@ const DEFAULT_PHILOSOPHIES: PhilosophyItem[] = [
     content:
       "신현고, 혜원여고, 원묵고 등 인근 학교 학생들이 모여 서로 긍정적인 자극을 주고받습니다. 각 학교별 출제 경향을 꿰뚫는 내신 완벽 대비와 방학 윈터스쿨로 다음 학기를 탄탄히 준비합니다.",
   },
+  {
+    number: 4,
+    title: "결과로 증명하는 실력: \"내신·수능·입시 통합 관리\"",
+    content:
+      "단기 점수 상승이 아닌 장기적인 성장을 목표로 합니다. 학기 중에는 학교별 내신 완벽 대비, 방학 중에는 취약 단원 심화와 선행 학습을 병행하여 상위권 진입과 목표 대학 진학까지 체계적으로 이끌어 드립니다.",
+  },
 ];
 
 const DEFAULT_PROMISE =
@@ -81,6 +98,7 @@ const DEFAULT_PROMISE =
 
 async function fetchAboutData(): Promise<{
   hero: HeroContent;
+  intro: IntroContent;
   basicInfo: BasicInfo;
   philosophies: PhilosophyItem[];
   promise: string;
@@ -89,6 +107,7 @@ async function fetchAboutData(): Promise<{
   if (!apiUrl)
     return {
       hero: DEFAULT_HERO,
+      intro: DEFAULT_INTRO,
       basicInfo: DEFAULT_BASIC_INFO,
       philosophies: DEFAULT_PHILOSOPHIES,
       promise: DEFAULT_PROMISE,
@@ -101,6 +120,7 @@ async function fetchAboutData(): Promise<{
     if (!res.ok)
       return {
         hero: DEFAULT_HERO,
+        intro: DEFAULT_INTRO,
         basicInfo: DEFAULT_BASIC_INFO,
         philosophies: DEFAULT_PHILOSOPHIES,
         promise: DEFAULT_PROMISE,
@@ -110,12 +130,14 @@ async function fetchAboutData(): Promise<{
     if (!items?.length)
       return {
         hero: DEFAULT_HERO,
+        intro: DEFAULT_INTRO,
         basicInfo: DEFAULT_BASIC_INFO,
         philosophies: DEFAULT_PHILOSOPHIES,
         promise: DEFAULT_PROMISE,
       };
 
     let hero = DEFAULT_HERO;
+    let intro = DEFAULT_INTRO;
     let basicInfo = DEFAULT_BASIC_INFO;
     const philosophies: PhilosophyItem[] = [];
     let promise = DEFAULT_PROMISE;
@@ -123,6 +145,8 @@ async function fetchAboutData(): Promise<{
     items.forEach((item: { key: string; data: Record<string, unknown> }) => {
       if (item.key === "hero")
         hero = { ...DEFAULT_HERO, ...(item.data as unknown as Partial<HeroContent>) };
+      else if (item.key === "intro")
+        intro = { ...DEFAULT_INTRO, ...(item.data as unknown as Partial<IntroContent>) };
       else if (item.key === "basic_info") basicInfo = item.data as unknown as BasicInfo;
       else if (item.key.startsWith("philosophy_"))
         philosophies.push(item.data as unknown as PhilosophyItem);
@@ -132,6 +156,7 @@ async function fetchAboutData(): Promise<{
 
     return {
       hero,
+      intro,
       basicInfo,
       philosophies: philosophies.sort((a, b) => a.number - b.number).length
         ? philosophies
@@ -141,6 +166,7 @@ async function fetchAboutData(): Promise<{
   } catch {
     return {
       hero: DEFAULT_HERO,
+      intro: DEFAULT_INTRO,
       basicInfo: DEFAULT_BASIC_INFO,
       philosophies: DEFAULT_PHILOSOPHIES,
       promise: DEFAULT_PROMISE,
@@ -148,14 +174,19 @@ async function fetchAboutData(): Promise<{
   }
 }
 
-const PHILOSOPHY_COLORS = ["bg-cls-orange", "bg-cls-black", "bg-cls-orange"];
+const PHILOSOPHY_COLORS = [
+  "bg-cls-orange",
+  "bg-cls-black",
+  "bg-cls-orange",
+  "bg-cls-black",
+];
 
 function isHtmlContent(str: string): boolean {
   return /<[a-z][\s\S]*>/i.test(str);
 }
 
 export default async function About() {
-  const { hero, basicInfo, philosophies, promise } = await fetchAboutData();
+  const { hero, intro, basicInfo, philosophies, promise } = await fetchAboutData();
 
   // 약속 텍스트를 문단으로 분리
   const promiseParagraphs = promise.split("\n\n").filter((p) => p.trim());
@@ -193,11 +224,9 @@ export default async function About() {
         {/* Intro Card */}
         <div className="bg-white rounded-2xl shadow-lg p-8 md:p-12 mb-16 relative overflow-hidden">
           <div className="absolute top-0 right-0 w-32 h-32 bg-cls-orange/10 rounded-bl-full"></div>
-          <h2 className="text-3xl font-bold text-cls-black mb-6">신내동 최고의 교육 파트너</h2>
-          <p className="text-lg text-gray-600 leading-relaxed mb-8 break-keep">
-            단순히 지식을 전달하는 곳을 넘어, 아이들의 학습 습관과 마음까지 세심하게 살피는 곳.{" "}
-            <br className="hidden md:block" />
-            신내동에서 꾸준히 신뢰를 쌓아온 CLS에듀케이션이 우리 아이들의 &lsquo;든든한 교육 파트너&rsquo;가 되어드립니다.
+          <h2 className="text-3xl font-bold text-cls-black mb-6">{intro.heading}</h2>
+          <p className="text-lg text-gray-600 leading-relaxed mb-8 break-keep whitespace-pre-line">
+            {intro.description}
           </p>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6 bg-slate-50 p-6 rounded-xl border border-slate-100">
             <div>
