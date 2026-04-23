@@ -15,9 +15,9 @@ const Header = () => {
       <div className="w-full bg-gray-50 border-b border-gray-200 hidden md:block">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-10 flex justify-between items-center text-xs font-medium text-gray-500">
           <div className="flex items-center space-x-4">
-            <Link href="#" className="hover:text-cls-orange transition-colors">알림장</Link>
+            <Link href="/my-account/notification" className="hover:text-cls-orange transition-colors">알림장</Link>
             <span className="text-gray-300">|</span>
-            <Link href="#" className="hover:text-cls-orange transition-colors">교육비 결제</Link>
+            <Link href="/my-account/payment" className="hover:text-cls-orange transition-colors">교육비 결제</Link>
             <span className="text-gray-300">|</span>
             <Link href="/contact" className="hover:text-cls-orange transition-colors">교육상담예약</Link>
           </div>
