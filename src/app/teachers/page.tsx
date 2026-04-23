@@ -153,7 +153,7 @@ export default async function Teachers() {
         {/* Director / Head Teacher */}
         <div className="mb-24">
           <div className="flex items-center gap-4 mb-10 border-l-4 border-cls-orange pl-4">
-            <h2 className="text-3xl font-bold text-cls-black">원장 및 대표 강사</h2>
+            <h2 className="text-3xl font-bold text-cls-black">원장</h2>
             <span className="text-gray-400 font-light hidden sm:inline-block">Head Instructor</span>
           </div>
 
