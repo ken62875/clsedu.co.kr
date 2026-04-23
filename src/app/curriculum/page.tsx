@@ -21,12 +21,20 @@ interface LevelMeta {
   description: string;
 }
 
+interface LevelNotes {
+  content: string;
+}
+
 interface LevelData {
   title: string;
   description: string;
   href: string;
+  notes: string;
   courses: (CourseItem & { id: number })[];
 }
+
+const DEFAULT_NOTES =
+  "※ 교재비 및 온라인 학습 시스템 이용료는 별도입니다.\n※ 자세한 시간표 및 반 배정은 레벨 테스트 후 상담을 통해 결정됩니다.";
 
 // ─── 기본값 (API 실패 시 fallback) ────────────────────────────────────────────
 
@@ -35,6 +43,7 @@ const DEFAULT_DATA: Record<"primary" | "middle" | "high", LevelData> = {
     title: "초등부 교과과정",
     description: "공부의 기본기를 탄탄하게 다지고 올바른 학습 습관을 형성하는 CLS 초등부",
     href: "/curriculum/elementary-school",
+    notes: DEFAULT_NOTES,
     courses: [
       { id: 1, subject: "국어", content: "독해력 향상 및 문해력 기초, 논술", level: "primary" },
       { id: 2, subject: "영어", content: "파닉스, 스토리텔링 및 기초 회화", level: "primary" },
@@ -46,6 +55,7 @@ const DEFAULT_DATA: Record<"primary" | "middle" | "high", LevelData> = {
     title: "중등부 교과과정",
     description: "내신 완벽 대비와 특목고 진학을 위해 심도있는 학업 역량을 기르는 중등부",
     href: "/curriculum/middle-school",
+    notes: DEFAULT_NOTES,
     courses: [
       { id: 1, subject: "국어", content: "내신 국어 집중 대비 및 수능 국어 기초", level: "middle" },
       { id: 2, subject: "영어", content: "내신 만점 및 수능 독해/문법 심화", level: "middle" },
@@ -57,6 +67,7 @@ const DEFAULT_DATA: Record<"primary" | "middle" | "high", LevelData> = {
     title: "고등부 교과과정",
     description: "수능 1등급 및 명문대 진학을 위해 최정예 강사진이 제공하는 완벽한 솔루션",
     href: "/curriculum/high-school",
+    notes: DEFAULT_NOTES,
     courses: [
       { id: 1, subject: "수능 국어", content: "수능/모평 완벽 분석 및 고난도 심화 독해", level: "high" },
       { id: 2, subject: "수능 영어", content: "EBS 간접 연계 및 고난도 빈칸/순서 완벽 대비", level: "high" },
@@ -73,7 +84,7 @@ const HREF_MAP: Record<string, string> = {
 };
 
 export default function Curriculum() {
-  const [activeTab, setActiveTab] = useState<"primary" | "middle" | "high">("primary");
+  const [activeTab, setActiveTab] = useState<"primary" | "middle" | "high">("high");
   const [curriculumData, setCurriculumData] = useState(DEFAULT_DATA);
 
   useEffect(() => {
@@ -86,6 +97,7 @@ export default function Curriculum() {
         if (!items?.length) return;
 
         const metas: Record<string, LevelMeta> = {};
+        const notesMap: Record<string, LevelNotes> = {};
         const courseMap: Record<string, (CourseItem & { id: number })[]> = {
           primary: [],
           middle: [],
@@ -97,6 +109,9 @@ export default function Curriculum() {
             if (item.key.endsWith("_meta")) {
               const level = item.key.replace("_meta", "");
               metas[level] = item.data as unknown as LevelMeta;
+            } else if (item.key.endsWith("_notes")) {
+              const level = item.key.replace("_notes", "");
+              notesMap[level] = item.data as unknown as LevelNotes;
             } else if (item.key.includes("_course_")) {
               const d = item.data as unknown as CourseItem;
               const level = d.level as "primary" | "middle" | "high";
@@ -114,6 +129,7 @@ export default function Curriculum() {
               title: metas[level]?.title ?? prev[level].title,
               description: metas[level]?.description ?? prev[level].description,
               href: HREF_MAP[level],
+              notes: notesMap[level]?.content ?? prev[level].notes,
               courses: courseMap[level].length > 0 ? courseMap[level] : prev[level].courses,
             };
           });
@@ -144,9 +160,9 @@ export default function Curriculum() {
         <FadeIn direction="up" delay={200} duration={800}>
           <div className="flex flex-col sm:flex-row justify-center gap-2 sm:gap-4 mb-12">
             {[
-              { id: "primary", label: "초등부" },
+              { id: "high", label: "고등부" },
               { id: "middle", label: "중등부" },
-              { id: "high", label: "고등부" }
+              { id: "primary", label: "초등부" }
             ].map((tab) => (
               <button
                 key={tab.id}
@@ -232,8 +248,17 @@ export default function Curriculum() {
             {/* Footer / Payment CTA */}
             <div className="bg-gray-50 p-6 md:p-8 border-t border-gray-100 flex flex-col md:flex-row items-center justify-between gap-6">
               <div className="text-gray-500 text-sm">
-                <p>※ 교재비 및 온라인 학습 시스템 이용료는 별도입니다.</p>
-                <p>※ 자세한 시간표 및 반 배정은 레벨 테스트 후 상담을 통해 결정됩니다.</p>
+                {isHtmlContent(activeData.notes) ? (
+                  <div
+                    className="prose prose-sm max-w-none prose-p:text-gray-500 prose-p:my-0 prose-p:leading-relaxed"
+                    dangerouslySetInnerHTML={{ __html: sanitizeHtml(activeData.notes) }}
+                  />
+                ) : (
+                  activeData.notes
+                    .split("\n")
+                    .filter((line) => line.trim().length > 0)
+                    .map((line, i) => <p key={i}>{line}</p>)
+                )}
               </div>
               <Link
                 href={activeData.href}
