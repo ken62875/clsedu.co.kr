@@ -38,11 +38,11 @@ const DEFAULT_PHILOSOPHY = [
 
 const DEFAULT_PROGRAMS = [
   {
-    category: "Elementary",
-    imageUrl: "https://media.clsedu.co.kr/programs/elementary_study.jpg",
-    title: "초등부",
+    category: "High School",
+    imageUrl: "https://media.clsedu.co.kr/programs/high_school_study.jpg",
+    title: "고등부/입시",
     description:
-      "공부에 대한 흥미를 높이고 올바른 학습 습관을 형성하는 CLS 초등부. 기초부터 차근차근 실력을 쌓습니다.",
+      "수능과 내신을 아우르는 심층 학습으로 SKY 및 상위권 대학 진학의 꿈을 실현합니다.",
   },
   {
     category: "Middle School",
@@ -52,11 +52,11 @@ const DEFAULT_PROGRAMS = [
       "신현중 등 인근 학교의 철저한 내신 분석과 특목고 대비까지, 중학교의 결정적 시기를 함께합니다.",
   },
   {
-    category: "High School",
-    imageUrl: "https://media.clsedu.co.kr/programs/high_school_study.jpg",
-    title: "고등부/입시",
+    category: "Elementary",
+    imageUrl: "https://media.clsedu.co.kr/programs/elementary_study.jpg",
+    title: "초등부",
     description:
-      "수능과 내신을 아우르는 심층 학습으로 SKY 및 상위권 대학 진학의 꿈을 실현합니다.",
+      "공부에 대한 흥미를 높이고 올바른 학습 습관을 형성하는 CLS 초등부. 기초부터 차근차근 실력을 쌓습니다.",
   },
 ];
 
@@ -132,23 +132,30 @@ export default async function Home() {
       )
     : DEFAULT_PHILOSOPHY;
 
-  // 프로그램 카드
+  // 프로그램 카드: 고등부 → 중등부 → 초등부 순 강제 정렬
+  const PROGRAM_KEY_ORDER: Record<string, number> = { high: 0, middle: 1, elementary: 2 };
   const programs: {
     category: string;
     imageUrl: string;
     title: string;
     description: string;
   }[] = programItems
-    ? (
-        programItems as {
+    ? [
+        ...(programItems as {
+          key: string;
           data: {
             category: string;
             imageUrl: string;
             title: string;
             description: string;
           };
-        }[]
-      ).map((i) => i.data)
+        }[]),
+      ]
+        .sort(
+          (a, b) =>
+            (PROGRAM_KEY_ORDER[a.key] ?? 99) - (PROGRAM_KEY_ORDER[b.key] ?? 99)
+        )
+        .map((i) => i.data)
     : DEFAULT_PROGRAMS;
 
   // 신뢰 후기
