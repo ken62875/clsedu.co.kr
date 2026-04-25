@@ -57,7 +57,20 @@ const Header = () => {
             </div>
             
             <nav className="hidden md:flex flex-shrink-0 items-center justify-center space-x-8">
-              <Link href="/about" className="text-gray-700 hover:text-cls-orange font-semibold transition-colors">학원소개</Link>
+              <div className="relative group">
+                <Link href="/about" className="text-gray-700 hover:text-cls-orange font-semibold transition-colors flex items-center gap-1 py-6">
+                  학원소개
+                  <svg className="w-4 h-4 transition-transform group-hover:rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                  </svg>
+                </Link>
+                <div className="absolute top-16 left-0 mt-2 w-48 bg-white border border-gray-100 rounded-xl shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform origin-top-left -translate-y-2 group-hover:translate-y-0 z-50">
+                  <div className="py-2">
+                    <Link href="/about" className="block px-4 py-2.5 text-sm text-gray-700 hover:bg-slate-50 hover:text-cls-orange font-medium">학원 안내</Link>
+                    <Link href="/about/greetings" className="block px-4 py-2.5 text-sm text-gray-700 hover:bg-slate-50 hover:text-cls-orange font-medium">원장 인사말</Link>
+                  </div>
+                </div>
+              </div>
             <Link href="/teachers" className="text-gray-700 hover:text-cls-orange font-semibold transition-colors">강사소개</Link>
             <div className="relative group">
               <Link href="/curriculum" className="text-gray-700 hover:text-cls-orange font-semibold transition-colors flex items-center gap-1 py-6">
@@ -106,7 +119,13 @@ const Header = () => {
       {/* Mobile Menu Dropdown */}
       <div className={`md:hidden absolute w-full left-0 top-20 bg-white border-b border-gray-100 shadow-lg transition-all duration-300 overflow-hidden ${isMobileMenuOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'}`}>
         <div className="px-4 pt-2 pb-6 space-y-1">
-          <Link href="/about" onClick={() => setIsMobileMenuOpen(false)} className="block px-3 py-3 text-base font-medium text-gray-700 hover:text-cls-orange hover:bg-slate-50 rounded-md">학원소개</Link>
+          <div className="space-y-1">
+            <Link href="/about" onClick={() => setIsMobileMenuOpen(false)} className="block px-3 py-3 text-base font-medium text-gray-700 hover:text-cls-orange hover:bg-slate-50 rounded-md">학원소개</Link>
+            <div className="pl-6 space-y-1 bg-slate-50/50 rounded-lg py-1">
+              <Link href="/about" onClick={() => setIsMobileMenuOpen(false)} className="block px-3 py-2.5 text-sm font-medium text-gray-600 hover:text-cls-orange">학원 안내</Link>
+              <Link href="/about/greetings" onClick={() => setIsMobileMenuOpen(false)} className="block px-3 py-2.5 text-sm font-medium text-gray-600 hover:text-cls-orange">원장 인사말</Link>
+            </div>
+          </div>
           <Link href="/teachers" onClick={() => setIsMobileMenuOpen(false)} className="block px-3 py-3 text-base font-medium text-gray-700 hover:text-cls-orange hover:bg-slate-50 rounded-md">강사소개</Link>
           <div className="space-y-1">
             <Link href="/curriculum" onClick={() => setIsMobileMenuOpen(false)} className="block px-3 py-3 text-base font-medium text-gray-700 hover:text-cls-orange hover:bg-slate-50 rounded-md">교과과정</Link>
