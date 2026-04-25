@@ -1,5 +1,6 @@
 import React from "react";
 import Link from "next/link";
+import Image from "next/image";
 import FadeIn from "@/components/ui/FadeIn";
 
 export const metadata = {
@@ -7,6 +8,9 @@ export const metadata = {
   description:
     "CLS 에듀케이션 원장의 교육 철학과 진심 어린 인사말을 전합니다. 깊이 있는 이해, 따뜻한 마음, 함께하는 성장.",
 };
+
+const DIRECTOR_PHOTO_URL =
+  "https://media.clsedu.co.kr/%E1%84%91%E1%85%B3%E1%84%85%E1%85%A9%E1%84%91%E1%85%B5%E1%86%AF-%E1%84%8E%E1%85%AC%E1%84%80%E1%85%B3%E1%86%B7%E1%84%85%E1%85%A1%E1%86%AB%20%E1%84%8B%E1%85%AF%E1%86%AB%E1%84%8C%E1%85%A1%E1%86%BC%E1%84%82%E1%85%B5%E1%86%B702-800.jpeg";
 
 export default function GreetingsPage() {
   return (
@@ -53,7 +57,7 @@ export default function GreetingsPage() {
                 </h2>
 
                 <p className="text-lg md:text-xl font-semibold text-cls-black mb-10 break-keep">
-                  안녕하세요. CLS 에듀케이션 원장 OOO 입니다.
+                  안녕하세요. CLS 에듀케이션 원장 최금란 입니다.
                 </p>
 
                 <div className="space-y-7 mb-12">
@@ -91,15 +95,26 @@ export default function GreetingsPage() {
                   </div>
                 </div>
 
-                <div className="text-right pr-2 md:pr-6 pt-6 border-t border-slate-100">
-                  <span className="text-xl md:text-2xl font-semibold text-cls-black tracking-wide align-middle">
-                    원장 OOO
-                  </span>
-                  <span
-                    className="inline-flex items-center justify-center w-9 h-9 ml-3 rounded-full border-2 border-red-700 text-red-700 text-xs font-bold align-middle"
-                    aria-hidden="true"
-                  >
-                    印
+                <div className="text-right pr-2 md:pr-10 pt-6 border-t border-slate-100">
+                  <span className="inline-block text-xl md:text-2xl font-semibold text-cls-black tracking-wide leading-none">
+                    원장 최금
+                    <span className="relative inline-block">
+                      란
+                      <Image
+                        src="/director-stamp.png"
+                        alt="대표원장 직인"
+                        width={200}
+                        height={200}
+                        className="absolute pointer-events-none select-none"
+                        style={{
+                          width: "2em",
+                          height: "2em",
+                          right: "-1.4em",
+                          top: "-1.4em",
+                        }}
+                        unoptimized
+                      />
+                    </span>
                   </span>
                 </div>
               </div>
@@ -122,23 +137,16 @@ export default function GreetingsPage() {
                 />
 
                 <div className="relative h-full flex items-center justify-center p-8 md:p-12">
-                  <div className="relative w-full max-w-[280px] lg:max-w-sm aspect-[4/5] rounded-2xl overflow-hidden shadow-2xl bg-gradient-to-br from-slate-200 to-slate-300 flex flex-col items-center justify-center text-slate-500">
-                    <svg
-                      className="w-20 h-20 mb-4 opacity-70"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                      aria-hidden="true"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={1.5}
-                        d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
-                      />
-                    </svg>
-                    <p className="text-sm font-medium">원장님 사진</p>
-                    <p className="text-xs mt-1 opacity-70">(추후 등록 예정)</p>
+                  <div className="relative w-full max-w-[280px] lg:max-w-sm aspect-[4/5] rounded-2xl overflow-hidden shadow-2xl bg-slate-200">
+                    <Image
+                      src={DIRECTOR_PHOTO_URL}
+                      alt="CLS 에듀케이션 대표원장 최금란"
+                      fill
+                      sizes="(max-width: 1024px) 280px, 384px"
+                      className="object-cover"
+                      unoptimized
+                      priority
+                    />
                   </div>
                 </div>
               </div>
