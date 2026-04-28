@@ -92,11 +92,7 @@ const Header = () => {
             <Link href="/story" className="text-gray-700 hover:text-cls-orange font-semibold transition-colors">스토리</Link>
           </nav>
 
-          <div className="flex-1 hidden md:flex justify-end items-center">
-            <Link href="/contact" className="bg-cls-black text-white px-6 py-2.5 rounded-md font-bold hover:bg-cls-black-light transition-colors shadow-md">
-              상담 문의
-            </Link>
-          </div>
+          <div className="flex-1 hidden md:block" />
 
           <div className="md:hidden flex items-center">
             <button 
@@ -150,9 +146,6 @@ const Header = () => {
                 <Link href="/signup" onClick={() => setIsMobileMenuOpen(false)} className="flex-1 text-center border-2 border-cls-orange text-cls-orange px-4 py-2.5 rounded-md text-sm font-bold hover:bg-cls-orange hover:text-white transition-colors">회원가입</Link>
               </div>
             )}
-            <Link href="/contact" onClick={() => setIsMobileMenuOpen(false)} className="block w-full text-center bg-cls-black text-white px-6 py-3 rounded-md font-bold hover:bg-cls-black-light transition-colors shadow-md">
-              상담 문의
-            </Link>
           </div>
         </div>
       </div>

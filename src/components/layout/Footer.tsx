@@ -16,7 +16,7 @@ interface FooterData {
 
 const FALLBACK: FooterData = {
   slogan: "진짜 실력은 속도가 아니라 깊이에서 나옵니다.",
-  description: "초·중·고등학생 대상 수학, 영어, 국어, 과학 전문 보습학원",
+  description: "고등·중등·초등학생 대상 국영수과 단과 및 종합반",
   phone: "02-493-8899",
   hours: "14:00 ~ 22:00",
   address: "서울특별시 중랑구 봉화산로 218\n영창빌딩 7층 (신내동)",

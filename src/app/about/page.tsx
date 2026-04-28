@@ -1,6 +1,9 @@
 import React from "react";
 import KakaoMap from "@/components/ui/KakaoMap";
 import { sanitizeHtml } from "@/lib/sanitize";
+import { Nanum_Brush_Script } from "next/font/google";
+
+const nanumBrushScript = Nanum_Brush_Script({ weight: "400", subsets: ["latin"] });
 
 interface HeroContent {
   title: string;
@@ -214,7 +217,7 @@ export default async function About() {
               </>
             )}
           </h1>
-          <p className="text-xl md:text-2xl text-gray-100 font-light max-w-3xl mx-auto leading-relaxed drop-shadow-md whitespace-pre-line">
+          <p className={`${nanumBrushScript.className} text-4xl sm:text-5xl md:text-6xl text-gray-100 max-w-3xl mx-auto leading-relaxed drop-shadow-md whitespace-pre-line`}>
             {hero.subtitle}
           </p>
         </div>
@@ -225,8 +228,11 @@ export default async function About() {
         <div className="bg-white rounded-2xl shadow-lg p-8 md:p-12 mb-16 relative overflow-hidden">
           <div className="absolute top-0 right-0 w-32 h-32 bg-cls-orange/10 rounded-bl-full"></div>
           <h2 className="text-3xl font-bold text-cls-black mb-6">{intro.heading}</h2>
-          <p className="text-lg text-gray-600 leading-relaxed mb-8 break-keep whitespace-pre-line">
+          <p className="text-lg text-gray-600 leading-relaxed mb-4 break-keep whitespace-pre-line">
             {intro.description}
+          </p>
+          <p className="text-lg text-gray-600 leading-relaxed mb-8 break-keep">
+            사람이 최고의 가치임을 실현하는 진정한 교육 파트너가 되겠습니다.
           </p>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6 bg-slate-50 p-6 rounded-xl border border-slate-100">
             <div>
