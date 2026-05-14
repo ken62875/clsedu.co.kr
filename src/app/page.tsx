@@ -185,39 +185,42 @@ export default async function Home() {
       <CountupStats stats={stats} />
 
       {/* Philosophy Section */}
-      <section className="py-24 bg-white">
+      <section className="py-10 md:py-24 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <FadeIn className="text-center max-w-3xl mx-auto mb-16">
-            <h2 className="text-cls-orange font-bold tracking-widest uppercase mb-2">Philosophy</h2>
-            <h3 className="text-3xl md:text-4xl font-bold text-cls-black mb-6 tracking-tight">
-              "최고의 가치는 사람입니다"
+          <FadeIn className="text-center max-w-3xl mx-auto mb-8 md:mb-16">
+            <h2 className="text-cls-orange font-bold tracking-widest uppercase mb-2 text-xs md:text-base">Philosophy</h2>
+            <h3 className="text-2xl md:text-[2.7rem] font-bold text-cls-black mb-3 md:mb-6 tracking-tight">
+              &ldquo;최고의 가치는 사람입니다&rdquo;
             </h3>
-            <p className="text-lg text-gray-600 leading-relaxed font-light">
-              CLS에듀케이션은 학생 한 명, 한 명을 소중히 여깁니다.<br/>
-              개별화된 관리와 진심 어린 소통으로 학생들의 무한한 잠재력을 이끌어냅니다.
+            <p className="text-sm md:text-lg text-gray-600 leading-relaxed font-light break-keep">
+              CLS에듀케이션은 학생 한 명, 한 명을 소중히 여깁니다.<br />
+              개별화된 관리와 진심 어린 소통으로<br />
+              학생들의 무한한 잠재력을 이끌어냅니다.
             </p>
           </FadeIn>
 
-          <div className="grid md:grid-cols-3 gap-12 mt-16">
+          <div className="grid md:grid-cols-3 gap-3 md:gap-12 mt-8 md:mt-16">
             {philosophy.map((card, i) => (
               <FadeIn
                 key={i}
                 delay={(i + 1) * 100}
-                className="bg-slate-50 rounded-2xl p-8 hover:shadow-xl hover:-translate-y-2 transition-all duration-300 border border-slate-100"
+                className="bg-slate-50 rounded-2xl p-5 md:p-8 hover:shadow-xl hover:-translate-y-2 transition-all duration-300 border border-slate-100"
               >
-                <div
-                  className={`w-14 h-14 ${PHILOSOPHY_ICON_BG[i % PHILOSOPHY_ICON_BG.length]} text-white rounded-full flex items-center justify-center mb-6 shadow-md`}
-                >
-                  {PHILOSOPHY_ICONS[i % PHILOSOPHY_ICONS.length]}
+                <div className="flex items-center gap-3 md:block">
+                  <div
+                    className={`w-10 h-10 md:w-14 md:h-14 flex-shrink-0 ${PHILOSOPHY_ICON_BG[i % PHILOSOPHY_ICON_BG.length]} text-white rounded-full flex items-center justify-center md:mb-6 shadow-md`}
+                  >
+                    {PHILOSOPHY_ICONS[i % PHILOSOPHY_ICONS.length]}
+                  </div>
+                  <h4 className="text-base md:text-xl font-bold text-cls-black md:mb-4">{card.title}</h4>
                 </div>
-                <h4 className="text-xl font-bold text-cls-black mb-4">{card.title}</h4>
                 {isHtmlContent(card.description) ? (
                   <div
-                    className="text-gray-600 leading-relaxed font-light prose prose-sm max-w-none prose-p:text-gray-600 prose-p:leading-relaxed prose-p:font-light"
+                    className="hidden md:block text-gray-600 leading-relaxed font-light prose prose-sm max-w-none prose-p:text-gray-600 prose-p:leading-relaxed prose-p:font-light"
                     dangerouslySetInnerHTML={{ __html: sanitizeHtml(card.description) }}
                   />
                 ) : (
-                  <p className="text-gray-600 leading-relaxed font-light">{card.description}</p>
+                  <p className="hidden md:block text-gray-600 leading-relaxed font-light">{card.description}</p>
                 )}
               </FadeIn>
             ))}
@@ -226,14 +229,14 @@ export default async function Home() {
       </section>
 
       {/* Programs Overview */}
-      <section className="py-24 bg-slate-50">
+      <section className="py-10 md:py-24 bg-slate-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <FadeIn className="flex flex-col md:flex-row justify-between items-end mb-12">
+          <FadeIn className="flex flex-col md:flex-row justify-between items-end mb-6 md:mb-12">
             <div>
-              <h2 className="text-cls-orange font-bold tracking-widest uppercase mb-2">Programs</h2>
-              <h3 className="text-3xl md:text-4xl font-bold text-cls-black tracking-tight">대상별 맞춤 프로그램</h3>
+              <h2 className="text-cls-orange font-bold tracking-widest uppercase mb-1 text-xs md:text-base">Programs</h2>
+              <h3 className="text-2xl md:text-4xl font-bold text-cls-black tracking-tight">대상별 맞춤 프로그램</h3>
             </div>
-            <Link href="/program" className="text-cls-black hover:text-cls-orange font-bold mt-4 md:mt-0 flex items-center transition-colors">
+            <Link href="/program" className="text-cls-black hover:text-cls-orange font-bold mt-2 md:mt-0 flex items-center transition-colors text-sm md:text-base">
               전체 프로그램 보기
               <svg className="w-4 h-4 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
@@ -241,14 +244,14 @@ export default async function Home() {
             </Link>
           </FadeIn>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-8">
             {programs.map((prog, i) => (
               <FadeIn
                 key={i}
                 delay={(i + 1) * 100}
-                className="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 group"
+                className="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 group flex flex-row md:flex-col"
               >
-                <div className="h-48 relative overflow-hidden bg-cls-black/5">
+                <div className="relative w-28 shrink-0 md:w-full md:h-48 overflow-hidden bg-cls-black/5">
                   <Image
                     src={prog.imageUrl}
                     alt={prog.title}
@@ -257,18 +260,18 @@ export default async function Home() {
                     unoptimized
                   />
                 </div>
-                <div className="p-8">
-                  <div className="text-sm text-cls-orange font-bold mb-2">{prog.category}</div>
-                  <h4 className="text-2xl font-bold text-cls-black mb-4">{prog.title}</h4>
+                <div className="p-4 md:p-8 flex-1 flex flex-col justify-center md:block">
+                  <div className="text-xs md:text-sm text-cls-orange font-bold mb-1 md:mb-2">{prog.category}</div>
+                  <h4 className="text-base md:text-2xl font-bold text-cls-black mb-2 md:mb-4 leading-tight">{prog.title}</h4>
                   {isHtmlContent(prog.description) ? (
                     <div
-                      className="text-gray-600 mb-6 font-light h-20 overflow-hidden prose prose-sm max-w-none prose-p:text-gray-600 prose-p:font-light prose-p:my-0"
+                      className="hidden md:block text-gray-600 mb-6 font-light h-20 overflow-hidden prose prose-sm max-w-none prose-p:text-gray-600 prose-p:font-light prose-p:my-0"
                       dangerouslySetInnerHTML={{ __html: sanitizeHtml(prog.description) }}
                     />
                   ) : (
-                    <p className="text-gray-600 mb-6 font-light h-20">{prog.description}</p>
+                    <p className="hidden md:block text-gray-600 mb-6 font-light h-20">{prog.description}</p>
                   )}
-                  <Link href="/program" className="text-cls-black font-semibold hover:text-cls-orange inline-flex items-center">
+                  <Link href="/program" className="text-cls-black font-semibold hover:text-cls-orange inline-flex items-center text-sm md:text-base">
                     자세히 보기 &rarr;
                   </Link>
                 </div>

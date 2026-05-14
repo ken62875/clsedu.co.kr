@@ -7,6 +7,11 @@ import { useAuth } from "@/providers/AuthProvider";
 
 const Header = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [openSection, setOpenSection] = useState<string | null>(null);
+
+  const toggleSection = (section: string) => {
+    setOpenSection((prev) => (prev === section ? null : section));
+  };
   const { isLoggedIn, logout } = useAuth();
 
   return (
@@ -113,24 +118,44 @@ const Header = () => {
       </div>
 
       {/* Mobile Menu Dropdown */}
-      <div className={`md:hidden absolute w-full left-0 top-20 bg-white border-b border-gray-100 shadow-lg transition-all duration-300 overflow-hidden ${isMobileMenuOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'}`}>
+      <div className={`md:hidden absolute w-full left-0 top-20 bg-white border-b border-gray-100 shadow-lg transition-all duration-300 overflow-y-auto ${isMobileMenuOpen ? 'max-h-[calc(100vh-80px)] opacity-100' : 'max-h-0 opacity-0'}`}>
         <div className="px-4 pt-2 pb-6 space-y-1">
           <div className="space-y-1">
-            <Link href="/about" onClick={() => setIsMobileMenuOpen(false)} className="block px-3 py-3 text-base font-medium text-gray-700 hover:text-cls-orange hover:bg-slate-50 rounded-md">학원소개</Link>
-            <div className="pl-6 space-y-1 bg-slate-50/50 rounded-lg py-1">
-              <Link href="/about" onClick={() => setIsMobileMenuOpen(false)} className="block px-3 py-2.5 text-sm font-medium text-gray-600 hover:text-cls-orange">학원 안내</Link>
-              <Link href="/about/greetings" onClick={() => setIsMobileMenuOpen(false)} className="block px-3 py-2.5 text-sm font-medium text-gray-600 hover:text-cls-orange">원장 인사말</Link>
-            </div>
+            <button
+              onClick={() => toggleSection('about')}
+              className="w-full flex items-center justify-between px-3 py-3 text-base font-medium text-gray-700 hover:text-cls-orange hover:bg-slate-50 rounded-md"
+            >
+              학원소개
+              <svg className={`w-4 h-4 transition-transform duration-200 ${openSection === 'about' ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+              </svg>
+            </button>
+            {openSection === 'about' && (
+              <div className="pl-6 space-y-1 bg-slate-50/50 rounded-lg py-1">
+                <Link href="/about" onClick={() => setIsMobileMenuOpen(false)} className="block px-3 py-2.5 text-sm font-medium text-gray-600 hover:text-cls-orange">학원 안내</Link>
+                <Link href="/about/greetings" onClick={() => setIsMobileMenuOpen(false)} className="block px-3 py-2.5 text-sm font-medium text-gray-600 hover:text-cls-orange">원장 인사말</Link>
+              </div>
+            )}
           </div>
           <Link href="/teachers" onClick={() => setIsMobileMenuOpen(false)} className="block px-3 py-3 text-base font-medium text-gray-700 hover:text-cls-orange hover:bg-slate-50 rounded-md">강사소개</Link>
           <div className="space-y-1">
-            <Link href="/curriculum" onClick={() => setIsMobileMenuOpen(false)} className="block px-3 py-3 text-base font-medium text-gray-700 hover:text-cls-orange hover:bg-slate-50 rounded-md">교과과정</Link>
-            <div className="pl-6 space-y-1 bg-slate-50/50 rounded-lg py-1">
-              <Link href="/curriculum/high-school" onClick={() => setIsMobileMenuOpen(false)} className="block px-3 py-2.5 text-sm font-medium text-gray-600 hover:text-cls-orange">고등부</Link>
-              <Link href="/curriculum/middle-school" onClick={() => setIsMobileMenuOpen(false)} className="block px-3 py-2.5 text-sm font-medium text-gray-600 hover:text-cls-orange">중등부</Link>
-              <Link href="/curriculum/elementary-school" onClick={() => setIsMobileMenuOpen(false)} className="block px-3 py-2.5 text-sm font-medium text-gray-600 hover:text-cls-orange">초등부</Link>
-              <Link href="/curriculum/special-program" onClick={() => setIsMobileMenuOpen(false)} className="block px-3 py-2.5 text-sm font-medium text-gray-600 hover:text-cls-orange">특별 프로그램</Link>
-            </div>
+            <button
+              onClick={() => toggleSection('curriculum')}
+              className="w-full flex items-center justify-between px-3 py-3 text-base font-medium text-gray-700 hover:text-cls-orange hover:bg-slate-50 rounded-md"
+            >
+              교과과정
+              <svg className={`w-4 h-4 transition-transform duration-200 ${openSection === 'curriculum' ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+              </svg>
+            </button>
+            {openSection === 'curriculum' && (
+              <div className="pl-6 space-y-1 bg-slate-50/50 rounded-lg py-1">
+                <Link href="/curriculum/high-school" onClick={() => setIsMobileMenuOpen(false)} className="block px-3 py-2.5 text-sm font-medium text-gray-600 hover:text-cls-orange">고등부</Link>
+                <Link href="/curriculum/middle-school" onClick={() => setIsMobileMenuOpen(false)} className="block px-3 py-2.5 text-sm font-medium text-gray-600 hover:text-cls-orange">중등부</Link>
+                <Link href="/curriculum/elementary-school" onClick={() => setIsMobileMenuOpen(false)} className="block px-3 py-2.5 text-sm font-medium text-gray-600 hover:text-cls-orange">초등부</Link>
+                <Link href="/curriculum/special-program" onClick={() => setIsMobileMenuOpen(false)} className="block px-3 py-2.5 text-sm font-medium text-gray-600 hover:text-cls-orange">특별 프로그램</Link>
+              </div>
+            )}
           </div>
           <Link href="/program" onClick={() => setIsMobileMenuOpen(false)} className="block px-3 py-3 text-base font-medium text-gray-700 hover:text-cls-orange hover:bg-slate-50 rounded-md">프로그램</Link>
           <Link href="/story" onClick={() => setIsMobileMenuOpen(false)} className="block px-3 py-3 text-base font-medium text-gray-700 hover:text-cls-orange hover:bg-slate-50 rounded-md">스토리</Link>

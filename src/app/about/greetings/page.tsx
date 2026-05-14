@@ -1,5 +1,4 @@
 import React from "react";
-import Link from "next/link";
 import Image from "next/image";
 import FadeIn from "@/components/ui/FadeIn";
 
@@ -34,8 +33,8 @@ export default function GreetingsPage() {
             원장 <span className="text-cls-orange">인사말</span>
           </h1>
           <p className="text-lg md:text-2xl text-gray-100 font-light max-w-3xl mx-auto leading-relaxed drop-shadow-md break-keep">
-            “공부가 외롭지 않도록, 결과가 두렵지 않도록
-            <br className="hidden sm:block" /> 곁에서 함께 걷는 교육”
+            &ldquo;공부가 외롭지 않도록, 결과가 두렵지 않도록
+            <br className="hidden sm:block" /> 곁에서 함께 걷는 교육&rdquo;
           </p>
         </div>
       </div>
@@ -46,48 +45,62 @@ export default function GreetingsPage() {
           <div className="bg-white rounded-3xl shadow-xl border border-slate-100 overflow-hidden">
             <div className="grid lg:grid-cols-5">
               {/* Text Section */}
-              <div className="lg:col-span-3 p-8 md:p-12 lg:p-16 order-2 lg:order-1">
-                <p className="text-xs sm:text-sm font-semibold text-cls-orange tracking-[0.2em] mb-4">
+              <div className="lg:col-span-3 p-6 pb-3 md:p-12 md:pb-3 lg:p-16 lg:pb-3">
+                <p className="text-xs font-semibold text-cls-orange tracking-[0.2em] mb-3">
                   CLS EDUCATION · GREETINGS
                 </p>
-                <h2 className="text-3xl md:text-4xl lg:text-[2.75rem] font-bold text-cls-black leading-tight mb-10 break-keep">
-                  아이들의 꿈에 날개를 다는
-                  <br />
-                  <span className="text-cls-orange">진심의 교육</span>
+                <h2 className="font-bold text-cls-black leading-tight mb-4 md:mb-10 break-keep whitespace-nowrap">
+                  <span className="block text-xl md:text-4xl lg:text-[2.75rem]">아이들의 꿈에 날개를 다는</span>
+                  <span className="block text-2xl md:text-5xl lg:text-[3.25rem] text-cls-orange">진심의 교육</span>
                 </h2>
 
-                <p className="text-lg md:text-xl font-semibold text-cls-black mb-10 break-keep">
+                {/* 모바일 전용 사진 */}
+                <div className="lg:hidden mb-5 flex justify-center">
+                  <div className="relative w-full max-w-[260px] aspect-[4/5] rounded-2xl overflow-hidden shadow-xl bg-slate-200">
+                    <Image
+                      src={DIRECTOR_PHOTO_URL}
+                      alt="CLS 에듀케이션 대표원장 최금란"
+                      fill
+                      sizes="260px"
+                      className="object-cover"
+                      unoptimized
+                      priority
+                    />
+                  </div>
+                </div>
+
+                <p className="text-sm md:text-xl font-semibold text-cls-black mb-5 md:mb-10 break-keep">
                   안녕하세요. CLS 에듀케이션 원장 최금란 입니다.
                 </p>
 
-                <div className="space-y-7 mb-12">
-                  <div className="border-l-4 border-cls-orange pl-5 py-1">
-                    <h3 className="text-lg md:text-xl font-bold text-cls-black mb-2">
+                <div className="space-y-4 md:space-y-7 mb-5">
+                  <div className="border-l-4 border-cls-orange pl-4 py-1">
+                    <h3 className="text-sm md:text-xl font-bold text-cls-black mb-1 md:mb-2">
                       깊이 있는 이해
                     </h3>
-                    <p className="text-gray-600 leading-relaxed font-light break-keep">
+                    <p className="text-xs md:text-base text-gray-600 leading-relaxed font-light break-keep">
                       단순한 지식 전달을 넘어, 아이들의 마음을 먼저 읽습니다.
                       <br className="hidden md:block" /> 성적 향상의 시작은 학생에 대한 깊은
                       공감에서 시작됩니다.
                     </p>
                   </div>
 
-                  <div className="border-l-4 border-cls-orange pl-5 py-1">
-                    <h3 className="text-lg md:text-xl font-bold text-cls-black mb-2">
+                  <div className="border-l-4 border-cls-orange pl-4 py-1">
+                    <h3 className="text-sm md:text-xl font-bold text-cls-black mb-1 md:mb-2">
                       따뜻한 마음
                     </h3>
-                    <p className="text-gray-600 leading-relaxed font-light break-keep">
+                    <p className="text-xs md:text-base text-gray-600 leading-relaxed font-light break-keep">
                       지치고 힘든 수험 생활 속에서 CLS는 든든한 안식처가 됩니다.
                       <br className="hidden md:block" /> 아이들이 포기하지 않고 끝까지 걸을 수
                       있도록 따뜻하게 동행합니다.
                     </p>
                   </div>
 
-                  <div className="border-l-4 border-cls-orange pl-5 py-1">
-                    <h3 className="text-lg md:text-xl font-bold text-cls-black mb-2">
+                  <div className="border-l-4 border-cls-orange pl-4 py-1">
+                    <h3 className="text-sm md:text-xl font-bold text-cls-black mb-1 md:mb-2">
                       함께하는 성장
                     </h3>
-                    <p className="text-gray-600 leading-relaxed font-light break-keep">
+                    <p className="text-xs md:text-base text-gray-600 leading-relaxed font-light break-keep">
                       데이터가 증명하는 실력과 진심이 담긴 관리가 만날 때,
                       <br className="hidden md:block" /> 우리 아이들은 비로소 스스로 빛나는
                       결과를 만들어냅니다.
@@ -95,32 +108,20 @@ export default function GreetingsPage() {
                   </div>
                 </div>
 
-                <div className="text-right pr-2 md:pr-10 pt-6 border-t border-slate-100">
-                  <span className="inline-block text-xl md:text-2xl font-semibold text-cls-black tracking-wide leading-none">
-                    원장 최금
-                    <span className="relative inline-block">
-                      란
-                      <Image
-                        src="/director-stamp.png"
-                        alt="대표원장 직인"
-                        width={200}
-                        height={200}
-                        className="absolute pointer-events-none select-none"
-                        style={{
-                          width: "2em",
-                          height: "2em",
-                          right: "-1.4em",
-                          top: "-1.4em",
-                        }}
-                        unoptimized
-                      />
-                    </span>
-                  </span>
+                <div className="text-right pr-2 md:pr-10 pt-3 pb-0 border-t border-slate-100">
+                  <Image
+                    src="/director-stamp-sign.png"
+                    alt="원장 최금란"
+                    width={320}
+                    height={120}
+                    className="inline-block w-32 md:w-48"
+                    unoptimized
+                  />
                 </div>
               </div>
 
-              {/* Image / Visual Section */}
-              <div className="lg:col-span-2 relative bg-gradient-to-br from-slate-100 to-slate-50 min-h-[360px] lg:min-h-full order-1 lg:order-2 overflow-hidden">
+              {/* Image / Visual Section (데스크톱 전용) */}
+              <div className="hidden lg:block lg:col-span-2 relative bg-gradient-to-br from-slate-100 to-slate-50 lg:min-h-full overflow-hidden">
                 <span
                   className="absolute -top-6 right-2 text-7xl lg:text-9xl font-black text-slate-200/80 select-none pointer-events-none tracking-tighter"
                   aria-hidden="true"
@@ -129,10 +130,6 @@ export default function GreetingsPage() {
                 </span>
                 <div
                   className="absolute right-6 top-12 w-[78%] h-[78%] bg-cls-orange/10 rounded-3xl pointer-events-none hidden md:block"
-                  aria-hidden="true"
-                />
-                <div
-                  className="absolute bottom-0 left-0 w-32 h-24 lg:w-36 lg:h-28 bg-cls-black pointer-events-none"
                   aria-hidden="true"
                 />
 
@@ -156,73 +153,18 @@ export default function GreetingsPage() {
 
         {/* Quote Section */}
         <FadeIn direction="up" delay={150} duration={800}>
-          <div className="bg-cls-black text-white rounded-3xl p-10 md:p-14 mt-16 text-center shadow-xl relative overflow-hidden">
-            <div className="absolute top-0 right-0 w-full h-full bg-[url('https://images.unsplash.com/photo-1513258496099-481620b4cbdb?q=80&w=2070&auto=format&fit=crop')] bg-cover bg-center opacity-10" />
-            <div className="relative z-10 max-w-3xl mx-auto">
-              <svg
-                className="w-10 h-10 text-cls-orange mx-auto mb-6 opacity-80"
-                fill="currentColor"
-                viewBox="0 0 24 24"
-                aria-hidden="true"
-              >
-                <path d="M9.983 3v7.391c0 5.704-3.731 9.57-8.983 10.609l-.995-2.151c2.432-.917 3.995-3.638 3.995-5.849h-4v-10h9.983zm14.017 0v7.391c0 5.704-3.748 9.571-9 10.609l-.996-2.151c2.433-.917 3.996-3.638 3.996-5.849h-3.983v-10h9.983z" />
-              </svg>
-              <p className="text-xl md:text-2xl font-light leading-relaxed break-keep">
-                “부모님께서 안심하고 맡기실 수 있는 곳,
-                <br className="hidden md:block" /> 아이들에게 좋은 시간으로 남는 곳 — CLS가 그
-                자리를 지키겠습니다.”
+          <div className="rounded-3xl p-7 md:p-14 mt-10 md:mt-16 text-center shadow-xl" style={{ backgroundColor: "#F4EFDF" }}>
+            <div className="max-w-3xl mx-auto space-y-2 md:space-y-3">
+              <p className="text-sm md:text-xl font-light leading-relaxed break-keep text-stone-700">
+                부모님께서 안심하고 맡기실 수 있는 곳
+              </p>
+              <p className="text-sm md:text-xl font-light leading-relaxed break-keep text-stone-700">
+                아이들에게 좋은 시간으로 남는 곳
+              </p>
+              <p className="text-sm md:text-xl font-semibold leading-relaxed break-keep pt-1 text-cls-black">
+                &ldquo;CLS가 그 자리를 지키겠습니다&rdquo;
               </p>
             </div>
-          </div>
-        </FadeIn>
-
-        {/* CTA Cards */}
-        <FadeIn direction="up" delay={250} duration={800}>
-          <div className="grid md:grid-cols-2 gap-6 mt-12">
-            <Link
-              href="/about"
-              className="group bg-white rounded-2xl p-8 shadow-sm hover:shadow-md transition-all border border-slate-100"
-            >
-              <p className="text-sm text-gray-400 mb-2">학원 소개</p>
-              <h3 className="text-xl font-bold text-cls-black group-hover:text-cls-orange transition-colors flex items-center justify-between gap-2">
-                CLS 에듀케이션 안내
-                <svg
-                  className="w-5 h-5 group-hover:translate-x-1 transition-transform"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M17 8l4 4m0 0l-4 4m4-4H3"
-                  />
-                </svg>
-              </h3>
-            </Link>
-            <Link
-              href="/contact"
-              className="group bg-cls-orange rounded-2xl p-8 shadow-sm hover:shadow-md transition-all"
-            >
-              <p className="text-sm text-white/80 mb-2">상담 예약</p>
-              <h3 className="text-xl font-bold text-white flex items-center justify-between gap-2">
-                지금 바로 상담 신청하기
-                <svg
-                  className="w-5 h-5 group-hover:translate-x-1 transition-transform"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M17 8l4 4m0 0l-4 4m4-4H3"
-                  />
-                </svg>
-              </h3>
-            </Link>
           </div>
         </FadeIn>
       </div>

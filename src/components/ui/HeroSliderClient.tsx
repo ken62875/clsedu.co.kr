@@ -2,11 +2,11 @@
 
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
-import { Nanum_Myeongjo } from "next/font/google";
+import { Noto_Sans_KR } from "next/font/google";
 import FadeIn from "@/components/ui/FadeIn";
 
-const nanumMyeongjo = Nanum_Myeongjo({
-  weight: ["400", "700", "800"],
+const notoSansKR = Noto_Sans_KR({
+  weight: ["700", "900"],
   subsets: ["latin"],
 });
 
@@ -27,6 +27,13 @@ export interface SliderSettings {
   transitionSpeed: number;
   transitionEffect: string;
   isRandomized: boolean;
+}
+
+// ─── 부제목 줄바꿈 처리 (백엔드 수정 전 임시 프론트 처리) ──────────────────
+function processSubtitle(text: string): string {
+  return text
+    .replace(/넘어 /g, "넘어\n")
+    .replace(/아닌, /g, "아닌\n");
 }
 
 // ─── Fisher-Yates 셔플 ────────────────────────────────────────────────────────
@@ -85,7 +92,7 @@ export default function HeroSliderClient({
   const isSlideEffect = settings.transitionEffect === "slide";
 
   return (
-    <section className="relative h-[80vh] min-h-[600px] flex items-center justify-center bg-cls-black overflow-hidden">
+    <section className="relative h-[54vh] md:h-[80vh] min-h-[380px] md:min-h-[600px] flex items-center justify-center bg-cls-black overflow-hidden">
       {/* ─── 배경 이미지 레이어 ──────────────────────────────────────────── */}
       {displaySlides.map((slide, index) => {
         const isActive = index === currentIndex;
@@ -142,19 +149,19 @@ export default function HeroSliderClient({
               style={{ animation: "fadeSlideUp 0.7s ease-out forwards" }}
             >
               {currentSlide.title && (
-                <h1 className={`${nanumMyeongjo.className} text-4xl sm:text-5xl md:text-6xl font-extrabold text-white leading-tight tracking-tight mb-5 drop-shadow-lg`}>
+                <h1 className={`${notoSansKR.className} text-2xl sm:text-4xl md:text-6xl font-extrabold text-white leading-snug tracking-tight mb-3 md:mb-5 drop-shadow-lg break-keep`}>
                   {currentSlide.title}
                 </h1>
               )}
               {currentSlide.subtitle && (
-                <p className="text-xl sm:text-2xl text-gray-200 font-light mb-8 max-w-3xl mx-auto leading-relaxed drop-shadow-md">
-                  {currentSlide.subtitle}
+                <p className="text-sm sm:text-2xl text-gray-200 font-light mb-5 md:mb-8 max-w-3xl mx-auto leading-relaxed drop-shadow-md break-keep whitespace-pre-line">
+                  {processSubtitle(currentSlide.subtitle)}
                 </p>
               )}
               {currentSlide.ctaLabel && currentSlide.ctaLink && (
                 <Link
                   href={currentSlide.ctaLink}
-                  className="inline-block px-8 py-4 bg-cls-orange text-white rounded-lg font-bold text-lg shadow-xl hover:bg-orange-600 hover:-translate-y-1 transition-all duration-300"
+                  className="inline-block px-6 py-3 md:px-8 md:py-4 bg-cls-orange text-white rounded-lg font-bold text-sm md:text-lg shadow-xl hover:bg-orange-600 hover:-translate-y-1 transition-all duration-300"
                 >
                   {currentSlide.ctaLabel}
                 </Link>
@@ -166,7 +173,7 @@ export default function HeroSliderClient({
 
       {/* ─── 기본 텍스트 (커스텀 텍스트가 없을 때) ─────────────────────── */}
       {!hasCustomText && (
-        <div className="relative z-10 text-center px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto mt-20">
+        <div className="relative z-10 text-center px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto mt-10 md:mt-20">
           <FadeIn delay={100} duration={800}>
             <span className="inline-block px-4 py-1 rounded-full bg-cls-orange text-white text-sm font-bold tracking-widest mb-6">
               초·중·고 내신 및 입시 전문
@@ -174,24 +181,24 @@ export default function HeroSliderClient({
           </FadeIn>
 
           <FadeIn delay={300} duration={1000}>
-            <h1 className={`${nanumMyeongjo.className} text-4xl sm:text-5xl md:text-6xl font-extrabold text-white leading-tight tracking-tight mb-6 drop-shadow-lg`}>
+            <h1 className={`${notoSansKR.className} text-2xl sm:text-4xl md:text-6xl font-extrabold text-white leading-snug tracking-tight mb-3 md:mb-6 drop-shadow-lg break-keep`}>
               진짜 실력은 <br className="hidden sm:block" />
               <span className="text-cls-orange">속도</span>가 아니라 <span className="text-cls-orange">깊이</span>에서 나옵니다.
             </h1>
           </FadeIn>
 
           <FadeIn delay={500} duration={1000}>
-            <p className="mt-4 text-xl sm:text-2xl text-gray-200 font-light mb-10 max-w-3xl mx-auto leading-relaxed drop-shadow-md">
-              단순히 지식을 전달하는 곳을 넘어,<br className="sm:hidden" />
+            <p className="mt-2 text-sm sm:text-2xl text-gray-200 font-light mb-6 md:mb-10 max-w-3xl mx-auto leading-relaxed drop-shadow-md break-keep">
+              단순히 지식을 전달하는 곳을 넘어,<br />
               아이들의 학습 습관과 마음까지 세심하게 살핍니다.
             </p>
           </FadeIn>
 
           <FadeIn delay={700} duration={1000} className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link href="/program" className="px-8 py-4 bg-transparent border-2 border-white text-white rounded-lg font-bold text-lg hover:bg-white hover:text-cls-black transition-all duration-300">
+            <Link href="/program" className="px-5 py-2.5 md:px-8 md:py-4 bg-transparent border-2 border-white text-white rounded-lg font-bold text-sm md:text-lg hover:bg-white hover:text-cls-black transition-all duration-300">
               프로그램 보기
             </Link>
-            <Link href="/contact" className="px-8 py-4 bg-cls-orange text-white rounded-lg font-bold text-lg shadow-xl hover:bg-orange-600 hover:-translate-y-1 transition-all duration-300">
+            <Link href="/contact" className="px-5 py-2.5 md:px-8 md:py-4 bg-cls-orange text-white rounded-lg font-bold text-sm md:text-lg shadow-xl hover:bg-orange-600 hover:-translate-y-1 transition-all duration-300">
               무료 상담 신청하기
             </Link>
           </FadeIn>

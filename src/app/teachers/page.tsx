@@ -14,25 +14,6 @@ interface Teacher {
 
 // ─── 기본값 (API 실패 시 fallback) ────────────────────────────────────────────
 
-const DEFAULT_DIRECTOR: Teacher = {
-  id: "default-director",
-  name: "최금란",
-  role: "원장 / 입시 총괄",
-  subject: null,
-  isDirector: true,
-  quote:
-    "올바른 방향 설정 없이 속도만 내는 공부는 의미가 없습니다. 학생 한 명 한 명의 잠재력을 정확히 파악하여, 깊이 있는 공부 근육을 길러주는 것이 CLS에듀케이션의 존재 이유입니다.",
-  background: [
-    "학력: 서울 소재 주요 대학 사범대 수학교육과 졸업",
-    "경력: 대치동/목동 대형 학원 입시반 전임 (전)",
-    "실적: 스카이(SKY) 및 메디컬 계열 다수 배출 (20여년 경력)",
-    "철학: 진짜 실력은 속도가 아니라 깊이에서 나옵니다.",
-  ],
-  profileImage:
-    "https://images.unsplash.com/photo-1544717305-2782549b5136?q=80&w=800&auto=format&fit=crop",
-  order: 0,
-};
-
 const DEFAULT_STAFF: Teacher[] = [
   {
     id: "default-1",
@@ -86,48 +67,30 @@ const DEFAULT_STAFF: Teacher[] = [
 
 // ─── 서버사이드 데이터 fetch ───────────────────────────────────────────────────
 
-async function fetchTeachers(): Promise<{ directors: Teacher[]; staff: Teacher[] }> {
+async function fetchStaff(): Promise<Teacher[]> {
   const apiUrl = process.env.NEXT_PUBLIC_API_URL;
-  if (!apiUrl) return { directors: [DEFAULT_DIRECTOR], staff: DEFAULT_STAFF };
+  if (!apiUrl) return DEFAULT_STAFF;
 
   try {
     const res = await fetch(`${apiUrl}/api/site-teachers`, {
       next: { revalidate: 300 },
     });
-    if (!res.ok) return { directors: [DEFAULT_DIRECTOR], staff: DEFAULT_STAFF };
+    if (!res.ok) return DEFAULT_STAFF;
 
     const { teachers } = await res.json();
-    if (!teachers?.length) return { directors: [DEFAULT_DIRECTOR], staff: DEFAULT_STAFF };
+    if (!teachers?.length) return DEFAULT_STAFF;
 
-    const directors = teachers.filter((t: Teacher) => t.isDirector);
     const staff = teachers.filter((t: Teacher) => !t.isDirector);
-
-    return {
-      directors: directors.length > 0 ? directors : [DEFAULT_DIRECTOR],
-      staff,
-    };
+    return staff.length > 0 ? staff : DEFAULT_STAFF;
   } catch {
-    return { directors: [DEFAULT_DIRECTOR], staff: DEFAULT_STAFF };
+    return DEFAULT_STAFF;
   }
-}
-
-// ─── 학력/경력 항목 파싱 ─────────────────────────────────────────────────────
-
-function parseBackground(item: string): { label: string; content: string } {
-  const colonIdx = item.indexOf(":");
-  if (colonIdx > 0 && colonIdx < 5) {
-    return {
-      label: item.slice(0, colonIdx).trim(),
-      content: item.slice(colonIdx + 1).trim(),
-    };
-  }
-  return { label: "", content: item };
 }
 
 // ─── 컴포넌트 ─────────────────────────────────────────────────────────────────
 
 export default async function Teachers() {
-  const { directors, staff } = await fetchTeachers();
+  const staff = await fetchStaff();
 
   return (
     <div className="min-h-screen bg-white">
@@ -149,60 +112,6 @@ export default async function Teachers() {
       </div>
 
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
-
-        {/* Director / Head Teacher */}
-        <div className="mb-24">
-          <div className="flex items-center gap-4 mb-10 border-l-4 border-cls-orange pl-4">
-            <h2 className="text-3xl font-bold text-cls-black">원장</h2>
-            <span className="text-gray-400 font-light hidden sm:inline-block">Head Instructor</span>
-          </div>
-
-          <div className="space-y-10">
-            {directors.map((director) => (
-              <div key={director.id} className="bg-white rounded-3xl shadow-2xl overflow-hidden flex flex-col md:flex-row border border-gray-100 group">
-                <div className="md:w-2/5 md:bg-gray-50 flex items-center justify-center p-0 relative overflow-hidden">
-                  <div className="w-full h-[400px] md:h-full bg-slate-200 relative">
-                    <div className="absolute inset-0 bg-gradient-to-t from-cls-black/80 to-transparent z-10 md:hidden"></div>
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img
-                      src={director.profileImage ?? "https://images.unsplash.com/photo-1544717305-2782549b5136?q=80&w=800&auto=format&fit=crop"}
-                      alt={`${director.name} 프로필`}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-                    />
-                  </div>
-                </div>
-                <div className="md:w-3/5 p-10 md:p-14 relative bg-white">
-                  <div className="absolute top-14 right-14 text-6xl text-gray-100 font-serif leading-none opacity-50 hidden md:block">&ldquo;</div>
-                  <h3 className="text-cls-orange font-bold text-lg mb-2">{director.role}</h3>
-                  <h4 className="text-4xl font-extrabold text-cls-black mb-6">
-                    {director.name}
-                  </h4>
-                  {director.quote && (
-                    <p className="text-xl text-gray-700 italic font-light mb-8 break-keep leading-relaxed relative z-10">
-                      &ldquo;{director.quote}&rdquo;
-                    </p>
-                  )}
-                  <div className="space-y-4 text-gray-600 font-light">
-                    {director.background.map((item, i) => {
-                      const { label, content } = parseBackground(item);
-                      return (
-                        <div key={i} className="flex items-start gap-3">
-                          <span className="text-cls-orange mt-1">✓</span>
-                          <p>
-                            {label && (
-                              <span className="font-semibold text-cls-black mr-2">{label}:</span>
-                            )}
-                            {content}
-                          </p>
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
 
         {/* Subject Instructors Grid */}
         {staff.length > 0 && (
