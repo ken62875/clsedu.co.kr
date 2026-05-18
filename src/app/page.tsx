@@ -3,6 +3,7 @@ import Link from "next/link";
 import HeroSlider from "@/components/ui/HeroSlider";
 import FadeIn from "@/components/ui/FadeIn";
 import CountupStats, { type StatData } from "@/components/ui/CountupStats";
+import ReviewCarousel from "@/components/ui/ReviewCarousel";
 import { sanitizeHtml } from "@/lib/sanitize";
 
 // BlockNote 에디터가 생성한 HTML인지, 순수 텍스트인지 판별
@@ -60,8 +61,48 @@ const DEFAULT_PROGRAMS = [
   },
 ];
 
-const DEFAULT_TRUST_REVIEW =
-  "아이가 학원 가는 걸 즐거워해요. 무엇보다 우리 아이가 오늘 무엇을 배웠고 어떻게 변하고 있는지 정기적으로 공유해주셔서 정말 안심이 됩니다.";
+const DEFAULT_REVIEWS = [
+  {
+    text: "아이가 배우는 기쁨을 알게 됐어요.",
+    author: "- 중2 김OO 학생 학부모님 -",
+  },
+  {
+    text: "작은 성취도 놓치지 않고 칭찬해 주시는 선생님 덕분에, 아이가 항상 학원에 있던 일을 자랑해요.",
+    author: "- 초6 O연O 학생 학부모님 -",
+  },
+  {
+    text: "공부도 좋지만 선생님들의 열정에 저도 같이 공부를 열심히 하게 돼요.",
+    author: "- 고2 윤OO 학생 -",
+  },
+  {
+    text: "성적이 오른 것보다, 아이 스스로 공부하려는 태도가 생긴 게 더 감사해요.",
+    author: "- 중1 박OO 학생 학부모님 -",
+  },
+  {
+    text: "선생님이 아이 이름을 부르며 먼저 말 걸어주실 때마다, 여기가 맞다 싶었어요.",
+    author: "- 초5 이OO 학생 학부모님 -",
+  },
+  {
+    text: "내신 대비 자료가 정말 꼼꼼해서 시험 전 불안함이 확 줄었어요.",
+    author: "- 중3 최OO 학생 -",
+  },
+  {
+    text: "상담 때 제 걱정을 먼저 알아봐 주셔서 믿고 맡길 수 있었어요.",
+    author: "- 고1 정OO 학생 학부모님 -",
+  },
+  {
+    text: "진도보다 이해를 먼저 물어봐 주는 선생님 덕분에 자신감이 생겼어요.",
+    author: "- 중2 강OO 학생 -",
+  },
+  {
+    text: "다른 학원은 선생님 얼굴도 모르고 다녔는데, CLS는 달랐어요.",
+    author: "- 초4 손OO 학생 학부모님 -",
+  },
+  {
+    text: "수능 끝나고 제일 먼저 연락드린 곳이 여기예요. 정말 감사합니다.",
+    author: "- 재수 한OO 학생 -",
+  },
+];
 
 interface CtaData {
   title: string;
@@ -73,8 +114,8 @@ interface CtaData {
 const DEFAULT_CTA: CtaData = {
   title: "우리 아이의 변화, 지금부터 시작하세요.",
   description:
-    "아이가 스스로 '해냈다'는 변화를 느낄 수 있도록 CLS가 끝까지 함께 걷겠습니다.",
-  buttonText: "1:1 상담 및 레벨 테스트 예약",
+    "아이가 스스로 '할 수 있다'는\n변화를 느낄 수 있도록\nCLS 에듀케이션이 끝까지 함께 하겠습니다.",
+  buttonText: "상담 및 레벨 테스트 예약",
   buttonLink: "/contact",
 };
 
@@ -111,12 +152,11 @@ async function fetchSection<T>(section: string, fallback: T): Promise<T> {
 
 export default async function Home() {
   // 병렬 fetch
-  const [statsItems, philosophyItems, programItems, trustItems, ctaItems] =
+  const [statsItems, philosophyItems, programItems, ctaItems] =
     await Promise.all([
       fetchSection("stats", null),
       fetchSection("home_philosophy", null),
       fetchSection("home_programs", null),
-      fetchSection("home_trust", null),
       fetchSection("home_cta", null),
     ]);
 
@@ -157,12 +197,6 @@ export default async function Home() {
         )
         .map((i) => i.data)
     : DEFAULT_PROGRAMS;
-
-  // 신뢰 후기
-  const trustReview: string =
-    trustItems && (trustItems as { data: { content: string } }[]).length > 0
-      ? (trustItems as { data: { content: string } }[])[0].data.content
-      : DEFAULT_TRUST_REVIEW;
 
   // 하단 CTA 배너
   const ctaRaw = (ctaItems as { key: string; data: Partial<CtaData> }[] | null)?.find(
@@ -228,10 +262,21 @@ export default async function Home() {
         </div>
       </section>
 
+      {/* Trust & Review Section */}
+      <section className="py-10 md:py-24 bg-cls-black text-white text-center">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <FadeIn>
+            <h2 className="text-lg md:text-3xl font-bold mb-2 break-keep">CLS 에듀케이션을 선택하는 이유</h2>
+            <p className="text-xs md:text-sm text-cls-orange font-bold mb-6 md:mb-10">- 학부모님 수강 후기 중 -</p>
+            <ReviewCarousel reviews={DEFAULT_REVIEWS} />
+          </FadeIn>
+        </div>
+      </section>
+
       {/* Programs Overview */}
       <section className="py-10 md:py-24 bg-slate-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <FadeIn className="flex flex-col md:flex-row justify-between items-end mb-6 md:mb-12">
+          <FadeIn className="flex flex-col md:flex-row justify-between items-start md:items-end mb-6 md:mb-12">
             <div>
               <h2 className="text-cls-orange font-bold tracking-widest uppercase mb-1 text-xs md:text-base">Programs</h2>
               <h3 className="text-2xl md:text-4xl font-bold text-cls-black tracking-tight">대상별 맞춤 프로그램</h3>
@@ -281,62 +326,29 @@ export default async function Home() {
         </div>
       </section>
 
-      {/* Trust & Review Section */}
-      <section className="py-24 bg-cls-black text-white text-center">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <FadeIn>
-            <h2 className="text-3xl font-bold mb-12">CLS 에듀케이션을 선택하는 이유</h2>
-            <div className="bg-white/10 rounded-2xl p-8 md:p-12 backdrop-blur-sm border border-white/20 relative">
-              <svg className="absolute top-6 left-6 w-12 h-12 text-cls-orange opacity-50" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z"/>
-              </svg>
-              {isHtmlContent(trustReview) ? (
-                <div className="text-xl md:text-2xl font-light italic leading-relaxed mb-6 relative z-10 px-8 prose prose-invert max-w-none prose-p:text-white prose-p:font-light prose-p:italic prose-p:leading-relaxed prose-p:my-0">
-                  <span aria-hidden>&ldquo;</span>
-                  <span dangerouslySetInnerHTML={{ __html: sanitizeHtml(trustReview) }} />
-                  <span aria-hidden>&rdquo;</span>
-                </div>
-              ) : (
-                <p className="text-xl md:text-2xl font-light italic leading-relaxed mb-6 relative z-10 px-8">
-                  &ldquo;{trustReview}&rdquo;
-                </p>
-              )}
-              <p className="font-bold text-cls-orange">- 학부모님 수강 후기 중 -</p>
-            </div>
-          </FadeIn>
-        </div>
-      </section>
-
       {/* Final CTA */}
-      <section className="py-20 bg-cls-orange">
+      <section className="py-10 md:py-20 bg-cls-orange">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-white">
           <FadeIn direction="up" duration={1000}>
-            <h2 className="text-3xl md:text-4xl font-bold mb-6 tracking-tight">
+            <h2 className="text-xl md:text-4xl font-bold mb-4 md:mb-6 tracking-tight break-keep">
               {cta.title}
             </h2>
-            {isHtmlContent(cta.description) ? (
-              <div
-                className="text-lg md:text-xl mb-10 opacity-90 font-light prose prose-invert max-w-none prose-p:text-white prose-p:font-light prose-p:my-0"
-                dangerouslySetInnerHTML={{ __html: sanitizeHtml(cta.description) }}
-              />
-            ) : (
-              <p className="text-lg md:text-xl mb-10 opacity-90 font-light">
-                {cta.description}
-              </p>
-            )}
+            <p className="text-sm md:text-xl mb-7 md:mb-10 opacity-90 font-light whitespace-pre-line">
+              {"아이가 스스로 '할 수 있다'는\n변화를 느낄 수 있도록\nCLS 에듀케이션이 끝까지 함께 하겠습니다."}
+            </p>
             {isExternalCtaLink ? (
               <a
                 href={cta.buttonLink}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-block px-10 py-5 bg-white text-cls-black rounded-xl font-extrabold text-xl shadow-2xl hover:bg-slate-50 hover:scale-105 transition-all duration-300"
+                className="inline-block px-6 py-3 md:px-10 md:py-5 bg-white text-cls-black rounded-xl font-bold text-sm md:text-xl shadow-2xl hover:bg-slate-50 hover:scale-105 transition-all duration-300"
               >
                 {cta.buttonText}
               </a>
             ) : (
               <Link
                 href={cta.buttonLink}
-                className="inline-block px-10 py-5 bg-white text-cls-black rounded-xl font-extrabold text-xl shadow-2xl hover:bg-slate-50 hover:scale-105 transition-all duration-300"
+                className="inline-block px-6 py-3 md:px-10 md:py-5 bg-white text-cls-black rounded-xl font-bold text-sm md:text-xl shadow-2xl hover:bg-slate-50 hover:scale-105 transition-all duration-300"
               >
                 {cta.buttonText}
               </Link>

@@ -1,6 +1,7 @@
 import React from "react";
 import KakaoMap from "@/components/ui/KakaoMap";
 import { sanitizeHtml } from "@/lib/sanitize";
+import FadeIn from "@/components/ui/FadeIn";
 import { Nanum_Brush_Script } from "next/font/google";
 
 const nanumBrushScript = Nanum_Brush_Script({ weight: "400", subsets: ["latin"] });
@@ -43,7 +44,7 @@ const DEFAULT_HERO: HeroContent = {
   title: "About",
   titleHighlight: "CLS",
   subtitle:
-    "“공부가 외롭지 않도록, 결과가 두렵지 않도록\n곁에서 함께 걷는 교육”",
+    "\"공부가 외롭지 않도록, 결과가 두렵지 않도록\n곁에서 함께 걷는 교육\"",
 };
 
 const DEFAULT_INTRO: IntroContent = {
@@ -225,31 +226,31 @@ export default async function About() {
 
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 -mt-10">
         {/* Intro Card */}
-        <div className="bg-white rounded-2xl shadow-lg p-8 md:p-12 mb-16 relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-32 h-32 bg-cls-orange/10 rounded-bl-full"></div>
-          <h2 className="text-3xl font-bold text-cls-black mb-6">{intro.heading}</h2>
-          <p className="text-lg text-gray-600 leading-relaxed mb-4 break-keep whitespace-pre-line">
+        <div className="bg-white rounded-2xl shadow-lg p-5 md:p-12 mb-10 md:mb-16 relative overflow-hidden">
+          <div className="absolute top-0 right-0 w-24 h-24 md:w-32 md:h-32 bg-cls-orange/10 rounded-bl-full"></div>
+          <h2 className="text-xl md:text-3xl font-bold text-cls-black mb-3 md:mb-6 text-center">{intro.heading}</h2>
+          <p className="text-sm md:text-lg text-gray-600 leading-relaxed mb-2 md:mb-4 break-keep whitespace-pre-line text-center">
             {intro.description}
           </p>
-          <p className="text-lg text-gray-600 leading-relaxed mb-8 break-keep">
-            사람이 최고의 가치임을 실현하는 진정한 교육 파트너가 되겠습니다.
+          <p className="text-sm md:text-lg text-gray-600 leading-relaxed mb-5 md:mb-8 whitespace-pre-line text-center">
+            {"사람이 최고의 가치임을 실현하는\n진정한 교육 파트너가 되겠습니다."}
           </p>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 bg-slate-50 p-6 rounded-xl border border-slate-100">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-6 bg-slate-50 p-4 md:p-6 rounded-xl border border-slate-100">
             <div>
-              <p className="text-sm text-gray-400 mb-1">위치</p>
-              <p className="font-semibold text-cls-black">{basicInfo.location}</p>
+              <p className="text-xs text-gray-400 mb-0.5">위치</p>
+              <p className="text-sm md:text-base font-semibold text-cls-black">{basicInfo.location}</p>
             </div>
             <div>
-              <p className="text-sm text-gray-400 mb-1">대상</p>
-              <p className="font-semibold text-cls-black">{basicInfo.target}</p>
+              <p className="text-xs text-gray-400 mb-0.5">대상</p>
+              <p className="text-sm md:text-base font-semibold text-cls-black">{basicInfo.target}</p>
             </div>
             <div>
-              <p className="text-sm text-gray-400 mb-1">과목</p>
-              <p className="font-semibold text-cls-black">{basicInfo.subjects}</p>
+              <p className="text-xs text-gray-400 mb-0.5">과목</p>
+              <p className="text-sm md:text-base font-semibold text-cls-black">{basicInfo.subjects}</p>
             </div>
             <div>
-              <p className="text-sm text-gray-400 mb-1">특징</p>
-              <p className="font-semibold text-cls-black">{basicInfo.features}</p>
+              <p className="text-xs text-gray-400 mb-0.5">특징</p>
+              <p className="text-sm md:text-base font-semibold text-cls-black">{basicInfo.features}</p>
             </div>
           </div>
         </div>
@@ -259,26 +260,26 @@ export default async function About() {
           CLS에듀케이션 <span className="text-cls-orange">교육 철학</span>
         </h3>
 
-        <div className="space-y-6 mb-20">
+        <div className="space-y-3 md:space-y-6 mb-12 md:mb-20">
           {philosophies.map((p, i) => (
             <div
               key={p.number}
-              className="bg-white rounded-2xl p-8 shadow-sm hover:shadow-md transition-shadow flex flex-col md:flex-row gap-8 items-center border border-slate-100"
+              className="bg-white rounded-2xl p-4 md:p-8 shadow-sm hover:shadow-md transition-shadow flex flex-row md:flex-col gap-4 md:gap-8 items-center md:items-start border border-slate-100"
             >
               <div
-                className={`w-16 h-16 shrink-0 ${PHILOSOPHY_COLORS[i % PHILOSOPHY_COLORS.length]} text-white rounded-full flex items-center justify-center text-2xl font-bold shadow-md`}
+                className={`w-10 h-10 md:w-16 md:h-16 shrink-0 ${PHILOSOPHY_COLORS[i % PHILOSOPHY_COLORS.length]} text-white rounded-full flex items-center justify-center text-base md:text-2xl font-bold shadow-md`}
               >
                 {p.number}
               </div>
-              <div>
-                <h4 className="text-xl font-bold text-cls-black mb-3">{p.title}</h4>
+              <div className="flex-1">
+                <h4 className="text-sm md:text-xl font-bold text-cls-black md:mb-3 whitespace-pre-line">{p.title.replace(' (', '\n(')}</h4>
                 {isHtmlContent(p.content) ? (
                   <div
-                    className="text-gray-600 leading-relaxed font-light story-content"
+                    className="hidden md:block text-gray-600 leading-relaxed font-light story-content"
                     dangerouslySetInnerHTML={{ __html: sanitizeHtml(p.content) }}
                   />
                 ) : (
-                  <p className="text-gray-600 leading-relaxed font-light break-keep">{p.content}</p>
+                  <p className="hidden md:block text-gray-600 leading-relaxed font-light break-keep">{p.content}</p>
                 )}
               </div>
             </div>
@@ -286,68 +287,124 @@ export default async function About() {
         </div>
 
         {/* Promise Section */}
-        <div className="bg-cls-black text-white rounded-3xl p-10 md:p-16 mb-20 text-center shadow-xl relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-full h-full bg-[url('https://images.unsplash.com/photo-1513258496099-481620b4cbdb?q=80&w=2070&auto=format&fit=crop')] bg-cover bg-center opacity-10"></div>
-          <div className="relative z-10">
-            <h3 className="text-3xl font-bold mb-8 text-cls-orange">CLS에듀케이션의 약속</h3>
-            <div className="space-y-6 text-lg font-light leading-relaxed max-w-4xl mx-auto opacity-90 break-keep">
-              {isHtmlContent(promise) ? (
-                <div
-                  className="about-promise-content"
-                  dangerouslySetInnerHTML={{ __html: sanitizeHtml(promise) }}
-                />
-              ) : (
-                promiseParagraphs.map((para, i) => (
-                  <p
-                    key={i}
-                    className={
-                      i === promiseParagraphs.length - 1
-                        ? "font-medium text-white italic mt-8 text-xl opacity-100"
-                        : ""
-                    }
-                  >
-                    {para}
-                  </p>
-                ))
-              )}
-            </div>
+        <div className="bg-cls-black text-white rounded-3xl px-5 py-10 md:p-16 mb-12 md:mb-20 shadow-xl overflow-hidden">
+          <h3 className="text-xl md:text-3xl font-bold mb-6 md:mb-10 text-cls-orange text-center">
+            CLS에듀케이션의 약속
+          </h3>
+
+          {/* 약속 카드 3개 — 좌우 교차 슬라이드인, 텍스트는 모두 왼쪽 정렬 */}
+          <div className="space-y-4 md:space-y-5 mb-6 md:mb-8">
+            {([
+              "결과보다 아이의 '마음'을 먼저 살피겠습니다.",
+              "모든 아이가 빛날 수 있도록\n'진심을 다하는 길잡이'가 되겠습니다.",
+              "지식보다 '사람됨'의 가치를\n먼저 가르치겠습니다.",
+            ] as const).map((text, i) => {
+              const fromLeft = i % 2 === 0;
+              return (
+                <FadeIn key={i} direction={fromLeft ? "left" : "right"} delay={i * 120} duration={700}>
+                  <div className="flex gap-3 items-start bg-white/5 rounded-2xl px-4 py-4 md:px-6 md:py-5 border-l-4 border-cls-orange">
+                    <span className="text-cls-orange text-2xl md:text-3xl font-bold leading-none mt-0.5 select-none shrink-0">&ldquo;</span>
+                    <p className="text-sm md:text-lg font-light leading-relaxed break-keep text-white/90 whitespace-pre-line">
+                      {text}
+                    </p>
+                  </div>
+                </FadeIn>
+              );
+            })}
           </div>
+
+          {/* 구분선 + 결론 */}
+          <FadeIn direction="up" delay={400} duration={700}>
+            <div className="border-t border-white/20 pt-5 md:pt-6 text-center">
+              <p className="text-sm md:text-lg font-bold text-white break-keep">
+                사람이 미래이며 사람이 희망입니다.
+              </p>
+            </div>
+          </FadeIn>
         </div>
 
         {/* Location Section */}
         <div className="bg-white rounded-2xl shadow-sm p-8 md:p-12 border border-slate-100">
-          <h3 className="text-2xl font-bold text-cls-black mb-8 border-b pb-4">찾아오시는 길</h3>
-          <div className="grid md:grid-cols-2 gap-10">
-            <div className="rounded-xl overflow-hidden">
-              <KakaoMap />
-            </div>
-            <div className="space-y-6">
-              <div>
-                <h4 className="font-bold text-cls-black text-lg mb-2">주소 (Address)</h4>
-                <p className="text-gray-600 font-light">{basicInfo.address}</p>
+          <h3 className="text-xl md:text-2xl font-bold text-cls-black mb-5 border-b pb-4">찾아오시는 길</h3>
+          <div className="grid md:grid-cols-2 gap-6 md:gap-10">
+            <KakaoMap />
+            <div className="space-y-3 text-sm md:text-base">
+              <div className="flex items-start gap-3">
+                <span className="font-bold text-cls-black shrink-0 w-10">주소</span>
+                <a
+                  href="https://naver.me/5JpUNnYq"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-cls-orange font-semibold hover:underline"
+                >
+                  서울시 중랑구 봉화산로 218 영창빌딩 7층
+                </a>
               </div>
-              <div>
-                <h4 className="font-bold text-cls-black text-lg mb-2">교통편 (Transport)</h4>
-                <ul className="text-gray-600 space-y-2 list-disc list-inside font-light">
-                  <li>
-                    <strong>지하철:</strong> {basicInfo.subway}
-                  </li>
-                  <li>
-                    <strong>버스:</strong> {basicInfo.bus}
-                  </li>
-                  <li>
-                    <strong>주차:</strong> {basicInfo.parking}
-                  </li>
-                </ul>
+              <div className="flex items-center gap-3">
+                <span className="font-bold text-cls-black shrink-0 w-10">전화</span>
+                <a href="tel:0507-1443-8908" className="text-cls-orange font-semibold hover:underline">
+                  0507-1443-8908
+                </a>
               </div>
-              <div>
-                <h4 className="font-bold text-cls-black text-lg mb-2">상담 문의 (Contact)</h4>
-                <p className="text-gray-600 font-light">
-                  📞 {basicInfo.phone} ({basicInfo.hours})
-                  <br />
-                  <br />
-                  {basicInfo.kakao}
-                </p>
+              <div className="flex items-start gap-3">
+                <span className="font-bold text-cls-black shrink-0 w-10">시간</span>
+                <span className="text-gray-600 font-light">{basicInfo.hours}</span>
+              </div>
+              <div className="flex items-start gap-3">
+                <span className="font-bold text-cls-black shrink-0 w-10">주차</span>
+                <span className="text-gray-600 font-light">{basicInfo.parking}</span>
+              </div>
+
+              {/* 길찾기 버튼 */}
+              <div className="pt-3 border-t border-slate-100 space-y-2">
+                {/* 대중교통 */}
+                <a
+                  href="https://map.naver.com/p/directions/-/entry/place/1381304977/-/transit"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-2.5 w-full bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 rounded-xl px-4 py-3 transition-colors"
+                >
+                  <svg className="w-5 h-5 text-emerald-600 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
+                    <rect x="4" y="3" width="16" height="13" rx="2"/>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M4 9h16M9 16l-1.5 3M15 16l1.5 3M9 12h.01M15 12h.01"/>
+                  </svg>
+                  <span className="font-semibold text-sm text-emerald-700">대중교통으로 찾아오기</span>
+                  <svg className="w-4 h-4 ml-auto text-emerald-400 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7"/>
+                  </svg>
+                </a>
+
+                {/* 네비게이션 */}
+                <div>
+                  <p className="text-xs text-gray-400 font-medium mb-1.5">네비게이션</p>
+                  <div className="grid grid-cols-3 gap-2">
+                    <a
+                      href="https://map.naver.com/p/directions/-/entry/place/1381304977/-/car"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex flex-col items-center gap-1 bg-[#03C75A] hover:opacity-90 rounded-xl py-3 transition-opacity"
+                    >
+                      <span className="text-base font-black text-white leading-none">N</span>
+                      <span className="text-xs font-bold text-white">네이버</span>
+                    </a>
+                    <a
+                      href="tmap://route?goalname=CLS%EC%97%90%EB%93%80%EC%BC%80%EC%9D%B4%EC%85%98%ED%95%99%EC%9B%90&goalx=127.0843&goaly=37.6069"
+                      className="flex flex-col items-center gap-1 bg-[#E8384F] hover:opacity-90 rounded-xl py-3 transition-opacity"
+                    >
+                      <span className="text-base font-black text-white leading-none">T</span>
+                      <span className="text-xs font-bold text-white">T맵</span>
+                    </a>
+                    <a
+                      href="https://map.kakao.com/link/to/CLS%EC%97%90%EB%93%80%EC%BC%80%EC%9D%B4%EC%85%98%ED%95%99%EC%9B%90,37.6069,127.0843"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex flex-col items-center gap-1 bg-[#FEE500] hover:opacity-90 rounded-xl py-3 transition-opacity"
+                    >
+                      <span className="text-base font-black text-[#3C1E1E] leading-none">K</span>
+                      <span className="text-xs font-bold text-[#3C1E1E]">카카오내비</span>
+                    </a>
+                  </div>
+                </div>
               </div>
             </div>
           </div>

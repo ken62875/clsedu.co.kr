@@ -239,3 +239,23 @@ body {
 .about-promise-content i {
   font-style: italic;
 }
+
+/* ── 후기 마퀴 슬라이드 ───────────────────────────────────────── */
+@keyframes review-marquee {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+
+.review-marquee-track {
+  animation: review-marquee 50s linear infinite;
+}
+
+.review-marquee-track:hover {
+  animation-play-state: paused;
+}
+
+@keyframes write-on {
+  from { clip-path: inset(0 100% 0 0); }
+  to   { clip-path: inset(0 0% 0 0); }
+}
+

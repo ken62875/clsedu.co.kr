@@ -49,9 +49,9 @@ const Footer = async () => {
   return (
     <footer className="bg-cls-black text-white pt-16 pb-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-8 mb-6 md:mb-12 items-start">
           <div>
-            <div className="mb-6 bg-white/10 p-4 rounded-lg inline-block">
+            <div className="mb-4 bg-white/10 p-4 rounded-lg inline-block">
               <Image
                 src="/logo-clsedu-landscape.webp"
                 alt="CLS 에듀케이션 로고"
@@ -61,31 +61,31 @@ const Footer = async () => {
                 unoptimized
               />
             </div>
-            <p className="text-gray-300 mb-4 leading-relaxed font-light">
+            <p className="text-sm text-gray-300 leading-relaxed font-light">
               {f.slogan}<br />
               {f.description}
             </p>
           </div>
           <div>
-            <h4 className="text-lg font-semibold mb-4 text-cls-orange">Contact Us</h4>
-            <ul className="space-y-2 text-gray-300 font-light">
+            <h4 className="text-base font-semibold mb-3 text-cls-orange">Contact Us</h4>
+            <ul className="space-y-1.5 text-gray-300 font-light text-sm">
               <li className="flex items-start">
-                <span className="w-20 font-medium">상담전화:</span>
+                <span className="w-20 font-medium shrink-0">상담전화:</span>
                 <span>{f.phone}</span>
               </li>
               <li className="flex items-start">
-                <span className="w-20 font-medium">상담시간:</span>
+                <span className="w-20 font-medium shrink-0">상담시간:</span>
                 <span>{f.hours}</span>
               </li>
               <li className="flex items-start">
-                <span className="w-20 font-medium">학원주소:</span>
+                <span className="w-20 font-medium shrink-0">학원주소:</span>
                 <span style={{ whiteSpace: "pre-line" }}>{f.address}</span>
               </li>
             </ul>
           </div>
           <div>
-            <h4 className="text-lg font-semibold mb-4 text-cls-orange">Business Info</h4>
-            <ul className="space-y-2 text-gray-300 font-light">
+            <h4 className="text-base font-semibold mb-3 text-cls-orange">Business Info</h4>
+            <ul className="space-y-1.5 text-gray-300 font-light text-sm">
               <li><span className="font-medium">상호명:</span> {f.bizName}</li>
               <li><span className="font-medium">대표자:</span> {f.bizOwner}</li>
               <li><span className="font-medium">사업자번호:</span> {f.bizNumber}</li>
@@ -94,7 +94,7 @@ const Footer = async () => {
           </div>
         </div>
 
-        <div className="border-t border-gray-800 pt-8 mt-8 flex flex-col md:flex-row justify-between items-center text-sm text-gray-500 font-light gap-4">
+        <div className="border-t border-gray-800 pt-8 mt-8 flex flex-col md:flex-row justify-between items-center text-xs text-gray-500 font-light gap-4">
           <p>COPYRIGHT © {new Date().getFullYear()} CLS EDUCATION. ALL RIGHTS RESERVED.</p>
           <div className="flex space-x-6">
             <Link href="#" className="hover:text-white transition-colors">이용약관</Link>

@@ -151,22 +151,53 @@ export default function GreetingsPage() {
           </div>
         </FadeIn>
 
-        {/* Quote Section */}
-        <FadeIn direction="up" delay={150} duration={800}>
-          <div className="rounded-3xl p-7 md:p-14 mt-10 md:mt-16 text-center shadow-xl" style={{ backgroundColor: "#F4EFDF" }}>
-            <div className="max-w-3xl mx-auto space-y-2 md:space-y-3">
-              <p className="text-sm md:text-xl font-light leading-relaxed break-keep text-stone-700">
-                부모님께서 안심하고 맡기실 수 있는 곳
-              </p>
-              <p className="text-sm md:text-xl font-light leading-relaxed break-keep text-stone-700">
-                아이들에게 좋은 시간으로 남는 곳
-              </p>
-              <p className="text-sm md:text-xl font-semibold leading-relaxed break-keep pt-1 text-cls-black">
-                &ldquo;CLS가 그 자리를 지키겠습니다&rdquo;
-              </p>
+        {/* Quote Section — 다크 인용구 카드 */}
+        <div className="relative rounded-3xl overflow-hidden mt-10 md:mt-16 shadow-2xl bg-cls-black">
+          <div className="px-8 py-12 md:px-16 md:py-16">
+            {/* 상단 타이틀 */}
+            <FadeIn direction="up" delay={0} duration={700}>
+              <div className="mb-10 md:mb-14">
+                <p className="text-[0.65rem] tracking-[0.45em] text-white/35 uppercase mb-3">
+                  CLS Education
+                </p>
+                <h2 className="text-3xl md:text-5xl font-extralight text-white tracking-wide leading-snug whitespace-nowrap">
+                  우리가 지키는 <span className="font-semibold text-cls-orange">약속</span>
+                </h2>
+                <div className="mt-5 h-px w-12 bg-cls-orange" />
+              </div>
+            </FadeIn>
+
+            {/* 본문 텍스트 순차 페이드인 */}
+            <div className="space-y-3 md:space-y-5 mb-10 md:mb-14 max-w-2xl">
+              <FadeIn direction="up" delay={200} duration={700}>
+                <p className="text-lg md:text-2xl font-light text-white/85 leading-relaxed break-keep">
+                  부모님께서 안심하고 맡기실 수 있는 곳
+                </p>
+              </FadeIn>
+              <FadeIn direction="up" delay={400} duration={700}>
+                <p className="text-lg md:text-2xl font-light text-white/85 leading-relaxed break-keep">
+                  아이들에게 좋은 시간으로 남는 곳
+                </p>
+              </FadeIn>
+              <FadeIn direction="up" delay={600} duration={700}>
+                <p className="text-base md:text-2xl font-bold text-cls-orange leading-relaxed whitespace-nowrap pt-1">
+                  CLS 에듀케이션이 그 자리를 지키겠습니다
+                </p>
+              </FadeIn>
             </div>
+
+            {/* 하단 구분선 + 서명 */}
+            <FadeIn direction="up" delay={800} duration={700}>
+              <div className="flex items-center gap-4">
+                <div className="h-px flex-1 bg-white/15" />
+                <p className="text-xs text-gray-500 tracking-widest uppercase shrink-0">
+                  CLS Education · 원장 최금란
+                </p>
+                <div className="h-px flex-1 bg-white/15" />
+              </div>
+            </FadeIn>
           </div>
-        </FadeIn>
+        </div>
       </div>
     </div>
   );
