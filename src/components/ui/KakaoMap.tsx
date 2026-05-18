@@ -7,6 +7,8 @@ const MAP_KEY = "ku9i9nvinet";
 const CONTAINER_ID = `daumRoughmapContainer${TIMESTAMP}`;
 const LOADER_URL = "https://ssl.daumcdn.net/dmaps/map_js_init/roughmapLoader.js";
 const ASPECT = 360 / 640;
+// 지도 이미지 아래 툴바(kakaomap | 로드뷰 | 길찾기 | 지도 크게 보기) 높이
+const TOOLBAR_HEIGHT = 40;
 
 type RoughmapWindow = Window & {
   daum?: {
@@ -32,8 +34,6 @@ export default function KakaoMap() {
     const origWrite = document.write.bind(document);
     const restore = () => { document.write = origWrite; };
 
-    // roughmapLoader.js 가 document.write() 로 roughmapLander.js 를 주입한다.
-    // src 를 추출해 직접 onload 핸들러가 있는 스크립트로 교체 로드한다.
     document.write = (content: string) => {
       restore();
       const match = content.match(/src=["']([^"']+)["']/);
@@ -45,7 +45,6 @@ export default function KakaoMap() {
       landerScript.onload = () => {
         const w = window as RoughmapWindow;
         if (w.daum?.roughmap?.Lander) {
-          // 컨테이너 실제 너비로 mapWidth 를 결정해 모바일에서도 지도가 중앙 정렬된다.
           const mapWidth = Math.min(wrapperRef.current?.offsetWidth ?? 640, 640);
           const mapHeight = Math.round(mapWidth * ASPECT);
           new w.daum.roughmap.Lander({
@@ -54,6 +53,14 @@ export default function KakaoMap() {
             mapWidth: String(mapWidth),
             mapHeight: String(mapHeight),
           }).render();
+
+          // 렌더 후 지도+툴바만 보이도록 clip — 주소/전화 섹션은 잘려나감
+          setTimeout(() => {
+            if (wrapperRef.current) {
+              wrapperRef.current.style.overflow = "hidden";
+              wrapperRef.current.style.maxHeight = `${mapHeight + TOOLBAR_HEIGHT}px`;
+            }
+          }, 300);
         }
       };
       document.body.appendChild(landerScript);

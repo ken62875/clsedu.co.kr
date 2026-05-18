@@ -1,16 +1,5 @@
 import React from "react";
-
-interface Teacher {
-  id: string;
-  name: string;
-  role: string;
-  subject: string | null;
-  isDirector: boolean;
-  quote: string | null;
-  background: string[];
-  profileImage: string | null;
-  order: number;
-}
+import TeacherGrid, { Teacher } from "@/components/ui/TeacherGrid";
 
 // ─── 기본값 (API 실패 시 fallback) ────────────────────────────────────────────
 
@@ -101,12 +90,13 @@ export default async function Teachers() {
           <span className="inline-block px-4 py-1 rounded-full bg-cls-orange text-white text-sm font-bold tracking-widest mb-6 border border-cls-orange/50 shadow-lg shadow-cls-orange/20">
             OUR INSTRUCTORS
           </span>
-          <h1 className="text-4xl md:text-5xl font-bold text-white tracking-tight mb-6">
+          <h1 className="text-2xl md:text-5xl font-bold text-white tracking-tight mb-4 break-keep">
             최고의 강사진이 <span className="text-cls-orange">결과</span>를 증명합니다
           </h1>
-          <p className="text-xl md:text-2xl text-gray-300 font-light max-w-3xl mx-auto leading-relaxed">
+          <p className="text-sm md:text-xl text-gray-300 font-light max-w-3xl mx-auto leading-relaxed break-keep">
             &ldquo;선생님의 자부심이 곧 아이들의 실력이 됩니다.&rdquo;<br/>
-            대치·목동 출신 검증된 강사진이 신내동 교육의 패러다임을 바꿉니다.
+            대치·목동 출신 검증된 강사진이<br/>
+            신내동 교육의 패러다임을 바꿉니다.
           </p>
         </div>
       </div>
@@ -117,56 +107,9 @@ export default async function Teachers() {
         {staff.length > 0 && (
           <div>
             <div className="flex items-center gap-4 mb-10 border-b pb-4">
-              <h2 className="text-3xl font-bold text-cls-black">과목별 전임 강사진</h2>
+              <h2 className="text-xl md:text-3xl font-bold text-cls-black">과목별 전임 강사진</h2>
             </div>
-
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {staff.map((teacher) => (
-                <div
-                  key={teacher.id}
-                  className="bg-white rounded-2xl overflow-hidden border border-gray-100 hover:shadow-2xl transition-all duration-300 group"
-                >
-                  <div className="h-72 overflow-hidden relative bg-slate-100">
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img
-                      src={
-                        teacher.profileImage ??
-                        "https://images.unsplash.com/photo-1568602471122-7832951cc4c5?q=80&w=800&auto=format&fit=crop"
-                      }
-                      alt={`${teacher.name} 선생님`}
-                      className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-cls-black/90 via-cls-black/20 to-transparent"></div>
-                    <div className="absolute bottom-6 left-6 text-white">
-                      {teacher.subject && (
-                        <span className="bg-cls-orange px-3 py-1 rounded-md text-xs font-bold mb-2 inline-block">
-                          {teacher.subject}
-                        </span>
-                      )}
-                      <h4 className="text-2xl font-bold flex items-center gap-2">
-                        {teacher.name}{" "}
-                        <span className="text-sm font-light text-gray-300">T</span>
-                      </h4>
-                    </div>
-                  </div>
-                  <div className="p-8">
-                    {teacher.quote && (
-                      <p className="text-gray-600 font-light text-sm italic mb-6 leading-relaxed bg-slate-50 p-4 rounded-lg border-l-2 border-cls-black">
-                        &ldquo;{teacher.quote}&rdquo;
-                      </p>
-                    )}
-                    <ul className="text-sm text-gray-600 space-y-3 font-light">
-                      {teacher.background.map((item, i) => (
-                        <li key={i} className="flex gap-2">
-                          <span className="text-cls-orange font-bold">•</span>
-                          <span>{item}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                </div>
-              ))}
-            </div>
+            <TeacherGrid staff={staff} />
           </div>
         )}
       </div>
