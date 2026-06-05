@@ -1,9 +1,11 @@
 "use client";
 
+import type React from "react";
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { Noto_Sans_KR } from "next/font/google";
 import FadeIn from "@/components/ui/FadeIn";
+import { BOOKING_URL } from "@/lib/booking";
 
 const notoSansKR = Noto_Sans_KR({
   weight: ["700", "900"],
@@ -59,6 +61,9 @@ export default function HeroSliderClient({
   const [slides, setSlides] = useState<SlideData[]>(initialSlides);
   const [currentIndex, setCurrentIndex] = useState(0);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  // 터치 스와이프용
+  const touchStartX = useRef<number | null>(null);
+  const touchDeltaX = useRef(0);
 
   // 랜덤 순서 옵션 처리 (클라이언트 마운트 이후)
   useEffect(() => {
@@ -91,8 +96,49 @@ export default function HeroSliderClient({
   const transSpeed = `${settings.transitionSpeed}ms`;
   const isSlideEffect = settings.transitionEffect === "slide";
 
+  // 자동 전환 타이머 재시작 (수동 조작 후 호출)
+  const restartTimer = () => {
+    if (displaySlides.length <= 1) return;
+    if (timerRef.current) clearInterval(timerRef.current);
+    timerRef.current = setInterval(() => {
+      setCurrentIndex((prev) => (prev + 1) % displaySlides.length);
+    }, settings.autoplayInterval);
+  };
+
+  const goTo = (index: number) => {
+    if (displaySlides.length <= 1) return;
+    setCurrentIndex((index + displaySlides.length) % displaySlides.length);
+    restartTimer();
+  };
+
+  // ─── 터치 스와이프 핸들러 ─────────────────────────────────────────────
+  const handleTouchStart = (e: React.TouchEvent) => {
+    touchStartX.current = e.touches[0].clientX;
+    touchDeltaX.current = 0;
+  };
+  const handleTouchMove = (e: React.TouchEvent) => {
+    if (touchStartX.current !== null) {
+      touchDeltaX.current = e.touches[0].clientX - touchStartX.current;
+    }
+  };
+  const handleTouchEnd = () => {
+    if (touchStartX.current === null) return;
+    const delta = touchDeltaX.current;
+    const threshold = 50; // 이 이상 밀어야 슬라이드 전환 (탭과 구분)
+    if (delta <= -threshold) goTo(currentIndex + 1);
+    else if (delta >= threshold) goTo(currentIndex - 1);
+    touchStartX.current = null;
+    touchDeltaX.current = 0;
+  };
+
   return (
-    <section className="relative h-[54vh] md:h-[80vh] min-h-[380px] md:min-h-[600px] flex items-center justify-center bg-cls-black overflow-hidden">
+    <section
+      className="relative h-[54vh] md:h-[80vh] min-h-[380px] md:min-h-[600px] flex items-center justify-center bg-cls-black overflow-hidden"
+      style={{ touchAction: "pan-y" }}
+      onTouchStart={handleTouchStart}
+      onTouchMove={handleTouchMove}
+      onTouchEnd={handleTouchEnd}
+    >
       {/* ─── 배경 이미지 레이어 ──────────────────────────────────────────── */}
       {displaySlides.map((slide, index) => {
         const isActive = index === currentIndex;
@@ -198,9 +244,9 @@ export default function HeroSliderClient({
             <Link href="/program" className="px-5 py-2.5 md:px-8 md:py-4 bg-transparent border-2 border-white text-white rounded-lg font-bold text-sm md:text-lg hover:bg-white hover:text-cls-black transition-all duration-300">
               프로그램 보기
             </Link>
-            <Link href="/contact" className="px-5 py-2.5 md:px-8 md:py-4 bg-cls-orange text-white rounded-lg font-bold text-sm md:text-lg shadow-xl hover:bg-orange-600 hover:-translate-y-1 transition-all duration-300">
+            <a href={BOOKING_URL} target="_blank" rel="noopener noreferrer" className="px-5 py-2.5 md:px-8 md:py-4 bg-cls-orange text-white rounded-lg font-bold text-sm md:text-lg shadow-xl hover:bg-orange-600 hover:-translate-y-1 transition-all duration-300">
               무료 상담 신청하기
-            </Link>
+            </a>
           </FadeIn>
         </div>
       )}
@@ -211,13 +257,7 @@ export default function HeroSliderClient({
           {displaySlides.map((_, index) => (
             <button
               key={index}
-              onClick={() => {
-                setCurrentIndex(index);
-                if (timerRef.current) clearInterval(timerRef.current);
-                timerRef.current = setInterval(() => {
-                  setCurrentIndex((prev) => (prev + 1) % displaySlides.length);
-                }, settings.autoplayInterval);
-              }}
+              onClick={() => goTo(index)}
               className={`h-1.5 rounded-full transition-all duration-300 ${index === currentIndex ? "w-8 bg-cls-orange" : "w-1.5 bg-white/40 hover:bg-white/70"}`}
               aria-label={`슬라이드 ${index + 1}`}
             />

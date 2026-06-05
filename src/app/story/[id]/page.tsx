@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import FadeIn from "@/components/ui/FadeIn";
 import { prisma } from "@/lib/prisma";
 import { sanitizeHtml } from "@/lib/sanitize";
+import { BOOKING_URL } from "@/lib/booking";
 
 interface BlogTag { id: string; name: string; slug: string; }
 interface BlogCategory { id: string; name: string; slug: string; }
@@ -158,9 +159,9 @@ export default async function StoryDetailPage({
               <Link href="/story" className="px-6 py-3 bg-slate-50 text-slate-700 hover:bg-slate-100 rounded-lg font-medium transition-colors">
                 목록으로
               </Link>
-              <Link href="/contact" className="px-6 py-3 bg-cls-blue text-white hover:bg-blue-700 rounded-lg font-medium transition-colors">
+              <a href={BOOKING_URL} target="_blank" rel="noopener noreferrer" className="px-6 py-3 bg-cls-blue text-white hover:bg-blue-700 rounded-lg font-medium transition-colors">
                 상담 문의하기
-              </Link>
+              </a>
             </div>
           </FadeIn>
         </div>

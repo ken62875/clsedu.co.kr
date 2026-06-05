@@ -5,6 +5,7 @@ import FadeIn from "@/components/ui/FadeIn";
 import CountupStats, { type StatData } from "@/components/ui/CountupStats";
 import ReviewCarousel from "@/components/ui/ReviewCarousel";
 import { sanitizeHtml } from "@/lib/sanitize";
+import { BOOKING_URL } from "@/lib/booking";
 
 // BlockNote 에디터가 생성한 HTML인지, 순수 텍스트인지 판별
 function isHtmlContent(value: string): boolean {
@@ -40,67 +41,51 @@ const DEFAULT_PHILOSOPHY = [
 const DEFAULT_PROGRAMS = [
   {
     category: "High School",
-    imageUrl: "https://media.clsedu.co.kr/programs/high_school_study.jpg",
+    imageUrl: "/images/programs/high-school.jpg",
     title: "고등부/입시",
     description:
       "수능과 내신을 아우르는 심층 학습으로 SKY 및 상위권 대학 진학의 꿈을 실현합니다.",
   },
   {
     category: "Middle School",
-    imageUrl: "https://media.clsedu.co.kr/programs/middle_school_study.jpg",
+    imageUrl: "/images/programs/middle-school.jpg",
     title: "중등부",
     description:
       "신현중 등 인근 학교의 철저한 내신 분석과 특목고 대비까지, 중학교의 결정적 시기를 함께합니다.",
   },
   {
     category: "Elementary",
-    imageUrl: "https://media.clsedu.co.kr/programs/elementary_study.jpg",
+    imageUrl: "/images/programs/elementary.jpg",
     title: "초등부",
     description:
       "공부에 대한 흥미를 높이고 올바른 학습 습관을 형성하는 CLS 초등부. 기초부터 차근차근 실력을 쌓습니다.",
   },
 ];
 
+// 프로그램 카드 이미지는 프런트엔드에서 직접 관리한다.
+// (백엔드 home_programs 의 imageUrl 은 옛 미디어 주소라 무시하고 아래 로컬 이미지로 강제 지정)
+const PROGRAM_IMAGE: Record<string, string> = {
+  "High School": "/images/programs/high-school.jpg",
+  "Middle School": "/images/programs/middle-school.jpg",
+  "Elementary": "/images/programs/elementary.jpg",
+};
+
 const DEFAULT_REVIEWS = [
   {
-    text: "아이가 배우는 기쁨을 알게 됐어요.",
-    author: "- 중2 김OO 학생 학부모님 -",
+    text: "사춘기 아들 CLS덕분에 잘 컸습니다.",
+    author: "- 중2 김○○어머니 -",
   },
   {
-    text: "작은 성취도 놓치지 않고 칭찬해 주시는 선생님 덕분에, 아이가 항상 학원에 있던 일을 자랑해요.",
-    author: "- 초6 O연O 학생 학부모님 -",
+    text: "즐겁게 공부한다는것이 바로 이런거구나 라는것을 알았습니다.",
+    author: "- 중3 이○○어머니 -",
   },
   {
-    text: "공부도 좋지만 선생님들의 열정에 저도 같이 공부를 열심히 하게 돼요.",
-    author: "- 고2 윤OO 학생 -",
+    text: "아이의 마음뿐만 아니라 엄마의 마음까지 살펴주시는 따스함에 홀딱 반했습니다.",
+    author: "- 고1 최○○어머니 -",
   },
   {
-    text: "성적이 오른 것보다, 아이 스스로 공부하려는 태도가 생긴 게 더 감사해요.",
-    author: "- 중1 박OO 학생 학부모님 -",
-  },
-  {
-    text: "선생님이 아이 이름을 부르며 먼저 말 걸어주실 때마다, 여기가 맞다 싶었어요.",
-    author: "- 초5 이OO 학생 학부모님 -",
-  },
-  {
-    text: "내신 대비 자료가 정말 꼼꼼해서 시험 전 불안함이 확 줄었어요.",
-    author: "- 중3 최OO 학생 -",
-  },
-  {
-    text: "상담 때 제 걱정을 먼저 알아봐 주셔서 믿고 맡길 수 있었어요.",
-    author: "- 고1 정OO 학생 학부모님 -",
-  },
-  {
-    text: "진도보다 이해를 먼저 물어봐 주는 선생님 덕분에 자신감이 생겼어요.",
-    author: "- 중2 강OO 학생 -",
-  },
-  {
-    text: "다른 학원은 선생님 얼굴도 모르고 다녔는데, CLS는 달랐어요.",
-    author: "- 초4 손OO 학생 학부모님 -",
-  },
-  {
-    text: "수능 끝나고 제일 먼저 연락드린 곳이 여기예요. 정말 감사합니다.",
-    author: "- 재수 한OO 학생 -",
+    text: "아이에게 늘 비전을 주시고 꿈꾸게 해주시는 선생님들 감사합니다.",
+    author: "- 고3 박○○어머니 -",
   },
 ];
 
@@ -116,7 +101,7 @@ const DEFAULT_CTA: CtaData = {
   description:
     "아이가 스스로 '할 수 있다'는\n변화를 느낄 수 있도록\nCLS 에듀케이션이 끝까지 함께 하겠습니다.",
   buttonText: "상담 및 레벨 테스트 예약",
-  buttonLink: "/contact",
+  buttonLink: BOOKING_URL,
 };
 
 // ─── 서버사이드 데이터 fetch ───────────────────────────────────────────────────
@@ -267,7 +252,7 @@ export default async function Home() {
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <FadeIn>
             <h2 className="text-lg md:text-3xl font-bold mb-2 break-keep">CLS 에듀케이션을 선택하는 이유</h2>
-            <p className="text-xs md:text-sm text-cls-orange font-bold mb-6 md:mb-10">- 학부모님 수강 후기 중 -</p>
+            <p className="text-xs md:text-sm text-cls-orange font-bold mb-6 md:mb-10">- 실제 수강 후기 중 -</p>
             <ReviewCarousel reviews={DEFAULT_REVIEWS} />
           </FadeIn>
         </div>
@@ -298,7 +283,7 @@ export default async function Home() {
               >
                 <div className="relative w-28 shrink-0 md:w-full md:h-48 overflow-hidden bg-cls-black/5">
                   <Image
-                    src={prog.imageUrl}
+                    src={PROGRAM_IMAGE[prog.category] ?? prog.imageUrl}
                     alt={prog.title}
                     fill
                     className="object-cover group-hover:scale-110 transition-transform duration-700"
@@ -316,7 +301,15 @@ export default async function Home() {
                   ) : (
                     <p className="hidden md:block text-gray-600 mb-6 font-light h-20">{prog.description}</p>
                   )}
-                  <Link href="/program" className="text-cls-black font-semibold hover:text-cls-orange inline-flex items-center text-sm md:text-base">
+                  <Link
+                    href={
+                      prog.category === "High School" ? "/curriculum/high-school"
+                      : prog.category === "Middle School" ? "/curriculum/middle-school"
+                      : prog.category === "Elementary" ? "/curriculum/elementary-school"
+                      : "/program"
+                    }
+                    className="text-cls-black font-semibold hover:text-cls-orange inline-flex items-center text-sm md:text-base"
+                  >
                     자세히 보기 &rarr;
                   </Link>
                 </div>

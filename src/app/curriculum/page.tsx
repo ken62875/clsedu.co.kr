@@ -142,14 +142,14 @@ export default function Curriculum() {
   const activeData = curriculumData[activeTab];
 
   return (
-    <div className="w-full bg-slate-50 min-h-screen pt-24 pb-20 font-sans">
+    <div className="w-full bg-slate-50 min-h-screen pt-8 md:pt-24 pb-16 md:pb-20 font-sans">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
 
         {/* Header Section */}
         <FadeIn direction="up" duration={800}>
-          <div className="text-center mb-16">
-            <h1 className="text-4xl md:text-5xl font-bold text-cls-black mb-6 tracking-tight">CLS 교과 과정</h1>
-            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+          <div className="text-center mb-8 md:mb-16">
+            <h1 className="text-2xl md:text-5xl font-bold text-cls-black mb-3 md:mb-6 tracking-tight">CLS 교과 과정</h1>
+            <p className="text-sm md:text-lg text-gray-600 max-w-2xl mx-auto leading-relaxed break-keep">
               학생의 수준과 목표에 맞춘 체계적이고 전문적인 학습 커리큘럼을 제공합니다.
               <br className="hidden sm:block" /> 기초부터 최상위권 도약까지 CLS 에듀케이션이 함께합니다.
             </p>
@@ -158,7 +158,7 @@ export default function Curriculum() {
 
         {/* Tabs */}
         <FadeIn direction="up" delay={200} duration={800}>
-          <div className="flex flex-col sm:flex-row justify-center gap-2 sm:gap-4 mb-12">
+          <div className="grid grid-cols-3 sm:flex sm:justify-center gap-2 sm:gap-4 mb-6 md:mb-12">
             {[
               { id: "high", label: "고등부" },
               { id: "middle", label: "중등부" },
@@ -167,9 +167,9 @@ export default function Curriculum() {
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id as "primary" | "middle" | "high")}
-                className={`px-8 py-4 rounded-full text-lg font-semibold transition-all duration-300 ease-out shadow-sm
+                className={`px-3 sm:px-8 py-2.5 sm:py-4 rounded-full text-sm sm:text-lg font-semibold transition-all duration-300 ease-out shadow-sm
                   ${activeTab === tab.id
-                    ? "bg-cls-orange text-white shadow-xl shadow-cls-orange/20 translate-y-[-2px]"
+                    ? "bg-cls-orange text-white shadow-xl shadow-cls-orange/20 sm:translate-y-[-2px]"
                     : "bg-white text-gray-600 hover:bg-gray-100 border border-gray-200"
                   }
                 `}
@@ -182,24 +182,24 @@ export default function Curriculum() {
 
         {/* Content Section */}
         <FadeIn key={activeTab} direction="up" delay={100} duration={600}>
-          <div className="bg-white rounded-3xl shadow-xl overflow-hidden border border-gray-100">
+          <div className="bg-white rounded-2xl md:rounded-3xl shadow-xl overflow-hidden border border-gray-100">
             {/* Inner Header */}
-            <div className="bg-gradient-to-r from-gray-900 to-cls-black-light text-white p-8 md:p-10 flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+            <div className="bg-gradient-to-r from-gray-900 to-cls-black-light text-white p-5 md:p-10 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 md:gap-6">
               <div>
-                <h2 className="text-3xl font-bold mb-3">{activeData.title}</h2>
+                <h2 className="text-xl md:text-3xl font-bold mb-2 md:mb-3">{activeData.title}</h2>
                 {isHtmlContent(activeData.description) ? (
                   <div
-                    className="text-gray-300 leading-relaxed font-light prose prose-invert max-w-none prose-p:text-gray-300 prose-p:leading-relaxed prose-p:font-light prose-p:my-0"
+                    className="text-gray-300 text-sm md:text-base leading-relaxed font-light prose prose-invert max-w-none prose-p:text-gray-300 prose-p:leading-relaxed prose-p:font-light prose-p:my-0"
                     dangerouslySetInnerHTML={{ __html: sanitizeHtml(activeData.description) }}
                   />
                 ) : (
-                  <p className="text-gray-300 leading-relaxed font-light">{activeData.description}</p>
+                  <p className="text-gray-300 text-sm md:text-base leading-relaxed font-light break-keep">{activeData.description}</p>
                 )}
               </div>
-              <div className="flex items-center">
+              <div className="hidden md:flex items-center">
                 <Link
                   href={activeData.href}
-                  className="px-6 py-3 bg-white/10 hover:bg-white/20 border border-white/20 rounded-xl text-white font-medium transition-colors backdrop-blur-md flex items-center gap-2"
+                  className="px-6 py-3 bg-white/10 hover:bg-white/20 border border-white/20 rounded-xl text-white font-medium transition-colors backdrop-blur-md flex items-center gap-2 whitespace-nowrap"
                 >
                   자세히 보기
                   <svg className="w-4 h-4 mt-[2px]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -209,9 +209,31 @@ export default function Curriculum() {
               </div>
             </div>
 
-            {/* Table wrapper */}
-            <div className="p-6 md:p-10">
-              <table className="w-full text-left border-collapse">
+            {/* Courses */}
+            <div className="p-5 md:p-10">
+              {/* ── 모바일: 과목 카드 리스트 ── */}
+              <ul className="md:hidden divide-y divide-gray-100">
+                {activeData.courses.map((course) => (
+                  <li key={course.id} className="flex items-start gap-3 py-3.5">
+                    <span className="shrink-0 mt-0.5 inline-block min-w-[68px] text-center bg-cls-orange/10 text-cls-orange px-2.5 py-1 rounded-md text-xs font-bold">
+                      {course.subject}
+                    </span>
+                    <div className="flex-1 text-gray-600 text-sm leading-relaxed break-keep">
+                      {isHtmlContent(course.content) ? (
+                        <div
+                          className="prose prose-sm max-w-none prose-p:text-gray-600 prose-p:my-0"
+                          dangerouslySetInnerHTML={{ __html: sanitizeHtml(course.content) }}
+                        />
+                      ) : (
+                        course.content
+                      )}
+                    </div>
+                  </li>
+                ))}
+              </ul>
+
+              {/* ── 데스크톱: 표 ── */}
+              <table className="hidden md:table w-full text-left border-collapse">
                 <thead>
                   <tr className="border-b-2 border-cls-black text-cls-black">
                     <th className="py-4 px-4 font-bold w-[20%]">과목</th>
@@ -246,8 +268,8 @@ export default function Curriculum() {
             </div>
 
             {/* Footer / Payment CTA */}
-            <div className="bg-gray-50 p-6 md:p-8 border-t border-gray-100 flex flex-col md:flex-row items-center justify-between gap-6">
-              <div className="text-gray-500 text-sm">
+            <div className="bg-gray-50 p-5 md:p-8 border-t border-gray-100 flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4 md:gap-6">
+              <div className="text-gray-500 text-xs md:text-sm leading-relaxed space-y-1">
                 {isHtmlContent(activeData.notes) ? (
                   <div
                     className="prose prose-sm max-w-none prose-p:text-gray-500 prose-p:my-0 prose-p:leading-relaxed"
@@ -262,9 +284,9 @@ export default function Curriculum() {
               </div>
               <Link
                 href={activeData.href}
-                className="group w-full md:w-auto px-8 py-4 bg-cls-black hover:bg-cls-orange text-white font-bold rounded-xl transition-all duration-300 ease-out flex items-center justify-center gap-2 shadow-lg hover:shadow-cls-orange/30 hover:-translate-y-1"
+                className="group shrink-0 w-full md:w-auto px-6 md:px-8 py-3.5 md:py-4 bg-cls-black hover:bg-cls-orange text-white text-sm md:text-base font-bold rounded-xl transition-all duration-300 ease-out flex items-center justify-center gap-2 shadow-lg hover:shadow-cls-orange/30 hover:-translate-y-1"
               >
-                <span>자세히보기</span>
+                <span>{activeData.title.replace(" 교과과정", "")} 자세히 보기</span>
                 <svg className="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
                 </svg>

@@ -1,12 +1,19 @@
 "use client";
 
+import type { ReactNode } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { BOOKING_URL } from "@/lib/booking";
 
 export default function MobileBottomNav() {
   const pathname = usePathname();
 
-  const navItems = [
+  const navItems: {
+    name: string;
+    href: string;
+    external?: boolean;
+    icon: ReactNode;
+  }[] = [
     {
       name: "교과과정",
       href: "/curriculum",
@@ -45,7 +52,8 @@ export default function MobileBottomNav() {
     },
     {
       name: "상담문의",
-      href: "/contact",
+      href: BOOKING_URL,
+      external: true,
       icon: (
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
           <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 002.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-2.896-1.596-5.48-4.18-7.076-7.076l1.293-.97c.362-.271.527-.733.417-1.173L6.963 3.102a1.125 1.125 0 00-1.091-.852H4.5A2.25 2.25 0 002.25 4.5v2.25z" />
@@ -58,19 +66,31 @@ export default function MobileBottomNav() {
     <div className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-50 pb-safe">
       <div className="flex justify-around items-center h-16 px-2">
         {navItems.map((item) => {
-          const isActive = pathname === item.href || pathname?.startsWith(`${item.href}/`);
-          return (
-            <Link
+          const isActive =
+            !item.external &&
+            (pathname === item.href || pathname?.startsWith(`${item.href}/`));
+          const className = `flex flex-col items-center justify-center w-full h-full space-y-1 ${
+            isActive ? "text-cls-orange" : "text-gray-500 hover:text-gray-900"
+          }`;
+          const inner = (
+            <>
+              <div className="flex-shrink-0">{item.icon}</div>
+              <span className="text-[10px] font-medium">{item.name}</span>
+            </>
+          );
+          return item.external ? (
+            <a
               key={item.name}
               href={item.href}
-              className={`flex flex-col items-center justify-center w-full h-full space-y-1 ${
-                isActive ? "text-cls-orange" : "text-gray-500 hover:text-gray-900"
-              }`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className={className}
             >
-              <div className="flex-shrink-0">
-                {item.icon}
-              </div>
-              <span className="text-[10px] font-medium">{item.name}</span>
+              {inner}
+            </a>
+          ) : (
+            <Link key={item.name} href={item.href} className={className}>
+              {inner}
             </Link>
           );
         })}

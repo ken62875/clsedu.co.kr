@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 export interface Teacher {
   id: string;
@@ -17,9 +17,25 @@ export interface Teacher {
 const FALLBACK_IMG =
   "https://images.unsplash.com/photo-1568602471122-7832951cc4c5?q=80&w=800&auto=format&fit=crop";
 
+const ALL = "전체";
+
 export default function TeacherGrid({ staff }: { staff: Teacher[] }) {
   const [selected, setSelected] = useState<Teacher | null>(null);
   const [sheetVisible, setSheetVisible] = useState(false);
+  const [activeSubject, setActiveSubject] = useState<string>(ALL);
+  const closeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // 강사진의 과목(role) 목록을 등장 순서대로 중복 없이 추출
+  const subjects = staff.reduce<string[]>((acc, t) => {
+    const s = t.role?.trim();
+    if (s && !acc.includes(s)) acc.push(s);
+    return acc;
+  }, []);
+
+  const filteredStaff =
+    activeSubject === ALL
+      ? staff
+      : staff.filter((t) => t.role?.trim() === activeSubject);
 
   const openSheet = (teacher: Teacher) => {
     setSelected(teacher);
@@ -30,14 +46,42 @@ export default function TeacherGrid({ staff }: { staff: Teacher[] }) {
 
   const closeSheet = () => {
     setSheetVisible(false);
-    setTimeout(() => setSelected(null), 300);
+    closeTimerRef.current = setTimeout(() => setSelected(null), 300);
   };
+
+  useEffect(() => {
+    return () => {
+      if (closeTimerRef.current) clearTimeout(closeTimerRef.current);
+    };
+  }, []);
 
   return (
     <>
+      {/* ── 과목별 필터 버튼 ── */}
+      {subjects.length > 1 && (
+        <div className="flex flex-wrap gap-2 mb-8">
+          {[ALL, ...subjects].map((subject) => {
+            const isActive = activeSubject === subject;
+            return (
+              <button
+                key={subject}
+                onClick={() => setActiveSubject(subject)}
+                className={`px-4 py-2 rounded-full text-sm font-bold border transition-colors ${
+                  isActive
+                    ? "bg-cls-black text-white border-cls-black"
+                    : "bg-white text-gray-500 border-gray-200 hover:border-cls-black hover:text-cls-black"
+                }`}
+              >
+                {subject}
+              </button>
+            );
+          })}
+        </div>
+      )}
+
       {/* ── 모바일: 2열 컴팩트 그리드 ── */}
       <div className="grid grid-cols-2 gap-3 md:hidden">
-        {staff.map((teacher) => (
+        {filteredStaff.map((teacher) => (
           <button
             key={teacher.id}
             onClick={() => openSheet(teacher)}
@@ -70,7 +114,7 @@ export default function TeacherGrid({ staff }: { staff: Teacher[] }) {
 
       {/* ── 데스크톱: 3열 풀 카드 ── */}
       <div className="hidden md:grid md:grid-cols-3 gap-8">
-        {staff.map((teacher) => (
+        {filteredStaff.map((teacher) => (
           <div
             key={teacher.id}
             className="bg-white rounded-2xl overflow-hidden border border-gray-100 hover:shadow-2xl transition-all duration-300 group"

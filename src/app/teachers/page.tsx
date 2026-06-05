@@ -101,12 +101,12 @@ export default async function Teachers() {
         </div>
       </div>
 
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 pb-16">
 
         {/* Subject Instructors Grid */}
         {staff.length > 0 && (
           <div>
-            <div className="flex items-center gap-4 mb-10 border-b pb-4">
+            <div className="flex items-center gap-4 mb-6 border-b pb-4">
               <h2 className="text-xl md:text-3xl font-bold text-cls-black">과목별 전임 강사진</h2>
             </div>
             <TeacherGrid staff={staff} />

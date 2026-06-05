@@ -69,18 +69,9 @@ const Footer = async () => {
           <div>
             <h4 className="text-base font-semibold mb-3 text-cls-orange">Contact Us</h4>
             <ul className="space-y-1.5 text-gray-300 font-light text-sm">
-              <li className="flex items-start">
-                <span className="w-20 font-medium shrink-0">상담전화:</span>
-                <span>{f.phone}</span>
-              </li>
-              <li className="flex items-start">
-                <span className="w-20 font-medium shrink-0">상담시간:</span>
-                <span>{f.hours}</span>
-              </li>
-              <li className="flex items-start">
-                <span className="w-20 font-medium shrink-0">학원주소:</span>
-                <span style={{ whiteSpace: "pre-line" }}>{f.address}</span>
-              </li>
+              <li><span className="font-medium">상담전화:</span> {f.phone}</li>
+              <li><span className="font-medium">상담시간:</span> {f.hours}</li>
+              <li><span className="font-medium">학원주소:</span> <span style={{ whiteSpace: "pre-line" }}>{f.address}</span></li>
             </ul>
           </div>
           <div>

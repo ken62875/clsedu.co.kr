@@ -4,7 +4,7 @@ import { GoogleAnalytics } from "@next/third-parties/google";
 import "./globals.css";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
-import FloatingButton from "@/components/ui/FloatingButton";
+// import FloatingButton from "@/components/ui/FloatingButton"; // 일단 숨김
 import MobileBottomNav from "@/components/layout/MobileBottomNav";
 import { AuthProvider } from "@/providers/AuthProvider";
 import { getSession } from "@/lib/auth";
@@ -50,7 +50,7 @@ export default async function RootLayout({
         <AuthProvider initialUser={initialUser}>
           <Header />
           <main className="flex-grow">{children}</main>
-          <FloatingButton />
+          {/* <FloatingButton /> 일단 숨김 */}
           <Footer />
           <MobileBottomNav />
         </AuthProvider>

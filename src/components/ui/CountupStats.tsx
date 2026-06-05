@@ -19,32 +19,32 @@ function StatCard({ end, label, suffix = "", isVisible, delay }: StatItemProps) 
 
     hasStarted.current = true;
 
-    // 지연 시간 후 애니메이션 시작
+    let rafId: number;
     const timer = setTimeout(() => {
-      const duration = 2500; // 2.5초 동안 카운트
+      const duration = 2500;
       const startTime = Date.now();
 
       const animate = () => {
         const elapsed = Date.now() - startTime;
         const progress = Math.min(elapsed / duration, 1);
 
-        // easeOutQuad 이징
         const easeProgress = 1 - Math.pow(1 - progress, 2);
-        const value = easeProgress * end;
-
-        setCurrent(value);
+        setCurrent(easeProgress * end);
 
         if (progress < 1) {
-          requestAnimationFrame(animate);
+          rafId = requestAnimationFrame(animate);
         } else {
           setCurrent(end);
         }
       };
 
-      animate();
+      rafId = requestAnimationFrame(animate);
     }, delay);
 
-    return () => clearTimeout(timer);
+    return () => {
+      clearTimeout(timer);
+      cancelAnimationFrame(rafId);
+    };
   }, [isVisible, end, delay]);
 
   // 소수점 표시 로직
@@ -96,12 +96,13 @@ export default function CountupStats({ stats = DEFAULT_STATS }: CountupStatsProp
       { threshold: 0.2 }
     );
 
-    if (containerRef.current) {
-      observer.observe(containerRef.current);
+    const el = containerRef.current;
+    if (el) {
+      observer.observe(el);
     }
 
     return () => {
-      if (containerRef.current) observer.unobserve(containerRef.current);
+      observer.disconnect();
     };
   }, []);
 

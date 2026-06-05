@@ -6,7 +6,7 @@ const FloatingButton = () => {
       <span className="bg-cls-black text-white px-4 py-2 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap hidden md:block shadow-lg font-medium tracking-tight translate-x-4 group-hover:translate-x-0 duration-300">
         무료 상담 신청
       </span>
-      <Link href="/contact" className="flex items-center justify-center w-[58px] h-[58px] bg-cls-orange text-white rounded-full shadow-2xl hover:bg-cls-orange-light hover:scale-110 transition-all duration-300 ease-out cursor-pointer relative">
+      <Link href="https://talk.naver.com/ct/wf8ty8t?frm=mnmb#nafullscreen" target="_blank" rel="noopener noreferrer" className="flex items-center justify-center w-[58px] h-[58px] bg-cls-orange text-white rounded-full shadow-2xl hover:bg-cls-orange-light hover:scale-110 transition-all duration-300 ease-out cursor-pointer relative">
         <span className="absolute -top-1 -right-1 flex h-3.5 w-3.5">
           <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
           <span className="relative inline-flex rounded-full h-3.5 w-3.5 bg-red-500 border-2 border-white"></span>

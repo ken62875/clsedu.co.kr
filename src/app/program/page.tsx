@@ -1,6 +1,8 @@
 import React from "react";
 import Link from "next/link";
 import { sanitizeHtml } from "@/lib/sanitize";
+import { BOOKING_URL } from "@/lib/booking";
+import SwipeCarousel from "@/components/ui/SwipeCarousel";
 
 function isHtmlContent(value: string): boolean {
   return /<[a-z][\s\S]*>/i.test(value);
@@ -86,7 +88,7 @@ const DEFAULT_META: ProgramMeta = {
     titleLead: "결과가 증명하는",
     titleAccent: "완벽한 학습 시스템",
     subtitle:
-      "주먹구구식 강의를 넘어, 예습-수업-클리닉으로 이어지는\nCLS에듀케이션만의 3단계 다면 관리 프로세스를 경험하세요.",
+      "일방적인 강의를 넘어, 예습-수업-클리닉으로 이어지는\nCLS만의 3단계 대면 관리 프로세스를 경험하세요.",
   },
   processIntro: {
     title: "CLS 3-STEP Learning Process",
@@ -100,7 +102,7 @@ const DEFAULT_META: ProgramMeta = {
     description:
       "학생의 학년과 지망 수준에 따라 다양한 클래스가 실시간으로 운영중입니다.\n상담을 남겨주시면 최적의 반 편성과 시간표를 안내해 드립니다.",
     buttonText: "반 편성 및 시간표 문의하기",
-    buttonLink: "/contact",
+    buttonLink: BOOKING_URL,
   },
 };
 
@@ -112,7 +114,7 @@ const DEFAULT_TARGETS: ProgramTarget[] = [
     tagline: "고등과정 경험과 내신 100점의 완성",
     mainTitle: "자유학년제 대비 및 특목/자사고 입시",
     description:
-      "시험이 없는 중등 1학년 시기부터 올바른 학습 습관을 형성합니다. 신현중, 원묵중, 상봉중, 송곡중, 동원중, 영란여중, 봉화중, 면목중, 혜원여중 등 인근 학교의 출제 스타일을 빅데이터화 하여 완벽한 학교별 내신 대비를 진행하며, 상위권 학생들을 위한 고등 통합 선행 학습을 동시에 진행합니다.",
+      "중등 1학년부터 올바른 학습 습관을 잡습니다. 신현중·원묵중·상봉중 등 인근 학교의 출제 경향을 분석해 학교별 내신을 완벽 대비하고, 상위권은 고등 선행까지 함께 진행합니다.",
     features: [
       { title: "내신 집중 대비반", desc: "시험 4주 전 학교별 맞춤 교재 진행" },
       { title: "고등과정 학습반", desc: "수능형 독해 및 모의고사" },
@@ -125,7 +127,7 @@ const DEFAULT_TARGETS: ProgramTarget[] = [
     tagline: "수능 1등급과 SKY 합격 로드맵",
     mainTitle: "수능/내신 투 트랙(Two Track) 심화 시스템",
     description:
-      "대입 성공이라는 최종 목표를 향해 기본기를 형성하는 중요한 시기. 변별력을 가르는 킬러 문항 대비와 최신 수능 트렌드 반영 프리미엄 하프 모의고사를 수시로 실시합니다. 학생부 관리와 입시 지원 전략까지 원장님이 직접 지도하십니다.",
+      "대입을 향한 결정적 시기. 변별력을 가르는 킬러 문항 대비와 최신 수능 트렌드를 반영한 모의고사를 수시로 실시합니다. 학생부 관리와 입시 전략까지 원장님이 직접 지도합니다.",
     features: [
       { title: "수능 집중반", desc: "EBS 수능특강/완성 연계 완벽 대비" },
       { title: "입시 컨설팅", desc: "생기부 관리 및 수시 / 정시 지원전략 코칭" },
@@ -219,25 +221,25 @@ async function fetchProgramData(): Promise<{
 
 const STEP_STYLES = [
   {
-    card: "bg-white rounded-2xl shadow-lg p-8 border-t-4 border-gray-300 hover:border-cls-orange transition-colors duration-300 text-center relative",
+    card: "bg-white rounded-2xl h-full shadow-lg p-5 md:p-8 border-t-4 border-gray-300 hover:border-cls-orange transition-colors duration-300 text-center relative",
     circle:
-      "w-16 h-16 bg-white border-4 border-gray-100 text-gray-400 rounded-full flex items-center justify-center text-2xl font-bold mx-auto -mt-16 mb-6 shadow-sm",
-    subtitleCls: "text-lg text-gray-500 font-medium",
+      "w-16 h-16 bg-white border-4 border-gray-100 text-gray-400 rounded-full flex items-center justify-center text-xl md:text-2xl font-bold mx-auto mt-0 md:-mt-16 mb-4 md:mb-6 shadow-sm",
+    subtitleCls: "text-sm md:text-lg text-gray-500 font-medium",
     listCls: "text-sm text-left text-gray-500 space-y-2 bg-slate-50 p-4 rounded-lg",
   },
   {
-    card: "bg-white rounded-2xl shadow-xl p-8 border-t-4 border-cls-orange transform md:-translate-y-4 text-center relative z-10",
+    card: "bg-white rounded-2xl h-full shadow-xl p-5 md:p-8 border-t-4 border-cls-orange transform md:-translate-y-4 text-center relative z-10",
     circle:
-      "w-16 h-16 bg-cls-orange text-white rounded-full flex items-center justify-center text-2xl font-bold mx-auto -mt-16 mb-6 shadow-md shadow-cls-orange/30",
-    subtitleCls: "text-lg text-cls-orange font-medium",
+      "w-16 h-16 bg-cls-orange text-white rounded-full flex items-center justify-center text-xl md:text-2xl font-bold mx-auto mt-0 md:-mt-16 mb-4 md:mb-6 shadow-md shadow-cls-orange/30",
+    subtitleCls: "text-sm md:text-lg text-cls-orange font-medium",
     listCls:
       "text-sm text-left text-gray-500 space-y-2 bg-slate-50 p-4 rounded-lg border border-cls-orange/10",
   },
   {
-    card: "bg-white rounded-2xl shadow-lg p-8 border-t-4 border-gray-300 hover:border-cls-black transition-colors duration-300 text-center relative",
+    card: "bg-white rounded-2xl h-full shadow-lg p-5 md:p-8 border-t-4 border-gray-300 hover:border-cls-black transition-colors duration-300 text-center relative",
     circle:
-      "w-16 h-16 bg-cls-black text-white rounded-full flex items-center justify-center text-2xl font-bold mx-auto -mt-16 mb-6 shadow-sm",
-    subtitleCls: "text-lg text-gray-500 font-medium",
+      "w-16 h-16 bg-cls-black text-white rounded-full flex items-center justify-center text-xl md:text-2xl font-bold mx-auto mt-0 md:-mt-16 mb-4 md:mb-6 shadow-sm",
+    subtitleCls: "text-sm md:text-lg text-gray-500 font-medium",
     listCls: "text-sm text-left text-gray-500 space-y-2 bg-slate-50 p-4 rounded-lg",
   },
 ];
@@ -252,102 +254,113 @@ export default async function Program() {
 
   const isExternalCtaLink = /^https?:\/\//i.test(meta.cta.buttonLink);
 
+  // 3단계 카드 (모바일 슬라이드 / 데스크톱 그리드에서 공통 사용)
+  const stepCards = steps.map((step, i) => {
+    const style = STEP_STYLES[i % STEP_STYLES.length];
+    return (
+      <div key={step.step} className={style.card}>
+        <div className={style.circle}>{step.step}</div>
+        <h3 className="text-lg md:text-2xl font-bold text-cls-black mb-3 md:mb-4">
+          {step.title}{" "}
+          <br />
+          <span className={style.subtitleCls}>{step.subtitle}</span>
+        </h3>
+        {isHtmlContent(step.description) ? (
+          <div
+            className="text-gray-600 font-light leading-relaxed mb-6 prose prose-sm max-w-none prose-p:text-gray-600 prose-p:font-light prose-p:leading-relaxed prose-p:my-0"
+            dangerouslySetInnerHTML={{ __html: sanitizeHtml(step.description) }}
+          />
+        ) : (
+          <p className="text-gray-600 font-light leading-relaxed mb-6 text-sm md:text-base">
+            {step.description}
+          </p>
+        )}
+        <ul className={style.listCls}>
+          {step.details.map((d, di) => (
+            <li key={di}>• {d}</li>
+          ))}
+        </ul>
+      </div>
+    );
+  });
+
   return (
     <div className="min-h-screen bg-slate-50">
       {/* Visual Header */}
-      <div className="bg-cls-black py-24 text-center mt-0 relative overflow-hidden">
+      <div className="bg-cls-black py-14 md:py-24 text-center mt-0 relative overflow-hidden">
         <div className="absolute inset-0 opacity-10 bg-[url('https://images.unsplash.com/photo-1434030216411-0b793f4b4173?q=80&auto=format&fit=crop')] bg-cover bg-center"></div>
         <div className="relative z-10 px-4">
-          <span className="inline-block px-4 py-1 rounded-full border border-gray-600 text-gray-300 text-sm font-bold tracking-widest mb-6">
+          <span className="inline-block px-3 md:px-4 py-1 rounded-full border border-gray-600 text-gray-300 text-xs md:text-sm font-bold tracking-widest mb-4 md:mb-6">
             {meta.header.badge}
           </span>
-          <h1 className="text-4xl md:text-5xl font-bold text-white tracking-tight mb-6">
-            {meta.header.titleLead}{" "}
+          <h1 className="text-2xl md:text-5xl font-bold text-white tracking-tight mb-3 md:mb-6 break-keep">
+            {meta.header.titleLead}
+            <br />
             <span className="text-cls-orange">{meta.header.titleAccent}</span>
           </h1>
-          <p className="text-xl md:text-2xl text-gray-300 font-light max-w-3xl mx-auto leading-relaxed whitespace-pre-line">
-            {meta.header.subtitle}
+          <p className="text-sm md:text-2xl text-gray-300 font-light max-w-3xl mx-auto leading-relaxed whitespace-pre-line break-keep">
+            {meta.header.subtitle
+              .replace("CLS에듀케이션만의", "CLS만의")
+              .replace("다면 관리", "대면 관리")}
           </p>
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 pb-32">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 md:py-20 pb-20 md:pb-32">
 
         {/* Core Process (3 Steps) */}
-        <div className="mb-28">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl font-bold text-cls-black mb-4">{meta.processIntro.title}</h2>
-            <p className="text-gray-500 font-light text-lg">{meta.processIntro.subtitle}</p>
+        <div className="mb-16 md:mb-28">
+          <div className="text-center mb-8 md:mb-16">
+            <h2 className="text-xl md:text-3xl font-bold text-cls-black mb-3 md:mb-4 break-keep">{meta.processIntro.title}</h2>
+            <p className="text-gray-500 font-light text-sm md:text-lg break-keep whitespace-pre-line">{meta.processIntro.subtitle.replace("아닌, ", "아닌,\n")}</p>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-6 relative">
-            <div className="hidden md:block absolute top-[40%] left-[15%] right-[15%] h-1 bg-gradient-to-r from-gray-200 via-cls-orange/50 to-gray-200 -z-10"></div>
+          {/* ── 모바일: 좌우 스와이프 슬라이드 ── */}
+          <div className="md:hidden">
+            <SwipeCarousel>{stepCards}</SwipeCarousel>
+          </div>
 
-            {steps.map((step, i) => {
-              const style = STEP_STYLES[i % STEP_STYLES.length];
-              return (
-                <div key={step.step} className={style.card}>
-                  <div className={style.circle}>{step.step}</div>
-                  <h3 className="text-2xl font-bold text-cls-black mb-4">
-                    {step.title}{" "}
-                    <br />
-                    <span className={style.subtitleCls}>{step.subtitle}</span>
-                  </h3>
-                  {isHtmlContent(step.description) ? (
-                    <div
-                      className="text-gray-600 font-light leading-relaxed mb-6 prose prose-sm max-w-none prose-p:text-gray-600 prose-p:font-light prose-p:leading-relaxed prose-p:my-0"
-                      dangerouslySetInnerHTML={{ __html: sanitizeHtml(step.description) }}
-                    />
-                  ) : (
-                    <p className="text-gray-600 font-light leading-relaxed mb-6">
-                      {step.description}
-                    </p>
-                  )}
-                  <ul className={style.listCls}>
-                    {step.details.map((d, di) => (
-                      <li key={di}>• {d}</li>
-                    ))}
-                  </ul>
-                </div>
-              );
-            })}
+          {/* ── 데스크톱: 3열 그리드 (+연결선) ── */}
+          <div className="hidden md:grid md:grid-cols-3 gap-6 relative">
+            <div className="absolute top-[40%] left-[15%] right-[15%] h-1 bg-gradient-to-r from-gray-200 via-cls-orange/50 to-gray-200 -z-10"></div>
+            {stepCards}
           </div>
         </div>
 
         {/* Level Targeted Programs */}
-        <div className="mb-24">
-          <div className="flex items-center gap-4 mb-10 border-l-4 border-cls-orange pl-4">
-            <h2 className="text-3xl font-bold text-cls-black">{meta.targetsIntro.title}</h2>
+        <div className="mb-16 md:mb-24">
+          <div className="flex items-center gap-4 mb-6 md:mb-10 border-l-4 border-cls-orange pl-3 md:pl-4">
+            <h2 className="text-xl md:text-3xl font-bold text-cls-black">{meta.targetsIntro.title}</h2>
           </div>
 
-          <div className="space-y-12">
+          <SwipeCarousel className="space-y-6 md:space-y-12">
             {/* Middle School */}
             {middleTarget && (
-              <div className="bg-white rounded-3xl p-8 md:p-12 shadow-sm border border-slate-100 flex flex-col md:flex-row gap-10 items-center hover:shadow-lg transition-shadow">
-                <div className="md:w-1/3">
-                  <div className="bg-slate-100 rounded-2xl h-64 flex flex-col items-center justify-center p-6 text-center">
-                    <span className="text-6xl mb-4">{middleTarget.emoji}</span>
-                    <h3 className="text-2xl font-bold text-cls-black">{middleTarget.title}</h3>
-                    <p className="text-cls-orange font-bold mt-2">&ldquo;{middleTarget.tagline}&rdquo;</p>
+              <div className="bg-white rounded-2xl md:rounded-3xl p-5 md:p-12 shadow-sm border border-slate-100 flex flex-col md:flex-row gap-5 md:gap-10 items-center hover:shadow-lg transition-shadow h-full">
+                <div className="w-full md:w-1/3">
+                  <div className="bg-slate-100 rounded-2xl h-44 md:h-64 flex flex-col items-center justify-center p-4 md:p-6 text-center">
+                    <span className="text-5xl md:text-6xl mb-2 md:mb-4">{middleTarget.emoji}</span>
+                    <h3 className="text-lg md:text-2xl font-bold text-cls-black">{middleTarget.title}</h3>
+                    <p className="text-cls-orange text-sm md:text-base font-bold mt-1 md:mt-2 break-keep">&ldquo;{middleTarget.tagline}&rdquo;</p>
                   </div>
                 </div>
-                <div className="md:w-2/3">
-                  <h4 className="text-xl font-bold text-cls-black mb-4">{middleTarget.mainTitle}</h4>
+                <div className="w-full md:w-2/3">
+                  <h4 className="text-base md:text-xl font-bold text-cls-black mb-3 md:mb-4">{middleTarget.mainTitle}</h4>
                   {isHtmlContent(middleTarget.description) ? (
                     <div
                       className="text-gray-600 font-light leading-relaxed mb-6 prose prose-sm max-w-none prose-p:text-gray-600 prose-p:font-light prose-p:leading-relaxed prose-p:my-0"
                       dangerouslySetInnerHTML={{ __html: sanitizeHtml(middleTarget.description) }}
                     />
                   ) : (
-                    <p className="text-gray-600 font-light leading-relaxed mb-6">
+                    <p className="text-gray-600 font-light leading-relaxed mb-6 text-sm md:text-base">
                       {middleTarget.description}
                     </p>
                   )}
-                  <div className="grid grid-cols-2 gap-4 text-sm font-light">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-4 text-sm font-light">
                     {middleTarget.features.map((f, i) => (
                       <div
                         key={i}
-                        className={`bg-slate-50 p-4 rounded-lg border-l-2 ${i === 0 ? "border-cls-black" : "border-cls-orange"}`}
+                        className={`bg-slate-50 p-3 md:p-4 rounded-lg border-l-2 ${i === 0 ? "border-cls-black" : "border-cls-orange"}`}
                       >
                         <span className="font-bold text-cls-black block mb-1">{f.title}</span>
                         {f.desc}
@@ -360,31 +373,31 @@ export default async function Program() {
 
             {/* High School */}
             {highTarget && (
-              <div className="bg-cls-black rounded-3xl p-8 md:p-12 shadow-xl flex flex-col md:flex-row-reverse gap-10 items-center">
-                <div className="md:w-1/3">
-                  <div className="bg-gray-800 rounded-2xl h-64 flex flex-col items-center justify-center p-6 text-center border border-gray-700">
-                    <span className="text-6xl mb-4">{highTarget.emoji}</span>
-                    <h3 className="text-2xl font-bold text-white">{highTarget.title}</h3>
-                    <p className="text-cls-orange font-bold mt-2">&ldquo;{highTarget.tagline}&rdquo;</p>
+              <div className="bg-cls-black rounded-2xl md:rounded-3xl p-5 md:p-12 shadow-xl flex flex-col md:flex-row-reverse gap-5 md:gap-10 items-center h-full">
+                <div className="w-full md:w-1/3">
+                  <div className="bg-gray-800 rounded-2xl h-44 md:h-64 flex flex-col items-center justify-center p-4 md:p-6 text-center border border-gray-700">
+                    <span className="text-5xl md:text-6xl mb-2 md:mb-4">{highTarget.emoji}</span>
+                    <h3 className="text-lg md:text-2xl font-bold text-white">{highTarget.title}</h3>
+                    <p className="text-cls-orange text-sm md:text-base font-bold mt-1 md:mt-2 break-keep">&ldquo;{highTarget.tagline}&rdquo;</p>
                   </div>
                 </div>
-                <div className="md:w-2/3">
-                  <h4 className="text-xl font-bold text-cls-orange mb-4">{highTarget.mainTitle}</h4>
+                <div className="w-full md:w-2/3">
+                  <h4 className="text-base md:text-xl font-bold text-cls-orange mb-3 md:mb-4">{highTarget.mainTitle}</h4>
                   {isHtmlContent(highTarget.description) ? (
                     <div
                       className="text-gray-300 font-light leading-relaxed mb-6 prose prose-invert max-w-none prose-p:text-gray-300 prose-p:font-light prose-p:leading-relaxed prose-p:my-0"
                       dangerouslySetInnerHTML={{ __html: sanitizeHtml(highTarget.description) }}
                     />
                   ) : (
-                    <p className="text-gray-300 font-light leading-relaxed mb-6">
+                    <p className="text-gray-300 font-light leading-relaxed mb-6 text-sm md:text-base">
                       {highTarget.description}
                     </p>
                   )}
-                  <div className="grid grid-cols-2 gap-4 text-sm font-light">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-4 text-sm font-light">
                     {highTarget.features.map((f, i) => (
                       <div
                         key={i}
-                        className={`bg-gray-800 p-4 rounded-lg border-l-2 text-gray-300 ${i === 0 ? "border-gray-500" : "border-cls-orange"}`}
+                        className={`bg-gray-800 p-3 md:p-4 rounded-lg border-l-2 text-gray-300 ${i === 0 ? "border-gray-500" : "border-cls-orange"}`}
                       >
                         <span className="font-bold text-white block mb-1">{f.title}</span>
                         {f.desc}
@@ -394,28 +407,28 @@ export default async function Program() {
                 </div>
               </div>
             )}
-          </div>
+          </SwipeCarousel>
         </div>
 
         {/* Time Table CTA box */}
-        <div className="bg-gradient-to-br from-cls-orange to-cls-orange-light rounded-3xl p-10 text-center text-white shadow-xl shadow-cls-orange/20">
-          <h3 className="text-3xl font-bold mb-4">{meta.cta.title}</h3>
-          <p className="text-lg opacity-90 mb-8 font-light whitespace-pre-line">
-            {meta.cta.description}
+        <div className="bg-gradient-to-br from-cls-orange to-cls-orange-light rounded-2xl md:rounded-3xl p-6 md:p-10 text-center text-white shadow-xl shadow-cls-orange/20">
+          <h3 className="text-xl md:text-3xl font-bold mb-3 md:mb-4 break-keep">{meta.cta.title}</h3>
+          <p className="text-sm md:text-lg opacity-90 mb-6 md:mb-8 font-light leading-relaxed break-keep max-w-xl mx-auto">
+            {meta.cta.description.replace(/\s*\n\s*/g, " ")}
           </p>
           {isExternalCtaLink ? (
             <a
               href={meta.cta.buttonLink}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-block px-8 py-4 bg-white text-cls-orange rounded-xl font-bold hover:bg-cls-black hover:text-white transition-colors duration-300 shadow-lg"
+              className="inline-block w-full sm:w-auto px-6 md:px-8 py-3.5 md:py-4 bg-white text-cls-orange rounded-xl font-bold text-sm md:text-base hover:bg-cls-black hover:text-white transition-colors duration-300 shadow-lg"
             >
               {meta.cta.buttonText}
             </a>
           ) : (
             <Link
               href={meta.cta.buttonLink}
-              className="inline-block px-8 py-4 bg-white text-cls-orange rounded-xl font-bold hover:bg-cls-black hover:text-white transition-colors duration-300 shadow-lg"
+              className="inline-block w-full sm:w-auto px-6 md:px-8 py-3.5 md:py-4 bg-white text-cls-orange rounded-xl font-bold text-sm md:text-base hover:bg-cls-black hover:text-white transition-colors duration-300 shadow-lg"
             >
               {meta.cta.buttonText}
             </Link>

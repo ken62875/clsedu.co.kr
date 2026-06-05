@@ -4,6 +4,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { useState } from "react";
 import { useAuth } from "@/providers/AuthProvider";
+import { BOOKING_URL } from "@/lib/booking";
 
 const Header = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -24,7 +25,7 @@ const Header = () => {
             <span className="text-gray-300">|</span>
             <Link href="/my-account/payment" className="hover:text-cls-orange transition-colors">교육비 결제</Link>
             <span className="text-gray-300">|</span>
-            <Link href="/contact" className="hover:text-cls-orange transition-colors">교육상담예약</Link>
+            <a href={BOOKING_URL} target="_blank" rel="noopener noreferrer" className="hover:text-cls-orange transition-colors">교육상담예약</a>
           </div>
           <div className="flex items-center space-x-4">
             {isLoggedIn ? (
