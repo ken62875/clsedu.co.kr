@@ -18,8 +18,14 @@ const notoSansKr = Noto_Sans_KR({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://clsedu.co.kr"),
   title: "CLS 에듀케이션",
   description: "진짜 실력은 속도가 아니라 깊이에서 나옵니다. 초중고 내신/입시 전문 보습학원",
+  verification: {
+    other: {
+      "naver-site-verification": "e3d2fbea793b9b4901e0b8dc98a754ad8b86444a",
+    },
+  },
 };
 
 export default async function RootLayout({
