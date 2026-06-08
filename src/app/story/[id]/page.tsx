@@ -1,10 +1,14 @@
-import React from "react";
+import React, { cache } from "react";
+import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import FadeIn from "@/components/ui/FadeIn";
+import ShareButtons from "@/components/ui/ShareButtons";
 import { prisma } from "@/lib/prisma";
 import { sanitizeHtml } from "@/lib/sanitize";
 import { BOOKING_URL } from "@/lib/booking";
+
+const SITE_URL = "https://clsedu.co.kr";
 
 interface BlogTag { id: string; name: string; slug: string; }
 interface BlogCategory { id: string; name: string; slug: string; }
@@ -16,6 +20,7 @@ interface BlogPostDetail {
   summary: string | null;
   contentHtml: string | null;
   featuredImageUrl: string | null;
+  ogImageUrl: string | null;
   publishedAt: Date | null;
   createdAt: Date;
   updatedAt: Date;
@@ -27,7 +32,8 @@ interface BlogPostDetail {
   tags: { tag: BlogTag }[];
 }
 
-async function fetchPost(slug: string): Promise<BlogPostDetail | null> {
+// cache()로 감싸 generateMetadata와 페이지 렌더에서 DB를 한 번만 조회
+const fetchPost = cache(async (slug: string): Promise<BlogPostDetail | null> => {
   // Next.js params가 인코딩된 상태로 올 수 있어 안전하게 디코딩
   const decodedSlug = decodeURIComponent(slug);
 
@@ -57,6 +63,48 @@ async function fetchPost(slug: string): Promise<BlogPostDetail | null> {
     console.error(`[Story] Prisma 오류: slug="${decodedSlug}"`, err);
     return null;
   }
+});
+
+// ─── 글별 메타데이터 (카톡/SNS 공유 시 제목·이미지 미리보기) ────────────────
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}): Promise<Metadata> {
+  const { id } = await params;
+  const post = await fetchPost(id);
+  if (!post) return { title: "글을 찾을 수 없습니다" };
+
+  const title = post.metaTitle || post.title;
+  const description =
+    post.metaDescription ||
+    post.summary ||
+    "CLS 에듀케이션 스토리 — 중랑구 신내동 내신·입시 학원";
+  const image = post.ogImageUrl || post.featuredImageUrl || undefined;
+  const url = `${SITE_URL}/story/${post.slug}`;
+
+  return {
+    title,
+    description,
+    alternates: { canonical: url },
+    openGraph: {
+      type: "article",
+      title,
+      description,
+      url,
+      siteName: "CLS 에듀케이션",
+      locale: "ko_KR",
+      images: image ? [{ url: image }] : undefined,
+      publishedTime: (post.publishedAt || post.createdAt).toISOString(),
+      authors: [post.author.name],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: image ? [image] : undefined,
+    },
+  };
 }
 
 export default async function StoryDetailPage({
@@ -133,6 +181,12 @@ export default async function StoryDetailPage({
                   ))}
                 </div>
               )}
+            </div>
+          </FadeIn>
+
+          <FadeIn delay={0.05} direction="up">
+            <div className="mb-10 pb-6 border-b border-gray-100">
+              <ShareButtons url={`${SITE_URL}/story/${post.slug}`} title={post.title} />
             </div>
           </FadeIn>
 
