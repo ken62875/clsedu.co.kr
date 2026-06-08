@@ -29,7 +29,10 @@ export const metadata: Metadata = {
     "중랑구 학원", "신내동 학원", "중랑구 영어학원", "신내동 수학학원",
     "중랑구 입시학원", "중랑구 고등학원", "신내동 내신학원", "CLS에듀케이션",
   ],
-  alternates: { canonical: "https://clsedu.co.kr" },
+  alternates: {
+    canonical: "https://clsedu.co.kr",
+    types: { "application/rss+xml": "https://clsedu.co.kr/rss.xml" },
+  },
   verification: {
     other: {
       "naver-site-verification": "e3d2fbea793b9b4901e0b8dc98a754ad8b86444a",
