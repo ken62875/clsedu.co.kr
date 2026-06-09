@@ -65,6 +65,13 @@ const ORG_JSON_LD = {
   },
   areaServed: ["서울 중랑구", "신내동", "신내역"],
   openingHours: "Mo-Sa 14:00-22:00",
+  logo: "https://clsedu.co.kr/logo-clsedu-landscape.webp",
+  image: "https://clsedu.co.kr/logo-clsedu-landscape.webp",
+  // 공식 채널 — 네이버/구글이 "이 학원의 공식 채널"로 연결 인식 (브랜드 검색 시 소셜 아이콘 노출에 도움)
+  sameAs: [
+    "https://blog.naver.com/clsjn",
+    "https://map.naver.com/p/entry/place/1381304977",
+  ],
 };
 
 export default async function RootLayout({
